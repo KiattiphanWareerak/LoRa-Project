@@ -2,8 +2,8 @@ Application Key
 eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjaGlycHN0YWNrIiwiaXNzIjoiY2hpcnBzdGFjayIsInN1YiI6IjM5NmI3YmJhLWExMTgtNDVkNy1hYzQ1LWFjN2FlZDFmMDBkMCIsInR5cCI6ImtleSJ9.a0HKYWfpt81mHERCv3GpUoruFwTtenILnlABSII51pE
 
 App keys
-Kiat-small = 100c12f0ad176142baff1f9b66229cf9
-Tense-small = e375c5ce079f492eedf8f6d9601d7db0
+Kiat-small = 418a5f5c87dc09fb412491857241ba86
+Tense-small = ab044f1690ca9fc8697ea62b7e5fc1a5
 
 Kiat-giant =
 Tense-giant =
