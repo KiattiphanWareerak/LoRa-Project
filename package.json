@@ -1,0 +1,15 @@
+{
+  "name": "lora-project",
+  "version": "1.0.0",
+  "description": "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",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@chirpstack/chirpstack-api": "^4.5.0"
+  }
+}
