@@ -143,8 +143,9 @@ wss.on('connection', (ws, request, client) => {
       ws.on('message', (message) => {
         console.log(`Received message for client: ${message}`);
 
-        devEUI = message.devEUI;
-        addDevice(message.deviceName, message.devEUI);
+        data = JSON.parse(message);
+        devEUI = data.devEUI;
+        addDevice(data.deviceName, data.devEUI);
 
         ws.send(JSON.stringify({ status: 'success', message: 'Device added successfully' }));
       });
@@ -158,7 +159,8 @@ wss.on('connection', (ws, request, client) => {
       ws.on('message', (message) => {
         console.log(`Received message for client: ${message}`);
 
-        newAppKey(message.appKey);
+        data = JSON.parse(message);
+        createAppKey(data.appKey);
 
         ws.send(JSON.stringify({ status: 'success', message: 'Update AppKey successfully' }));
       });
@@ -212,7 +214,7 @@ function addDevice(deviceName, devEUI) {
 
     // Create a new device.
     const newDevice = new device_pb.Device();
-    newDevice.setDevEui(devEUI); //25c5d9e6325825c6
+    newDevice.setDevEui(devEUI);
     newDevice.setName(deviceName);
     newDevice.setApplicationId("c735b5b4-8130-454b-abf5-26021f5327f0");
     newDevice.setDeviceProfileId("437b8519-76bc-4974-85bf-6e0645f800be");
@@ -231,8 +233,8 @@ function addDevice(deviceName, devEUI) {
 }
 //---------------------------------------------------------------------//
 
-//-UPDATE APP KEY-//
-function newAppKey(newAppKey) {
+//-CREATE APP KEY-//
+function createAppKey(appKey) {
   const grpc = require("@grpc/grpc-js");
   const device_grpc = require("@chirpstack/chirpstack-api/api/device_grpc_pb");
   const device_pb = require("@chirpstack/chirpstack-api/api/device_pb");
@@ -245,16 +247,20 @@ function newAppKey(newAppKey) {
   server,
   grpc.credentials.createInsecure(),
   );
-
+    
   const metadata = new grpc.Metadata();
   metadata.set("authorization", "Bearer " + apiToken);
 
   // Create a request to update the new app key (OTAA).
-  const updateAppKeyRequest = new device_pb.UpdateDeviceKeysRequest();
-  updateAppKeyRequest.setDevEui(devEUI);
-  updateAppKeyRequest.setAppKey(newAppKey);
+  const deviceKey = new device_pb.DeviceKeys();
+  deviceKey.setDevEui(devEUI);
+  deviceKey.setNwkKey(appKey); // LoRaWAN 1.0.x
 
-  deviceService.updateKeys(updateAppKeyRequest, metadata, (err, resp) => {
+  // Create a request to add the device key.
+  const createReq = new device_pb.CreateDeviceKeysRequest();
+  createReq.setDeviceKeys(deviceKey);
+
+  deviceService.createKeys(createReq, metadata, (err, resp) => {
   if (err !== null) {
       console.log(err);
       return;
@@ -263,3 +269,5 @@ function newAppKey(newAppKey) {
   });
 }
 //---------------------------------------------------------------------//
+// devEUI = '25c5d9e6325825c6';
+// appKey = '3e0c82264e71fe57d4087e0a3acf24cd';
