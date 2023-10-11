@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="RegStyles.css">
+    <title>Login</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Login</h1>
+        <form id="login-form">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+            
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+            
+            <button type="submit" id="login-button">Login</button>
+        </form>
+        <div class="form-links">
+            <a href="forgetPass.html">Forgot Password?</a>
+            <span> | </span>
+            <a href="Reg.html">Register</a>
+        </div>
+    </div>
+    <script>
+        document.getElementById("login-form").addEventListener("submit", function (event) {
+            event.preventDefault(); // Prevent the form from submitting normally
+            window.location.href = "dashboard.html"; // Redirect to dashboard.html
+        });
+    </script>
+</body>
+</html>

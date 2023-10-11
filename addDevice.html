@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="RegStyles.css">
+    <title>Add Device</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Add Device</h1>
+        <form id="add-device-form">
+            <label for="device-name">Device Name:</label>
+            <input type="text" id="device-name" name="device-name" required>
+            
+            <label for="device-eui">Device EUI:</label>
+            <input type="text" id="device-eui" name="device-eui" required>
+            
+            <button type="submit" id="add-device-button">Register Device</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById("add-device-form").addEventListener("submit", function (event) {
+            event.preventDefault(); // Prevent the form from submitting normally
+            alert("Success"); // Display the success alert
+            window.location.href = "setAppKey.html"; // Redirect to setAppKey.html
+        });
+    </script>
+</body>
+</html>

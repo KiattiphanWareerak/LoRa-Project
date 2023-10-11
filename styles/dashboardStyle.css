@@ -1,0 +1,100 @@
+/* Reset some default styles for consistency */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+}
+
+/* Header styling */
+header {
+    background-color: #333;
+    color: #fff;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+}
+
+#user-profile img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+#user-profile h3 {
+    font-size: 1.2rem;
+    margin: 0;
+}
+
+#user-profile p {
+    font-size: 0.9rem;
+}
+
+/* Navigation menu styling */
+nav {
+    background-color: #222;
+    color: #fff;
+    padding: 10px;
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+}
+
+nav ul li {
+    margin: 10px 0;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: #fff;
+    font-weight: bold;
+}
+
+/* Refresh button styling */
+.refresh-button {
+    float: right;
+    margin-top: 10px;
+}
+
+.refresh-button a {
+    text-decoration: none;
+    color: #fff;
+    font-size: 1.2rem;
+}
+
+.refresh-button a i {
+    font-size: 24px;
+}
+
+/* Main content styling */
+main {
+    padding: 20px;
+}
+
+/* Section styling */
+section {
+    margin: 20px 0;
+    background-color: #f2f2f2;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+section h2 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+/* Footer styling */
+footer {
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 10px;
+}
