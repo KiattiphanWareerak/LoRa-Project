@@ -1,31 +1,43 @@
-host = 'localhost';
-port = '8080';
-
 document.addEventListener("DOMContentLoaded", function () {
-    const button = document.getElementById("Btn-1");
+    const button = document.getElementById("add-device-button");
 
-    const deviceName = document.getElementById("deviceName");
-    const devEUI = document.getElementById("deviceEUI");
+    const deviceName = document.getElementById("device-name");
+    const devEUI = document.getElementById("device-eui");
 
     button.addEventListener("click", function () {
       const dN = deviceName.value;
       const dE = devEUI.value;
 
       const isValidName = /^[a-zA-Z0-9\-_]+$/.test(dN);
-      const isValidEUI = /^[a-zA-Z0-9\-_]+$/.test(dE);
+      const isValidEUI = /^[0-9a-fA-F]{16}$/.test(dE);
 
       if (isValidName && isValidEUI) {
-          sendAddDeviceToServer(dN, dE);
+        sendAddDeviceToServer(dN, dE);
+        deviceName.value = "";
+        devEUI.value = "";
+      } else if (isValidName && !isValidEUI) {
+        alert("Device EUI should be a 64-bit HEX string with exactly 16 characters.");
+        devEUI.value = "";
+      } else if (!isValidName && isValidEUI) {
+        alert("Device Name should be English letters (lowercase/uppercase), numbers, '-', and '_'.");
+        deviceName.value = "";
       } else {
-          alert("Please enter the device name. English letters lowercase - uppercase, numbers, and -/_");
+        alert("Device Name should be English letters (lowercase/uppercase), numbers, '-', and '_.'\n" +
+        "Device EUI should be a 64-bit HEX string with exactly 16 characters.");
+        deviceName.value = "";
+        devEUI.value = "";
       }
     });
 });
 
 //---------------------------------------------------------------------// 
-//------------------------------FUNCTIONS------------------------------//
+//-----------------------------WEB SOCKET------------------------------//
 //---------------------------------------------------------------------//
 
+const host = 'localhost';
+const port = '8080';
+//---------------------------------------------------------------------//
+//---------------------------------------------------------------------//
 function sendAddDeviceToServer(deviceName, devEUI) {
     const socket = new WebSocket('ws://' + host + ':'+ port + '/addDevice');
   
@@ -42,7 +54,8 @@ function sendAddDeviceToServer(deviceName, devEUI) {
       console.log('Received message for server:', response);
 
       if (response.status === 'success') {
-        window.location.href = 'add_appKey.html';
+        alert("Success!!");
+        window.location.href = 'createAppKey.html';
       } else {
         alert('An error occurred: ' + response.message);
       }

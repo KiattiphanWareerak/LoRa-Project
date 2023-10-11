@@ -1,28 +1,29 @@
-host = 'localhost';
-port = '8080';
-
 document.addEventListener("DOMContentLoaded", function () {
-    const button = document.getElementById("Btn-2");
+    const button = document.getElementById("set-app-key-button");
 
-    const appKey = document.getElementById("appKey");
+    const appKey = document.getElementById("app-key");
 
     button.addEventListener("click", function () {
       const aK = appKey.value;
 
-      const isValidAppKey = /^[a-zA-Z0-9\-_]+$/.test(aK);
+      const isValidAppKey = /^[0-9a-fA-F]{32}$/.test(aK);
 
       if (isValidAppKey) {
         sendAppKeyToServer(aK);
       } else {
-        alert("Please enter the device name. English letters lowercase - uppercase, numbers, and -/_");
+        alert("Please enter the AppKey correctly. The AppKey should be a 128-bit HEX string with exactly 32 characters.");
       }
     })
-});
+})
 
 //---------------------------------------------------------------------// 
-//------------------------------FUNCTIONS------------------------------//
+//-----------------------------WEB SOCKET------------------------------//
 //---------------------------------------------------------------------//
-  
+
+const host = 'localhost';
+const port = '8080';
+//---------------------------------------------------------------------//
+//---------------------------------------------------------------------//
 function sendAppKeyToServer(appKey) {
   const socket = new WebSocket('ws://' + host + ':'+ port + '/addAppKey');
   
@@ -38,7 +39,7 @@ function sendAppKeyToServer(appKey) {
     console.log('Received message for server:', response);
 
     if (response.status === 'success') {
-      window.location.href = 'devices.html';
+      window.location.href = 'dashboard.html';
     } else {
       alert('An error occurred: ' + response.message);
     }
