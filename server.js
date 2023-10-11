@@ -4,6 +4,9 @@ const url = require('url');
 const path = require('path');
 const WebSocket = require('ws');
 
+//---------------------------------------------------------------------// 
+//--------------------------------SERVER-------------------------------//
+
 const server = http.createServer((req, res) => {
   let q = url.parse(req.url, true);
   let fileName = '.' + q.pathname;
@@ -38,9 +41,16 @@ const server = http.createServer((req, res) => {
   })
 })
 
+const host = 'localhost';
+const port = 8080;
+
+server.listen(port, () => {
+  console.log(`Server is running on http://${host}:${port}/`);
+});
+//---------------------------------------------------------------------// 
+
 //---------------------------------------------------------------------// 
 //------------------------------WEB SOCKET-----------------------------//
-//---------------------------------------------------------------------//
 
 const wss = new WebSocket.Server({ noServer: true });
 
@@ -89,20 +99,12 @@ wss.on('connection', (ws, request, client) => {
     });
 });
 
-//---------------------------------------------------------------------// 
-//--------------------------------SERVER-------------------------------//
 //---------------------------------------------------------------------//
-
-const host = 'localhost';
-const port = 8080;
-
-server.listen(port, () => {
-  console.log(`Server is running on http://${host}:${port}/`);
-});
 
 //---------------------------------------------------------------------// 
 //------------------------------FUNCTIONS------------------------------//
-//---------------------------------------------------------------------//
+
+//---------------------------------------------------------------------// 
 // setting ChirpStack API
 const grpc = require("@grpc/grpc-js");
 const device_grpc = require("@chirpstack/chirpstack-api/api/device_grpc_pb");
@@ -112,7 +114,7 @@ const serverChirpStack = "192.168.50.54:8080";
 // The API token (can be obtained through the ChirpStack web-interface).
 const apiToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjaGlycHN0YWNrIiwiaXNzIjoiY2hpcnBzdGFjayIsInN1YiI6IjJmZjMzODRiLWZjYzgtNDE5OS1hNmY0LWVjYWEwNzUyMmE5NiIsInR5cCI6ImtleSJ9.HcJsMD_Vv-oPUFHqRIDo_xPlJOPPzNeNxSsixNXTRX0";
 //---------------------------------------------------------------------//
-//---------------------------------------------------------------------//
+
 //---ADD DEVICE---//
 function addDevice(deviceName, devEUI) {
     // Create the client for the DeviceService.
@@ -145,7 +147,7 @@ function addDevice(deviceName, devEUI) {
     });
 }
 //---------------------------------------------------------------------//
-//---------------------------------------------------------------------//
+
 //---CREATE OTAA KEY---//
 function createAppKey(appKey) {
   const deviceService = new device_grpc.DeviceServiceClient(
@@ -174,6 +176,6 @@ function createAppKey(appKey) {
   });
 }
 //---------------------------------------------------------------------//
-//---------------------------------------------------------------------//
+
 // devEUI = '25c5d9e6325825c6';
 // appKey = '3e0c82264e71fe57d4087e0a3acf24cd';
