@@ -39,7 +39,7 @@ const port = '8080';
 //---------------------------------------------------------------------//
 //---------------------------------------------------------------------//
 function sendAddDeviceToServer(deviceName, devEUI) {
-    const socket = new WebSocket('ws://' + host + ':'+ port + '/addDevice');
+    const socket = new WebSocket('ws://' + host + ':'+ port + '/newDevice');
   
     socket.addEventListener('open', (event) => {
       const data = {

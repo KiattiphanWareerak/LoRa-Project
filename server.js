@@ -59,7 +59,7 @@ let devEUI = '';
 wss.on('connection', (ws, request, client) => {
     const url = new URL(request.url, 'http://' + host);
   
-    if (url.pathname === '/addDevice') {
+    if (url.pathname === '/newDevice') {
       console.log('WebSocket connection established for client');
   
       ws.on('message', (message) => {
@@ -75,7 +75,7 @@ wss.on('connection', (ws, request, client) => {
       ws.on('close', () => {
         console.log('WebSocket connection closed for client');
       });
-    } else if (url.pathname === '/addAppKey') {
+    } else if (url.pathname === '/createAppKey') {
       console.log('WebSocket connection established for client');
   
       ws.on('message', (message) => {
@@ -84,7 +84,22 @@ wss.on('connection', (ws, request, client) => {
         data = JSON.parse(message);
         createAppKey(data.appKey);
 
-        ws.send(JSON.stringify({ status: 'success', message: 'Update AppKey successfully' }));
+        ws.send(JSON.stringify({ status: 'success', message: 'Created AppKey successfully' }));
+      });
+  
+      ws.on('close', () => {
+        console.log('WebSocket connection closed for client');
+      });
+    } else if (url.pathname === '/deleteDevice') {
+      console.log('WebSocket connection established for client');
+  
+      ws.on('message', (message) => {
+        console.log(`Received message for client: ${message}`);
+
+        data = JSON.parse(message);
+        deleteDevice(data.devEUI);
+
+        ws.send(JSON.stringify({ status: 'success', message: 'Deleted device successfully' }));
       });
   
       ws.on('close', () => {
@@ -177,5 +192,28 @@ function createAppKey(appKey) {
 }
 //---------------------------------------------------------------------//
 
+//---DELETE DEVICE---//
+function deleteDevice(devEUI) {
+  const deviceService = new device_grpc.DeviceServiceClient(
+  serverChirpStack,
+  grpc.credentials.createInsecure(),
+  );
+    
+  const metadata = new grpc.Metadata();
+  metadata.set("authorization", "Bearer " + apiToken);
+
+  // Create a request to add a device key.
+  const createReq = new device_pb.DeleteDeviceRequest();
+  createReq.setDeviceKeys(devEUI);
+
+  deviceService.delete(createReq, metadata, (err, resp) => {
+  if (err !== null) {
+      console.log(err);
+      return;
+  }
+  console.log('App Key (OTAA) has been created [device: ' + devEUI + ']');
+  });
+}
+//---------------------------------------------------------------------//
 // devEUI = '25c5d9e6325825c6';
 // appKey = '3e0c82264e71fe57d4087e0a3acf24cd';

@@ -25,7 +25,7 @@ const port = '8080';
 //---------------------------------------------------------------------//
 //---------------------------------------------------------------------//
 function sendAppKeyToServer(appKey) {
-  const socket = new WebSocket('ws://' + host + ':'+ port + '/addAppKey');
+  const socket = new WebSocket('ws://' + host + ':'+ port + '/createAppKey');
   
   socket.addEventListener('open', (event) => {
     const data = {
