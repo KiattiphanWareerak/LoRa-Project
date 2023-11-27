@@ -129,7 +129,6 @@ const serverChirpStack = "192.168.50.54:8080";
 // The API token (can be obtained through the ChirpStack web-interface).
 const apiToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjaGlycHN0YWNrIiwiaXNzIjoiY2hpcnBzdGFjayIsInN1YiI6IjJmZjMzODRiLWZjYzgtNDE5OS1hNmY0LWVjYWEwNzUyMmE5NiIsInR5cCI6ImtleSJ9.HcJsMD_Vv-oPUFHqRIDo_xPlJOPPzNeNxSsixNXTRX0";
 //---------------------------------------------------------------------//
-
 //---ADD DEVICE---//
 function addDevice(deviceName, devEUI) {
     // Create the client for the DeviceService.
@@ -162,7 +161,6 @@ function addDevice(deviceName, devEUI) {
     });
 }
 //---------------------------------------------------------------------//
-
 //---CREATE OTAA KEY---//
 function createAppKey(appKey) {
   const deviceService = new device_grpc.DeviceServiceClient(
@@ -177,6 +175,7 @@ function createAppKey(appKey) {
   const deviceKey = new device_pb.DeviceKeys();
   deviceKey.setDevEui(devEUI);
   deviceKey.setNwkKey(appKey); // LoRaWAN 1.0.x
+  // deviceKey.setAppKey(appKey); // LoRaWAN 1.1.x
 
   // Create a request to add a device key.
   const createReq = new device_pb.CreateDeviceKeysRequest();
@@ -191,7 +190,6 @@ function createAppKey(appKey) {
   });
 }
 //---------------------------------------------------------------------//
-
 //---DELETE DEVICE---//
 function deleteDevice(devEUI) {
   const deviceService = new device_grpc.DeviceServiceClient(
@@ -204,16 +202,74 @@ function deleteDevice(devEUI) {
 
   // Create a request to add a device key.
   const createReq = new device_pb.DeleteDeviceRequest();
-  createReq.setDeviceKeys(devEUI);
+  createReq.setDevEui(devEUI);
 
   deviceService.delete(createReq, metadata, (err, resp) => {
   if (err !== null) {
       console.log(err);
       return;
   }
-  console.log('App Key (OTAA) has been created [device: ' + devEUI + ']');
+  console.log('Device has been deleted [device: ' + devEUI + ']');
   });
 }
 //---------------------------------------------------------------------//
+//---UPDATE OTAA KEY---//
+function updateAppKey(devEUI, appKey) {
+  // Update a device key (OTAA).
+  const deviceKey = new device_pb.DeviceKeys();
+  deviceKey.setDevEui(devEUI);
+  deviceKey.setNwkKey(appKey); // LoRaWAN 1.0.x
+  // deviceKey.setAppKey(appKey); // LoRaWAN 1.1.x
+    
+  // Create a request to update a device key.
+  const createReq = new device_pb.UpdateDeviceKeysRequest();
+  createReq.setDeviceKeys(deviceKey);
+    
+  deviceService.updateKeys(createReq, metadata, (err, resp) => {
+  if (err !== null) {
+      console.log(err);
+      return;
+  }
+  console.log('App Key (OTAA) has been updated [device: ' + devEUI + ']');
+  });
+}
+//---------------------------------------------------------------------//
+//---LIST DEVICES REQUEST---//
+function listDevicesRequest(appID) {
+  const deviceService = new device_grpc.DeviceServiceClient(
+    serverChirpStack,
+    grpc.credentials.createInsecure(),
+    );
+      
+  const metadata = new grpc.Metadata();
+  metadata.set("authorization", "Bearer " + apiToken);
+
+  // Create a request to list devices
+  const createReq = new device_pb.ListDevicesRequest();
+  createReq.setLimit(99);
+  createReq.setApplicationId(appID); //Application ID of User
+
+  deviceService.list(createReq, metadata, (err, resp) => {
+      if (err !== null) {
+          console.log(err);
+          return;
+      }
+      console.log(resp);
+
+      let devices = resp.array[1]; //list devices at index 1
+      console.log(devices);
+
+      for (const device of devices) {
+          const devEUI = device[0]; // DevEUI at index 0
+          const deviceName = device[4]; // Device name at index 4
+
+          console.log("DevEUI:", devEUI);
+          console.log("Device Name:", deviceName);
+      }
+  });
+}
+//---------------------------------------------------------------------//
+
+
 // devEUI = '25c5d9e6325825c6';
 // appKey = '3e0c82264e71fe57d4087e0a3acf24cd';

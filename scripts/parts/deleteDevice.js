@@ -68,3 +68,5 @@ function sendAddDeviceToServer(deviceName, devEUI) {
       console.error('Error connecting to the server.', event.error);
     });
 }
+//---------------------------------------------------------------------//
+//---------------------------------------------------------------------//
