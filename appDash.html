@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8 /">
+        <title>Dashboard Design</title>
+        <link rel="stylesheet" href="styles/mainStyles.css" />
+
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        />
+    </head>
+    <body>
+        <div class="sidebar">
+            <div class="logo"></div>
+            <ul class="menu">
+                <li class="active">
+                    <a href="appDash.html">
+                        <i class="fas fa-user"></i>
+                        <span>Application</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="fas fa-cog"></i>
+                        <span>Setting</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="addDevice.html">
+                        <i class="fas fa-question-circle"></i>
+                        <span>FAQ</span>
+                    </a>
+                </li>
+                <li class="logout">
+                    <a href="Login.html">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="main--content">
+            <div class="header--wrapper">
+                <div class="header--title">
+                    <h1>Application</h1>
+                </div>
+                <div class="user--info">
+                    <img src="userProfile.png" 
+                    alt="" />
+                </div>
+            </div>
+            <div class="mid--contents">
+                <div class="located">
+                    <h4>Application</h4>
+                </div>
+                <div class="button-group">
+                    <button class="button-configapp">Application Configuration</button>
+                    <button class="button-addapp" onclick="openModal()">Add</button>
+                    <button class="button-delapp">Delete</button>
+                </div>
+            </div>
+            <div class="app-name">
+                <div class="app-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="selectAll" name="selectAll"></th>
+                                <th>No.</th>
+                                <th>Application name</th>
+                                <th>Application ID</th>
+                                <th>Registered Device</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><input type="checkbox" name="app1" /></td>
+                                <td>1</td>
+                                <td><a href="inApp.html">Testing-App</a></td>
+                                <td>xxADzXxxxArd-***</td>
+                                <td>3</td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox" name="app2" /></td>
+                                <td>2</td>
+                                <td>new-app</td>
+                                <td>xxcdaXxxxAff-***</td>
+                                <td>3</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- Add this within your <body> -->
+        <div class="modal" id="addModal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <form id="addForm">
+                      <label for="appName">Application Name:</label>
+                      <input type="text" id="appName" name="appName" required>
+              
+                      <label for="appID">Application ID:</label>
+                      <input type="text" id="appID" name="appID" required>
+              
+                    <button class="button-submit">Submit</button>
+                </form>
+            </div>
+        </div>
+        <!-- Add this within your <body> -->
+        <script>
+        function openModal() {
+            document.getElementById("addModal").style.display = "block";
+        }
+
+        function closeModal() {
+            document.getElementById("addModal").style.display = "none";
+        }
+
+        // Close the modal if the user clicks outside the modal content
+        window.onclick = function (event) {
+            var modal = document.getElementById("addModal");
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+
+    </body>
+</html>  

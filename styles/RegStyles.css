@@ -78,14 +78,3 @@ button:hover {
 .form-links span {
     margin: 0 10px;
 }
-
-button:active {
-    background: #b1deff;
-}
-
-/* Responsive Styles */
-@media screen and (max-width: 600px) {
-    button {
-        font-size: 14px;
-    }
-}
