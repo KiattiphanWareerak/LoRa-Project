@@ -4,6 +4,7 @@
         <meta charset="UTF-8 /">
         <title>Dashboard Design</title>
         <link rel="stylesheet" href="styles/mainStyles.css" />
+        <script src="scripts/scriptReqToServer.js"></script>
 
         <link
             rel="stylesheet"
@@ -14,8 +15,8 @@
         <div class="sidebar">
             <div class="logo"></div>
             <ul class="menu">
-                <li class="active">
-                    <a href="appDash.html">
+                <li class="active" id="menu-applications">
+                    <a href="applications.html">
                         <i class="fas fa-user"></i>
                         <span>Application</span>
                     </a>
@@ -79,8 +80,8 @@
                                 <th>Registered Device</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
+                        <tbody id="app-table-apps">
+                            <!-- <tr>
                                 <td><input type="checkbox" name="app1" /></td>
                                 <td>1</td>
                                 <td><a href="inApp.html">Testing-App</a></td>
@@ -93,7 +94,7 @@
                                 <td>new-app</td>
                                 <td>xxcdaXxxxAff-***</td>
                                 <td>3</td>
-                            </tr>
+                            </tr> -->
                         </tbody>
                     </table>
                 </div>

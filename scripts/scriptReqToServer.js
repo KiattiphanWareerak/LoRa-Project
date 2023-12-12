@@ -2,7 +2,7 @@
 //----------------------SCRIPT FOR CHIRPSTACK API----------------------//
 //--------------------------REQUEST TO SERVER--------------------------//
 //---------------------------------------------------------------------// 
-
+let resp_listApplicationsReq;
 //---------------------------------------------------------------------// 
 //----------------------------ACTION EVENTS----------------------------//
 
@@ -63,10 +63,24 @@ document.addEventListener("DOMContentLoaded", function () {
   const button = document.getElementById("list-device-button");
 
   button.addEventListener("click", function () {
-    send_listDeviceRequest_to_server();
+    send_listDevicesRequest_to_server();
   });
 });
 //---------------------------------------------------------------------//
+//---LIST APPLICATIONS REQUEST---//
+document.addEventListener("DOMContentLoaded", function () {
+  let menuApplications = document.getElementById("menu-applications");
+
+  menuApplications.addEventListener('click', function (event) {
+    // Prevent the default action (in this case, navigating to applications.html)
+    event.preventDefault();
+
+    // Add your custom logic here
+    send_listApplicationsRequest_to_server();
+  });
+});
+//---------------------------------------------------------------------//
+
 
 
 //---------------------------------------------------------------------// 
@@ -137,7 +151,7 @@ function send_createDeviceKeyRequest_to_server(devKey) {
     });
   }
 //---------------------------------------------------------------------//
-function send_listDeviceRequest_to_server() {
+function send_listDevicesRequest_to_server() {
   const socket = new WebSocket('ws://' + host + ':'+ port + '/listDeviceRequest');
   
   socket.addEventListener('open', (event) => {
@@ -152,10 +166,41 @@ function send_listDeviceRequest_to_server() {
     console.log('Received message for server:', response);
 
     if (response.status === 'success') {
-      alert("Success!!");
+      let resp_listDevicesReq = response.resp_listDevicesReq;
 
-      let devices = response.devices;
-      displayListDevice(devices);
+      displayListDevices(resp_listDevicesReq);
+    } else {
+      alert('An error occurred: ' + response.message);
+    }
+  });
+
+  socket.addEventListener('close', (event) => {
+    console.log('Close connection to server.');
+  });
+
+  socket.addEventListener('error', (event) => {
+    console.error('Error connecting to the server.', event.error);
+  });
+}
+//---------------------------------------------------------------------//
+function send_listApplicationsRequest_to_server() {
+  const socket = new WebSocket('ws://' + host + ':'+ port + '/listApplicationsRequest');
+  
+  socket.addEventListener('open', (event) => {
+    const data = {
+      user_tenantID: "c735b5b4-8130-454b-abf5-26021f5327f0",
+    };
+    socket.send(JSON.stringify(data));
+  });
+
+  socket.addEventListener('message', (event) => {
+    const response = JSON.parse(event.data);
+    console.log('Received message for server:', response);
+
+    if (response.status === 'success') {
+      resp_listApplicationsReq = response.resp_listApplicationsReq;
+
+      displayListApplications(resp_listApplicationsReq);
     } else {
       alert('An error occurred: ' + response.message);
     }
@@ -174,20 +219,124 @@ function send_listDeviceRequest_to_server() {
 //---------------------------------------------------------------------// 
 //----------------------------FUNCTIONS--------------------------------//
 
-function displayListDevice(devices) {
-  const listDeviceDiv = document.getElementById('list-device');
+function displayListDevices(items) {
+  let tbody = document.getElementById('app-table-devices');
   
-  // Clear previous content
-  listDeviceDiv.innerHTML = '';
+  tbody.innerHTML = '';
 
-  devices.forEach(device => {
-      let devEUI = device.devEUI;
-      let devName = device.devName;
+  let count = 0;
+  items.forEach(function(item, index) {
+    var row = document.createElement('tr');
 
-      let deviceDiv = document.createElement('div');
-      deviceDiv.textContent = `DevEUI: ${devEUI}, Device Name: ${devName}`;
+    // Checkbox column
+    var checkboxCell = document.createElement('td');
+    var checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.name = 'app' + (index + 1);
+    checkboxCell.appendChild(checkbox);
+    row.appendChild(checkboxCell);
 
-      listDeviceDiv.appendChild(deviceDiv);
+    // Number column
+    var numberCell = document.createElement('td');
+    count += 1;
+    numberCell.textContent = count;
+    row.appendChild(numberCell);
+
+    // Device name column with a link
+    var devNameCell = document.createElement('td');
+    var devNameLink = document.createElement('a');
+    devNameLink.href = 'deviceConfigPage.html'; // Linkto device config page
+    devNameLink.textContent = item.dev_name;
+    devNameCell.appendChild(devNameLink);
+    row.appendChild(devNameCell);
+  
+    // Deivce ID column
+    var devIdCell = document.createElement('td');
+    devIdCell.textContent = item.dev_id;
+    row.appendChild(devIdCell);
+
+    // Last Seen column
+    var lastSeenCell = document.createElement('td');
+    lastSeenCell.textContent = formatLastSeen(item.last_seen);
+    row.appendChild(lastSeenCell);
+
+    // Append the row to the tbody
+    tbody.appendChild(row);
   });
+}
+//---------------------------------------------------------------------//
+function displayListApplications(items) {
+  let tbody = document.getElementById('app-table-apps');
+
+    tbody.innerHTML = '';
+
+    let count = 0;
+    // Loop through the items and append rows to the tbody
+    items.forEach(function(item, index) {
+        var row = document.createElement('tr');
+
+        // Checkbox column
+        var checkboxCell = document.createElement('td');
+        var checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.name = 'app' + (index + 1);
+        checkboxCell.appendChild(checkbox);
+        row.appendChild(checkboxCell);
+
+        // Number column
+        var numberCell = document.createElement('td');
+        count += 1;
+        numberCell.textContent = count;
+        row.appendChild(numberCell);
+
+        // Application name column with a link
+        var appNameCell = document.createElement('td');
+        var appNameLink = document.createElement('a');
+        appNameLink.href = 'devicesPage.html';
+        // Add click event listener to appNameLink
+        appNameLink.addEventListener('click', function(event) {
+          event.preventDefault(); // Prevent default link behavior
+          var appID = item.app_id;
+          console.log("test: " + appID);
+          send_listDevicesRequest_to_server();
+          window.location.href = 'devicesPage.html';
+        });
+        appNameLink.textContent = item.app_name;
+        appNameCell.appendChild(appNameLink);
+        row.appendChild(appNameCell);
+
+        // Application ID column
+        var appIdCell = document.createElement('td');
+        appIdCell.textContent = item.app_id;
+        row.appendChild(appIdCell);
+
+        // Number of registered devices column
+        var registeredDeviceCell = document.createElement('td');
+        registeredDeviceCell.textContent = item.app_num;
+        row.appendChild(registeredDeviceCell);
+
+        // Append the row to the tbody
+        tbody.appendChild(row);
+    });
+}
+//---------------------------------------------------------------------//
+function formatLastSeen(items) {
+  if (!items) {
+    return 'never';
+  }
+
+  var lastSeenDate = new Date(items);
+  var formattedDate = lastSeenDate.toLocaleTimeString('en-US', { hour12: false }) + ' ' +
+                      lastSeenDate.toLocaleDateString('en-US');
+  return formattedDate;
+}//---------------------------------------------------------------------//
+
+//---------------------------------------------------------------------//
+//-----------------------REFRESH CHECKING------------------------------//
+// ตรวจสอบว่าอยู่ในหน้าไหน เพื่อดึงข้อมูลมาแสดงให้ใหม่ เมื่อมีการรีเฟรชหน้าจอ
+if (window.location.pathname === '/applicationsPage.html' || window.location.pathname === '/') {
+  send_listApplicationsRequest_to_server();
+} else if (window.location.pathname === '/devicesPage.html') {
+  send_listDevicesRequest_to_server();
 }
 //---------------------------------------------------------------------//

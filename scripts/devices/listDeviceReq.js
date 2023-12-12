@@ -40,4 +40,4 @@ function listDevicesRequest_to_chripstack(appID) {
     });
 }
 
-listDevicesRequest_to_chripstack("");
+listDevicesRequest_to_chripstack("3d13c146-4226-4a2a-9462-3011a703c50b");
