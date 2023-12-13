@@ -15,8 +15,8 @@
         <div class="sidebar">
             <div class="logo"></div>
             <ul class="menu">
-                <li class="active" id="menu-applications">
-                    <a href="applications.html">
+                <li class="active">
+                    <a href="applicationsPage.html">
                         <i class="fas fa-user"></i>
                         <span>Application</span>
                     </a>
@@ -34,7 +34,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="addDevice.html">
+                    <a href="applicationsPage.html">
                         <i class="fas fa-question-circle"></i>
                         <span>FAQ</span>
                     </a>
@@ -51,7 +51,7 @@
         <div class="main--content">
             <div class="header--wrapper">
                 <div class="header--title">
-                    <h1>Application</h1>
+                    <h1>Max-01</h1>
                 </div>
                 <div class="user--info">
                     <img src="user.png" 
@@ -60,7 +60,11 @@
             </div>
             <div class="mid--contents">
                 <div class="located">
-                    <h4>Application</h4>
+                    <h4><a href="applicationsPage.html">Application</a></h4>
+                    <h4>></h4>
+                    <h4><a href="devicesPage.html">My-App-1</a></h4>
+                    <h4>></h4>
+                    <h4><a>Max-01</a></h4>
                 </div>
                 <div class="button-group">
                     <button class="button-configapp">Application Configuration</button>
@@ -73,27 +77,33 @@
                     <table>
                         <thead>
                             <tr>
-                                <th><input type="checkbox" id="selectAll" name="selectAll"></th>
-                                <th>No.</th>
-                                <th>Application name</th>
-                                <th>Application ID</th>
-                                <th>Registered Device</th>
+                                <th>***</th>
+                                <th>***</th>
+                                <th>***</th>
+                                <th>***</th>
                             </tr>
                         </thead>
-                        <tbody id="app-table-apps">
+                        <tbody id="app-table-devices">
                             <!-- <tr>
-                                <td><input type="checkbox" name="app1" /></td>
+                                <td><input type="checkbox" name="dev-1" /></td>
                                 <td>1</td>
-                                <td><a href="inApp.html">Testing-App</a></td>
-                                <td>xxADzXxxxArd-***</td>
-                                <td>3</td>
+                                <td>DTL-Kiat</td>
+                                <td>***aed-*******-33ff</td>
+                                <td>12:04:22 10/12/23</td>
                             </tr>
                             <tr>
-                                <td><input type="checkbox" name="app2" /></td>
+                                <td><input type="checkbox" name="dev-2" /></td>
                                 <td>2</td>
-                                <td>new-app</td>
-                                <td>xxcdaXxxxAff-***</td>
-                                <td>3</td>
+                                <td>DTL-Tense</td>
+                                <td>***596-*******-a5fc</td>
+                                <td>09:59:32 20/10/23</td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox" name="dev-3" /></td>
+                                <td>2</td>
+                                <td>ASIP-Test</td>
+                                <td>***32f-*******-f6ae</td>
+                                <td>never</td>
                             </tr> -->
                         </tbody>
                     </table>
@@ -104,14 +114,17 @@
         <div class="modal" id="addModal">
             <div class="modal-content">
                 <span class="close" onclick="closeModal()">&times;</span>
+                <!-- Your form goes here -->
                 <form id="addForm">
-                      <label for="appName">Application Name:</label>
-                      <input type="text" id="appName" name="appName" required>
-              
-                      <label for="appID">Application ID:</label>
-                      <input type="text" id="appID" name="appID" required>
-              
-                    <button class="button-submit">Submit</button>
+                    <!-- Add your form fields here -->
+                    <label for="devName">Device Name:</label>
+                    <input type="text" id="devName" name="devName" required>
+
+                    <label for="devEUI">Device EUI:</label>
+                    <input type="text" id="devEUI" name="devEUI" required>
+                    <!-- Add more form fields as needed -->
+
+                    <button class="button-next">Next</button>
                 </form>
             </div>
         </div>
