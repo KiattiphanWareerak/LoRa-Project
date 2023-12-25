@@ -9,6 +9,64 @@
 body {
     display: flex;
 }
+.container {
+    width: 1000px;
+    background-color: white;
+    padding: 30px;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
+    flex-wrap: wrap;
+}
+.container body{
+    background-color: #deeeff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+.tab_box {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border-bottom: 2px solid rgba(299,299,299);
+    position: relative;
+}
+.tab_box .tab_button{
+    font-size: 18px;
+    font-weight: 600;
+    color: black;
+    background: none;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+}
+.tab_box .tab_button.active{
+    color: #7360ff;
+}
+.content_box{
+    padding: 20px;
+}
+.content_box .tab_content{
+    display: none;
+}
+.content_box .tab_content.active{
+    display: block;
+}
+.content_box .content h2{
+    margin-bottom: 10px;
+}
+
+.active_line{
+    position: absolute;
+    top: 40px;
+    left: 35px;
+    width: 120px;
+    height: 5px;
+    background-color: #7360ff;
+    transition: all .3s ease-in-out;
+}
+
 .sidebar {
     position: sticky;
     top: 0;
@@ -245,3 +303,4 @@ form {
     cursor: pointer;
 }
 
+/*  TEST TEST TEST TEST*/
