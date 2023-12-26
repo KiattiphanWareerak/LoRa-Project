@@ -26,9 +26,18 @@ function listApplicationsRequest_to_chirpstack(tenantID) {
         console.log(err);
         return;
     }
-    console.log('list applications has been completed.\n' + 
-    resp.toObject());
+    console.log('list applications has been completed.');
+
+    let resp_listApplicationsReq = resp.toObject();
+    let extractedData = resp_listApplicationsReq.resultList.map(item => ({
+      id: item.id,
+      name: item.name,
+      description: item.description,
+    }));
+    extractedData.totalCount = resp_listApplicationsReq.totalCount;
+    
+    console.log(extractedData);
     });
 }
 
-listApplicationsRequest_to_chirpstack("");
+listApplicationsRequest_to_chirpstack("52f14cd4-c6f1-4fbd-8f87-4025e1d49242");

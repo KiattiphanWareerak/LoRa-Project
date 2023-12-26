@@ -310,10 +310,15 @@ function listApplicationsRequest_to_chirpstack(tenantID, callback) {
   }
   console.log('list applications has been completed.');
 
-  console.log(resp.toObject());
-  let resp_listApplicationsReq = resp.array[1];
+  let resp_listApplicationsReq = resp.toObject().resultList.map(item => ({
+    id: item.id,
+    name: item.name,
+    description: item.description,
+  }));
+  resp_listApplicationsReq.totalCount = resp.toObject().totalCount;
+  
   console.log(resp_listApplicationsReq);
-  callback(null, resp_listApplicationsReq)
+  callback(null, resp_listApplicationsReq);
   });
 }
 //---------------------------------------------------------------------//
