@@ -103,6 +103,10 @@
         </div>
         <div class="modal_container">
             <div class="form">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <div class="form_headder">
+                    <h4>Add Application</h4>
+                </div>
                 <div>
                     <label for="appName">Application Name:</label>
                     <input type="text" class="appName" required>
@@ -111,22 +115,9 @@
                     <label for="Description">Description:</label>
                     <input type="text" class="Description">
                 </div>
-
-            </div>
-        </div>
-        <!-- Add this within your <body> -->
-        <div class="modal" id="addModal">
-            <div class="modal-content">
-                <span class="close" onclick="closeModal()">&times;</span>
-                <form id="addForm">
-                      <label for="appName">Application Name:</label>
-                      <input type="text" id="appName" name="appName" required>
-              
-                      <label for="appID">Application ID:</label>
-                      <input type="text" id="appID" name="appID" required>
-              
-                    <button class="button-submit">Submit</button>
-                </form>
+                <div>
+                    <button class="modal_button">Confirm</button>
+                </div>
             </div>
         </div>
     </body>
