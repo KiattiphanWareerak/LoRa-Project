@@ -151,13 +151,14 @@ function send_createDeviceKeyRequest_to_server(devKey) {
     });
   }
 //---------------------------------------------------------------------//
-function send_listDevicesRequest_to_server() {
+function send_listDevicesRequest_to_server(appID) {
   const socket = new WebSocket('ws://' + host + ':'+ port + '/listDeviceRequest');
   
   socket.addEventListener('open', (event) => {
     const data = {
       appID: "c735b5b4-8130-454b-abf5-26021f5327f0",
     };
+    console.log(appID);
     socket.send(JSON.stringify(data));
   });
 
@@ -188,7 +189,7 @@ function send_listApplicationsRequest_to_server() {
   
   socket.addEventListener('open', (event) => {
     const data = {
-      user_tenantID: "c735b5b4-8130-454b-abf5-26021f5327f0",
+      user_tenantID: "52f14cd4-c6f1-4fbd-8f87-4025e1d49242",
     };
     socket.send(JSON.stringify(data));
   });
@@ -294,11 +295,11 @@ function displayListApplications(items) {
         var appNameLink = document.createElement('a');
         appNameLink.href = 'devicesPage.html';
         // Add click event listener to appNameLink
+        appNameLink.setAttribute('app-id', item.id);
         appNameLink.addEventListener('click', function(event) {
           event.preventDefault(); // Prevent default link behavior
-          var appID = item.app_id;
-          console.log("test: " + appID);
-          send_listDevicesRequest_to_server();
+          let appID = this.getAttribute('app-id');
+          send_listDevicesRequest_to_server(appID);
           window.location.href = 'devicesPage.html';
         });
         appNameLink.textContent = item.app_name;
