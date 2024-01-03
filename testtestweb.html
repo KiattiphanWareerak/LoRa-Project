@@ -1,74 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8 /">
-        <title>Dashboard Design</title>
-        <link rel="stylesheet" href="styles/mainStyles.css" />
-        <script src="scripts/scriptReqToServer.js"></script>
-        <script src="scripts/webScript.js"></script>
-
-        <link
-            rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-        />
-    </head>
-    <body>
-        <div>
-            <button onclick="openModal('app_ConfigApp')">Config</button>
-            <button onclick="openModal('app_AddDevice')">Add</button>
-            <button onclick="openModal('app_DelApp')">Del</button>
-
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FAQs</title>
+    <link rel="stylesheet" href="styles/mainStyles.css" />
+</head>
+<body>
+  <div class="faq">
+    <section>
+        <h2 class="title">FAQs</h2>
+        <div class="question">
+            <h3>Getting Started</h3>
+            <svg width="15" height="10" viewBox="0 0 42 25">
+                <path d="M3 3L21 21L39 3" stroke="black" stroke-width="7" stroke-linecap="round" />
+            </svg>
+            <hr>
         </div>
-        <div class="modal_container">
-            <div class="form" id="app_ConfigApp">
-                <span class="close" onclick="closeModal('app_ConfigApp')">&times;</span>
-                <div class="form_headder">
-                    <h4>Application Configuration</h4>
-                </div>
-                <div>
-                    <label for="appName">Application Name:</label>
-                    <input type="text" class="appName" required>
-                </div>
-                <div>
-                    <label for="Description">Description:</label>
-                    <input type="text" class="Description">
-                </div>
-                <div>
-                    <button class="modal_button">Confirm</button>
-                </div>
-            </div>
-
-            <div class="form" id="app_AddDevice">
-                <span class="close" onclick="closeModal('app_AddDevice')">&times;</span>
-                <div class="form_headder">
-                    <h4>Add Application</h4>
-                </div>
-                <div>
-                    <label for="appName">Application Name:</label>
-                    <input type="text" class="appName" required>
-                </div>
-                <div>
-                    <label for="Description">Description:</label>
-                    <input type="text" class="Description">
-                </div>
-                <div>
-                    <button class="modal_button">Next</button>
-                </div>
-            </div>
-
-            <div class="form" id="app_DelApp">
-                <span class="close" onclick="closeModal('app_DelApp')">&times;</span>
-                <div class="form_headder">
-                    <h4>Delete Application</h4>
-                </div>
-                <div>
-                    <label for="appName">Application Name:</label>
-                    <input type="text" class="appName" required>
-                </div>
-                <div>
-                    <button class="modal_button">Confirm</button>
-                </div>
-            </div>
+        <div class="answer">
+            <p>(1) Add Application</p>
+            <p>(2) Add Device</p>
+            <p>(3) Start Communication</p>
         </div>
-    </body>
-</html>  
+    </section>
+  </div>
+</body>
+    <script src="scripts/webScript.js"></script>
+</html>

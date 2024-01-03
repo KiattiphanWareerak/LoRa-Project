@@ -1,3 +1,4 @@
+/*  *   *   *   *   Tab Switching Function   *   *   *   *   */
 const tags = document.querySelectorAll('[data-tab-target]')
 
 tags.forEach(tab => {
@@ -6,41 +7,10 @@ tags.forEach(tab => {
         target.classList.add('active')
     })
 })
-
 // Add this line to trigger the click event for the "Dashboard" button on page load
 document.addEventListener('DOMContentLoaded', function () {
     document.querySelector('.tab_button.active').click();
 });
-
-
-
-
-
-function openModal(Modal) {
-    document.getElementById(Modal).style.display = "block";
-}
-
-function closeModal(Modal) {
-    document.getElementById(Modal).style.display = "none";
-}
-
-function nextModal() {
-    document.getElementById('dev_AddDevice').style.display = "none";
-    document.getElementById('dev_AddAppkey').style.display = "block";
-}
-/*
-// Close the modal if the user clicks outside the modal content
-window.addEventListener('click', function (event) {
-    var modals = document.querySelectorAll('.form');
-    for (var i = 0; i < modals.length; i++) {
-        var modal = modals[i];
-        if (event.target.closest('.form') !== modal) {
-            modal.style.display = "none";
-        }
-    }
-}); */
-
-
 
 function opentab(evt, tabName) {
     // Declare all variables
@@ -66,4 +36,46 @@ function opentab(evt, tabName) {
     // Show the current tab, and add an "active" class to the button that opened the tab
     document.getElementById(tabName).style.display = "block";
     evt.currentTarget.className += " active";
-  }
+}
+/*  *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   */
+
+
+/*  *   *   *   *   Pop-up Modal Function   *   *   *   *   */
+function openModal(Modal) {
+    document.getElementById(Modal).style.display = "block";
+}
+
+function closeModal(Modal) {
+    document.getElementById(Modal).style.display = "none";
+}
+
+function nextModal() {
+    document.getElementById('dev_AddDevice').style.display = "none";
+    document.getElementById('dev_AddAppkey').style.display = "block";
+}
+/*
+// Close the modal if the user clicks outside the modal content
+window.addEventListener('click', function (event) {
+    var modals = document.querySelectorAll('.form');
+    for (var i = 0; i < modals.length; i++) {
+        var modal = modals[i];
+        if (event.target.closest('.form') !== modal) {
+            modal.style.display = "none";
+        }
+    }
+}); */
+/*  *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   */
+
+/*  *   *   *   *   FAQs Drop-down Function   *   *   *   *   */
+/* FAQs Drop-down Function */
+const questions = document.querySelectorAll(".faq .question");
+
+questions.forEach((question) => {
+    const answer = question.nextElementSibling;
+
+    question.addEventListener("click", () => {
+        answer.classList.toggle("active");
+    });
+});
+
+/*  *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   */
