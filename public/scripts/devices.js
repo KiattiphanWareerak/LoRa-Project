@@ -34,29 +34,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });    
 });
-//---------------------------------------------------------------------//
-function openModal() {
-    document.getElementById("addModal").style.display = "block";
-}
-
-function closeModal() {
-    document.getElementById("addModal").style.display = "none";
-}
-
-// Close the modal if the user clicks outside the modal content
-window.onclick = function (event) {
-    var modal = document.getElementById("addModal");
-    if (event.target === modal) {
-        modal.style.display = "none";
-    }
-}
 //---------------------------------------------------------------------// 
 //-----------------------------FUNCTIONS-------------------------------// 
 //---------------------------------------------------------------------// 
 function displayDevicesList(items, appID, appName) {
-    let tbody = document.getElementById('app-table-devices');
+    let tbody = document.getElementById('data-table');
 
-    // tbody.innerHTML = '';
+    tbody.innerHTML = '';
 
     // Header title
     let newH1Element = document.createElement('h1');

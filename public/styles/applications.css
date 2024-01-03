@@ -209,10 +209,10 @@ body {
     transition: all 0.2s ease;
     margin-left: 5px;
 }
-.button-add{
+.button-addapp{
     background: green;
 }
-.button-del{
+.button-delapp{
     background: red;
 }
 .button-config{

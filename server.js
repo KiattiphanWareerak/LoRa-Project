@@ -7,6 +7,7 @@ const app = express();
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
+// Set api services
 // const chirpStackServices = require('./chirpStackServices.js');
 const dataBaseServices = require('./dataBaseSevices.js');
 const testApiService = require('./testApiServices.js');
