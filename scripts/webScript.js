@@ -67,7 +67,6 @@ window.addEventListener('click', function (event) {
 /*  *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   */
 
 /*  *   *   *   *   FAQs Drop-down Function   *   *   *   *   */
-/* FAQs Drop-down Function */
 const questions = document.querySelectorAll(".faq .question");
 
 questions.forEach((question) => {
@@ -77,5 +76,22 @@ questions.forEach((question) => {
         answer.classList.toggle("active");
     });
 });
+
+/*  *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   */
+
+/*  *   *   *   * SelectAll-checkbox Function   *   *   *   *   */
+
+document.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('selectAll').addEventListener('click', function () {
+        // Get all checkboxes in the tbody
+        const checkboxes = document.querySelectorAll('#data-table input[type="checkbox"]');
+
+        // Set the state of all checkboxes to be the same as the "Select All" checkbox
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = this.checked;
+        });
+    });
+});
+
 
 /*  *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   */
