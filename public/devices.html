@@ -4,6 +4,12 @@
         <meta charset="UTF-8 /">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Dashboard Design</title>
+<<<<<<< HEAD:public/devices.html
+=======
+        <link rel="stylesheet" href="styles/mainStyles.css" />
+        <script src="scripts/scriptReqToServer.js"></script>
+        <script src="scripts/webScript.js"></script>
+>>>>>>> b5e254c9678cdb5d72f6ea2dc883a90551168be4:devicesPage.html
 
         <link rel="stylesheet" href="styles/devices.css" />
         <link
@@ -34,7 +40,11 @@
                     </a>
                 </li>
                 <li>
+<<<<<<< HEAD:public/devices.html
                     <a href="index.html">
+=======
+                    <a href="faqsPage.html">
+>>>>>>> b5e254c9678cdb5d72f6ea2dc883a90551168be4:devicesPage.html
                         <i class="fas fa-question-circle"></i>
                         <span>FAQ</span>
                     </a>
@@ -65,9 +75,15 @@
                     <h4><a>My-App-1</a></h4> -->
                 </div>
                 <div class="button-group">
+<<<<<<< HEAD:public/devices.html
                     <button class="button-configapp">Application Configuration</button>
                     <button class="button-addapp" onclick="openModal()">Add Deivce</button>
                     <button class="button-delapp">Delete Device</button>
+=======
+                    <button class="button-config" onclick="openModal('dev_ConfigApp')">Application Configuration</button>
+                    <button class="button-add" onclick="openModal('dev_AddDevice')">Add</button>
+                    <button class="button-del" onclick="openModal('dev_DelDev')">Delete</button>
+>>>>>>> b5e254c9678cdb5d72f6ea2dc883a90551168be4:devicesPage.html
                 </div>
             </div>
             <div class="app-name">
@@ -109,25 +125,75 @@
                 </div>
             </div>
         </div>
-        <!-- Add this within your <body> -->
-        <div class="modal" id="addModal">
-            <div class="modal-content">
-                <span class="close" onclick="closeModal()">&times;</span>
-                <!-- Your form goes here -->
-                <form id="addForm">
-                    <!-- Add your form fields here -->
+        <div class="modal_container">
+            <div class="form" id="dev_ConfigApp">
+                <span class="close" onclick="closeModal('dev_ConfigApp')">&times;</span>
+                <div class="form_headder">
+                    <h4>Application Configuration</h4>
+                </div>
+                <div>
+                    <label for="appName">Application Name:</label>
+                    <input type="text" class="appName" required>
+                </div>
+                <div>
+                    <label for="Description">Description:</label>
+                    <input type="text" class="Description">
+                </div>
+                <div>
+                    <button class="modal_button">Confirm</button>
+                </div>
+            </div>
+
+            <div class="form" id="dev_AddDevice">
+                <span class="close" onclick="closeModal('dev_AddDevice')">&times;</span>
+                <div class="form_headder">
+                    <h4>Add Device</h4>
+                </div>
+                <div>
                     <label for="devName">Device Name:</label>
-                    <input type="text" id="devName" name="devName" required>
-
+                    <input type="text" class="devName" required>
+                </div>
+                <div>
                     <label for="devEUI">Device EUI:</label>
-                    <input type="text" id="devEUI" name="devEUI" required>
-                    <!-- Add more form fields as needed -->
+                    <input type="text" class="devEUI" required>
+                </div>
+                <div>
+                    <button class="modal_button" onclick="nextModal()">Next</button>
+                </div>
+            </div>
 
-                    <button class="button-next">Next</button>
-                </form>
+            <div class="form" id="dev_AddAppkey">
+                <span class="close" onclick="closeModal('dev_AddAppkey')">&times;</span>
+                <div class="form_headder">
+                    <h4>Add Device > Appkey or OTAA key</h4>
+                </div>
+                <div>
+                    <label for="dev_Appkey">Key:</label>
+                    <input type="text" class="dev_Appkey" required>
+                </div>
+                <div>
+                    <button class="modal_button" onclick="closeModal('dev_AddAppkey')">Submit</button>
+                </div>
+            </div>
+
+            <div class="form" id="dev_DelDev">
+                <span class="close" onclick="closeModal('dev_DelDev')">&times;</span>
+                <div class="form_headder">
+                    <h4>Delete Device</h4>
+                </div>
+                <div>
+                    <label for="devName">Device Name:</label>
+                    <input type="text" class="devName" required>
+                </div>
+                <div>
+                    <button class="modal_button">Confirm</button>
+                </div>
             </div>
         </div>
+<<<<<<< HEAD:public/devices.html
 
         <script src="scripts/devices.js"></script>
+=======
+>>>>>>> b5e254c9678cdb5d72f6ea2dc883a90551168be4:devicesPage.html
     </body>
 </html>  

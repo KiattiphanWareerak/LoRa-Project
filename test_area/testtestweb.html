@@ -1,124 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8 /">
-        <title>Dashboard Design</title>
-        <link rel="stylesheet" href="styles/mainStyles.css" />
-        <script src="scripts/scriptReqToServer.js"></script>
-        <script src="scripts/webScript.js"></script>
-
-        <link
-            rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-        />
-    </head>
-    <body>
-        <div class="sidebar">
-            <div class="logo"></div>
-            <ul class="menu">
-                <li class="active" id="menu-applications">
-                    <a href="applications.html">
-                        <i class="fas fa-user"></i>
-                        <span>Application</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#">
-                        <i class="fas fa-tachometer-alt"></i>
-                        <span>Dashboard</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#">
-                        <i class="fas fa-cog"></i>
-                        <span>Setting</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="addDevice.html">
-                        <i class="fas fa-question-circle"></i>
-                        <span>FAQ</span>
-                    </a>
-                </li>
-                <li class="logout">
-                    <a href="Login.html">
-                        <i class="fas fa-sign-out-alt"></i>
-                        <span>Logout</span>
-                    </a>
-                </li>
-            </ul>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FAQs</title>
+    <link rel="stylesheet" href="styles/mainStyles.css" />
+</head>
+<body>
+  <div class="faq">
+    <section>
+        <h2 class="title">FAQs</h2>
+        <div class="question">
+            <h3>Getting Started</h3>
+            <svg width="15" height="10" viewBox="0 0 42 25">
+                <path d="M3 3L21 21L39 3" stroke="black" stroke-width="7" stroke-linecap="round" />
+            </svg>
+            <hr>
         </div>
-
-        <div class="main--content">
-            <div class="header--wrapper">
-                <div class="header--title">
-                    <h1>Application</h1>
-                </div>
-                <div class="user--info">
-                    <img src="user.png" 
-                    alt="" />
-                </div>
-            </div>
-            <div class="mid--contents">
-                <div class="located">
-                    <h4>Application</h4>
-                </div>
-                <div class="button-group">
-                    <button class="button-configapp">Application Configuration</button>
-                    <button class="button-addapp" onclick="openModal()">Add</button>
-                    <button class="button-delapp">Delete</button>
-                </div>
-            </div>
-            <div class="app-name">
-                <div class="app-table">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th><input type="checkbox" id="selectAll" name="selectAll"></th>
-                                <th>No.</th>
-                                <th>Application name</th>
-                                <th>Application ID</th>
-                                <th>Registered Device</th>
-                            </tr>
-                        </thead>
-                        <tbody id="app-table-apps">
-                            <!-- <tr>
-                                <td><input type="checkbox" name="app1" /></td>
-                                <td>1</td>
-                                <td><a href="inApp.html">Testing-App</a></td>
-                                <td>xxADzXxxxArd-***</td>
-                                <td>3</td>
-                            </tr>
-                            <tr>
-                                <td><input type="checkbox" name="app2" /></td>
-                                <td>2</td>
-                                <td>new-app</td>
-                                <td>xxcdaXxxxAff-***</td>
-                                <td>3</td>
-                            </tr> -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+        <div class="answer">
+            <p>(1) Add Application</p>
+            <p>(2) Add Device</p>
+            <p>(3) Start Communication</p>
         </div>
-        <div class="modal_container">
-            <div class="form">
-                <span class="close" onclick="closeModal()">&times;</span>
-                <div class="form_headder">
-                    <h4>Add Application</h4>
-                </div>
-                <div>
-                    <label for="appName">Application Name:</label>
-                    <input type="text" class="appName" required>
-                </div>
-                <div>
-                    <label for="Description">Description:</label>
-                    <input type="text" class="Description">
-                </div>
-                <div>
-                    <button class="modal_button">Confirm</button>
-                </div>
-            </div>
-        </div>
-    </body>
-</html>  
+    </section>
+  </div>
+</body>
+    <script src="scripts/webScript.js"></script>
+</html>
