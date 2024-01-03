@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8 /">
+        <title>Applications Page</title>
+        <link rel="stylesheet" href="styles/mainStyles.css" />
+        <script src="scripts/scriptReqToServer.js"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        />
+    </head>
+    <body>
+        <div class="sidebar">
+            <div class="logo"></div>
+            <ul class="menu">
+                <li>
+                    <a href="#">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="active" id="menu-applications">
+                    <a>
+                        <i class="fas fa-user"></i>
+                        <span>Application</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="index.html">
+                        <i class="fas fa-cog"></i>
+                        <span>Setting</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="faqsPage.html">
+                        <i class="fas fa-question-circle"></i>
+                        <span>FAQ</span>
+                    </a>
+                </li>
+                <li class="logout">
+                    <a href="index.html">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="main--content">
+            <div class="header--wrapper">
+                <div class="header--title">
+                    <h1>Application</h1>
+                </div>
+                <div class="user--info">
+                    <img src="components/user.png" 
+                    alt="" />
+                </div>
+            </div>
+            <div class="mid--contents">
+                <div class="located">
+                    <h4>Application</h4>
+                </div>
+                <div class="button-group">
+                    <button class="button-add" onclick="openModal('app_AddApp')">Add</button>
+                    <button class="button-del" onclick="openModal('app_DelApp')">Delete</button>
+                </div>
+            </div>
+            <div class="app-name">
+                <div class="app-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="selectAll" name="selectAll"></th>
+                                <th>No.</th>
+                                <th>Application name</th>
+                                <th>Application ID</th>
+                                <th>Registered Device</th>
+                            </tr>
+                        </thead>
+                        <tbody id="data-table">
+                            <tr>
+                                <td><input type="checkbox" name="app1" /></td>
+                                <td>1</td>
+                                <td><a href="devices.html">My-App-1</a></td>
+                                <td>xxADzXxxxArd-***</td>
+                                <td>3</td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox" name="app2" /></td>
+                                <td>2</td>
+                                <td>new-app</td>
+                                <td>xxcdaXxxxAff-***</td>
+                                <td>3</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="modal_container">
+            <div class="form" id="app_AddApp">
+                <span class="close" onclick="closeModal('app_AddApp')">&times;</span>
+                <div class="form_headder">
+                    <h4>Add Application</h4>
+                </div>
+                <div>
+                    <label for="appName">Application Name:</label>
+                    <input type="text" class="appName" required>
+                </div>
+                <div>
+                    <label for="Description">Description:</label>
+                    <input type="text" class="Description">
+                </div>
+                <div>
+                    <button class="modal_button">Submit</button>
+                </div>
+            </div>
+
+            <div class="form" id="app_DelApp">
+                <span class="close" onclick="closeModal('app_DelApp')">&times;</span>
+                <div class="form_headder">
+                    <h4>Delete Application</h4>
+                </div>
+                <div>
+                    <label for="appName">Application Name:</label>
+                    <input type="text" class="appName" required>
+                </div>
+                <div>
+                    <button class="modal_button">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script src="scripts/webScript.js"></script>
+</html>  
