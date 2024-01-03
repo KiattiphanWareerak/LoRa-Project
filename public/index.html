@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles/RegStyles.css">
     <title>Login</title>
+
+    <link rel="stylesheet" href="styles/login.css">
 </head>
 <body>
     <div class="container">
@@ -24,11 +25,7 @@
             <a href="register.html">Register</a>
         </div>
     </div>
-    <script>
-        document.getElementById("login-form").addEventListener("submit", function (event) {
-            event.preventDefault(); // Prevent the form from submitting normally
-            window.location.href = "appDash.html"; // Redirect to dashboard.html
-        });
-    </script>
+
+    <script src="scripts/login.js"></script>
 </body>
 </html>

@@ -2,11 +2,10 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8 /">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Dashboard Design</title>
-        <link rel="stylesheet" href="styles/mainStyles.css" />
-        <script src="scripts/scriptReqToServer.js"></script>
-        <script src="scripts/webScript.js"></script>
 
+        <link rel="stylesheet" href="styles/applications.css" />
         <link
             rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
@@ -16,32 +15,32 @@
         <div class="sidebar">
             <div class="logo"></div>
             <ul class="menu">
-                <li class="active" id="menu-applications">
-                    <a href="applications.html">
-                        <i class="fas fa-user"></i>
-                        <span>Application</span>
-                    </a>
-                </li>
                 <li>
                     <a href="#">
                         <i class="fas fa-tachometer-alt"></i>
                         <span>Dashboard</span>
                     </a>
                 </li>
+                <li class="active" id="menu-applications">
+                    <a>
+                        <i class="fas fa-user"></i>
+                        <span>Application</span>
+                    </a>
+                </li>
                 <li>
-                    <a href="#">
+                    <a href="index.html">
                         <i class="fas fa-cog"></i>
                         <span>Setting</span>
                     </a>
                 </li>
                 <li>
-                    <a href="addDevice.html">
+                    <a href="index.html">
                         <i class="fas fa-question-circle"></i>
                         <span>FAQ</span>
                     </a>
                 </li>
                 <li class="logout">
-                    <a href="Login.html">
+                    <a href="index.html">
                         <i class="fas fa-sign-out-alt"></i>
                         <span>Logout</span>
                     </a>
@@ -55,7 +54,7 @@
                     <h1>Application</h1>
                 </div>
                 <div class="user--info">
-                    <img src="user.png" 
+                    <img src="components/user.png" 
                     alt="" />
                 </div>
             </div>
@@ -64,9 +63,8 @@
                     <h4>Application</h4>
                 </div>
                 <div class="button-group">
-                    <button class="button-configapp">Application Configuration</button>
-                    <button class="button-addapp" onclick="openModal()">Add</button>
-                    <button class="button-delapp">Delete</button>
+                    <button class="button-addapp" onclick="openModal()">Add Application</button>
+                    <button class="button-delapp">Delete Applications</button>
                 </div>
             </div>
             <div class="app-name">
@@ -114,7 +112,6 @@
 
             </div>
         </div>
-        <!-- Add this within your <body> -->
         <div class="modal" id="addModal">
             <div class="modal-content">
                 <span class="close" onclick="closeModal()">&times;</span>
@@ -129,5 +126,7 @@
                 </form>
             </div>
         </div>
+
+        <script src="scripts/applications.js"></script>
     </body>
 </html>  

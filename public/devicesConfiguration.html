@@ -2,11 +2,10 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8 /">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Dashboard Design</title>
-        <link rel="stylesheet" href="styles/mainStyles.css" />
-        <script src="scripts/scriptReqToServer.js"></script>
-        <script src="scripts/webScript.js"></script>
 
+        <link rel="stylesheet" href="styles/devicesConfiguration.css" />
         <link
             rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
@@ -17,31 +16,31 @@
             <div class="logo"></div>
             <ul class="menu">
                 <li class="active">
-                    <a href="applicationsPage.html">
+                    <a href="applications.html">
                         <i class="fas fa-user"></i>
                         <span>Application</span>
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="applications.html">
                         <i class="fas fa-tachometer-alt"></i>
                         <span>Dashboard</span>
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="index.html">
                         <i class="fas fa-cog"></i>
                         <span>Setting</span>
                     </a>
                 </li>
                 <li>
-                    <a href="applicationsPage.html">
+                    <a href="index.html">
                         <i class="fas fa-question-circle"></i>
                         <span>FAQ</span>
                     </a>
                 </li>
                 <li class="logout">
-                    <a href="Login.html">
+                    <a href="index.html">
                         <i class="fas fa-sign-out-alt"></i>
                         <span>Logout</span>
                     </a>
@@ -52,20 +51,20 @@
         <div class="main--content">
             <div class="header--wrapper">
                 <div class="header--title">
-                    <h1>Max-01</h1>
+                    <!-- <h1>Max-01</h1> -->
                 </div>
                 <div class="user--info">
-                    <img src="user.png" 
+                    <img src="components/user.png" 
                     alt="" />
                 </div>
             </div>
             <div class="mid--contents">
                 <div class="located">
-                    <h4><a href="applicationsPage.html">Application</a></h4>
+                    <h4><a id="loc-apps" href="applications.html">Application</a></h4>
+                    <!-- <h4>></h4>
+                    <h4><a href="devices.html">My-App-1</a></h4>
                     <h4>></h4>
-                    <h4><a href="devicesPage.html">My-App-1</a></h4>
-                    <h4>></h4>
-                    <h4><a>Max-01</a></h4>
+                    <h4><a>Max-01</a></h4> -->
                 </div>
             </div>
             <div>
@@ -106,4 +105,6 @@
             </div>
         </div>
     </body>
-</html>  
+
+    <script src="scripts/devicesConfiguration.js"></script>
+</html>
