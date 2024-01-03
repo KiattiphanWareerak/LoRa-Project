@@ -64,9 +64,8 @@
                     <h4>Application</h4>
                 </div>
                 <div class="button-group">
-                    <button class="button-configapp">Application Configuration</button>
-                    <button class="button-addapp" onclick="openModal()">Add</button>
-                    <button class="button-delapp">Delete</button>
+                    <button class="button-add" onclick="openModal('app_AddApp')">Add</button>
+                    <button class="button-del" onclick="openModal('app_DelApp')">Delete</button>
                 </div>
             </div>
             <div class="app-name">
@@ -102,7 +101,11 @@
             </div>
         </div>
         <div class="modal_container">
-            <div class="form">
+            <div class="form" id="app_AddApp">
+                <span class="close" onclick="closeModal('app_AddApp')">&times;</span>
+                <div class="form_headder">
+                    <h4>Add Application</h4>
+                </div>
                 <div>
                     <label for="appName">Application Name:</label>
                     <input type="text" class="appName" required>
@@ -111,22 +114,23 @@
                     <label for="Description">Description:</label>
                     <input type="text" class="Description">
                 </div>
-
+                <div>
+                    <button class="modal_button">Submit</button>
+                </div>
             </div>
-        </div>
-        <!-- Add this within your <body> -->
-        <div class="modal" id="addModal">
-            <div class="modal-content">
-                <span class="close" onclick="closeModal()">&times;</span>
-                <form id="addForm">
-                      <label for="appName">Application Name:</label>
-                      <input type="text" id="appName" name="appName" required>
-              
-                      <label for="appID">Application ID:</label>
-                      <input type="text" id="appID" name="appID" required>
-              
-                    <button class="button-submit">Submit</button>
-                </form>
+
+            <div class="form" id="app_DelApp">
+                <span class="close" onclick="closeModal('app_DelApp')">&times;</span>
+                <div class="form_headder">
+                    <h4>Delete Application</h4>
+                </div>
+                <div>
+                    <label for="appName">Application Name:</label>
+                    <input type="text" class="appName" required>
+                </div>
+                <div>
+                    <button class="modal_button">Confirm</button>
+                </div>
             </div>
         </div>
     </body>
