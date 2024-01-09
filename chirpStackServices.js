@@ -26,119 +26,105 @@ metadata.set("authorization", "Bearer " + apiToken);
 //---------------------------------------------------------------------//
 //-------------------------------FUNCTIONS-----------------------------//
 //---------------------------------------------------------------------//
+function addApplicationRequest(items, tenantID) {
+  // Create a new application.
+  const newApplication = new application_pb.Application();
+  newApplication.setName(items.app_name);
+  newApplication.setDescription(items.description);
+  newApplication.setTenantId(tenantID);
+
+  // Create a request to create application.
+  const createReq = new application_pb.CreateApplicationRequest();
+  createReq.setApplication(newApplication);
+
+  applicationService.create(createReq, metadata, (err, resp) => {
+    if (err !== null) {
+      console.log(err);
+      return;
+    }
+    console.log('New application has been created.\n' + resp);
+
+    let respReq = { status: 'addAppReqSuccess' };
+
+    return respReq;
+  });
+}
+//---------------------------------------------------------------------//
 function applicationsListRequest(values) {
   // Create a request to list applications.
-  // const createReq = new application_pb.ListApplicationsRequest();
-  // createReq.setLimit(99);
-  // createReq.setOffset(0);
-  // createReq.setTenantId(items);
+  const createReq = new application_pb.ListApplicationsRequest();
+  createReq.setLimit(99);
+  createReq.setOffset(0);
+  createReq.setTenantId(values);
   
-  // applicationService.list(createReq, metadata, (err, resp) => {
-  // if (err !== null) {
-  //     console.log(err);
-  // }
+  applicationService.list(createReq, metadata, (err, resp) => {
+  if (err !== null) {
+      console.log(err);
+  }
 
-  // console.log('list applications has been completed.');
-  // let resp_listApplicationsReq = resp.toObject().resultList.map(item => ({
-  //   id: item.id,
-  //   name: item.name,
-  //   description: item.description,
-  // }));
-  // resp_listApplicationsReq.totalCount = resp.toObject().totalCount;
+  console.log('list applications has been completed.');
+  let resp_listApplicationsReq = resp.toObject().resultList.map(item => ({
+    id: item.id,
+    name: item.name,
+    description: item.description,
+  }));
+  resp_listApplicationsReq.totalCount = resp.toObject().totalCount;
   
-  // console.log(resp_listApplicationsReq);
-  // });
+  let respReq = { status: 'addAppReqSuccess', message: resp_listApplicationsReq};
+  console.log(respReq);
 
-  let data = values;
-  console.log('test from apps api');
-  console.log(data);
-
-  let respAppsList = { status: 'appsListSuccess', tenant_id: '0000-0000-0000-0000', message: 
-  [
-    { app_name: "my-app-1", app_id: "c735b5b4-8130-454b-abf5-26021f5327f0", app_num: 1 },
-    { app_name: "my-app-2", app_id: "c735b5b4-8130-454b-abf5-26021f535555", app_num: 2 }
-    ]
-  };
-
-  return respAppsList
+  return respReq;
+  });
 }
 //---------------------------------------------------------------------//
 function devicesListRequest(values) {
   // Create a request to list devices
-  // const createReq = new device_pb.ListDevicesRequest();
-  // createReq.setLimit(99);
-  // createReq.setApplicationId(items); //Application ID
+  const createReq = new device_pb.ListDevicesRequest();
+  createReq.setLimit(99);
+  createReq.setApplicationId(values); //Application ID
 
-  // deviceService.list(createReq, metadata, (err, resp) => {
-  //     if (err !== null) {
-  //         console.log(err);
-  //         return;
-  //     }
-  //     console.log(resp);
+  deviceService.list(createReq, metadata, (err, resp) => {
+      if (err !== null) {
+          console.log(err);
+          return;
+      }
+      console.log(resp);
 
-  //     let devices = resp.array[1]; //list devices at index 1
-  //     console.log(devices);
+      let devices = resp.array[1]; //list devices at index 1
+      console.log(devices);
 
-  //     for (const device of devices) {
-  //         let devEUI = device[0]; // DevEUI at index 0
-  //         let devName = device[4]; // Device name at index 4
+      for (const device of devices) {
+          let devEUI = device[0]; // DevEUI at index 0
+          let devName = device[4]; // Device name at index 4
 
-  //         console.log("DevEUI:", devEUI);
-  //         console.log("Device Name:", devName);
-  //     }
+          console.log("DevEUI:", devEUI);
+          console.log("Device Name:", devName);
+      }
 
-  let data = values;
-  console.log('test from device api');
-  console.log(data);
-
-  let respDevsList = { status: 'devsListSuccess', message: [
-    { dev_name: "MAX-01", dev_id: "c735b5b4-8130-454b-abf5-26021f5327f0", last_seen: "2023-10-30T12:00:53.000Z" },
-    { dev_name: "MAX-02", dev_id: "c735b5b4-8130-454b-abf5-26021f535555", last_seen: "2023-10-30T12:00:53.000Z" }
-    ],
-    app_id: '1',
-    app_name: '1'
-  };
-  
-  return respDevsList
+      let respReq = { status: 'devsListSuccess', message: resp_listApplicationsReq};
+      console.log(respReq);
+    
+      return respReq;
+    });
 }
 //---------------------------------------------------------------------//
 //---------------------------------------------------------------------//
-function dashboardDeviceRequest(items, appId, appName) {
-  // Create a request to list devices
-  // const createReq = new device_pb.DeviceState();
-  // createReq.setLimit(99);
+function dashboardDeviceRequest(values, appId, appName) { 
+  console.log('test from dash api');
+  console.log(values);
 
-
-  // deviceService.list(createReq, metadata, (err, resp) => {
-  //     if (err !== null) {
-  //         console.log(err);
-  //         return;
-  //     }
-  //     console.log(resp);
-
-  //     let devices = resp.array[1]; //list devices at index 1
-  //     console.log(devices);
-
-  //     for (const device of devices) {
-  //         let devEUI = device[0]; // DevEUI at index 0
-  //         let devName = device[4]; // Device name at index 4
-
-  //         console.log("DevEUI:", devEUI);
-  //         console.log("Device Name:", devName);
-  //     }
-  
   let respDashDevice = { status: 'dashDeviceSuccess',
-  app_id: appId, app_name: appName, dev_id: items.dev_id, dev_name: items.dev_name,
+  app_id: appId, app_name: appName, dev_id: values.dev_id, dev_name: values.dev_name,
     message: [
       { packets: "20", rssi: "-50", snr: "55" },
       { packets: "25", resi: "-25", snr: "55" }
-    ]};
+  ]};
 
   return respDashDevice;
 }
 //---------------------------------------------------------------------//
-
 module.exports = {
+  addApplicationRequest,
   applicationsListRequest,
   devicesListRequest,
   dashboardDeviceRequest

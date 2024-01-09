@@ -63,8 +63,8 @@
                     <h4>Application</h4>
                 </div>
                 <div class="button-group">
-                    <button class="button-add" onclick="openModal('app_AddApp')">Add</button>
-                    <button class="button-del" onclick="openModal('app_DelApp')">Delete</button>
+                    <button class="button-add" onclick="openModal('app_AddApp')">Add Application</button>
+                    <button class="button-del" onclick="openModal('app_DelApp')">Delete Application</button>
                 </div>
             </div>
             <div class="app-name">
@@ -107,14 +107,14 @@
                 </div>
                 <div>
                     <label for="appName">Application Name:</label>
-                    <input type="text" class="appName" required>
+                    <input type="text" id="appNameInput" required>
                 </div>
                 <div>
                     <label for="Description">Description:</label>
-                    <input type="text" class="Description">
+                    <input type="text" id="descriptionInput">
                 </div>
                 <div>
-                    <button class="modal_button">Submit</button>
+                    <button class="modal_button" id="submitForm">Submit</button>
                 </div>
             </div>
 

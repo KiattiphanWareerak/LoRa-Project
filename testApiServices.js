@@ -1,8 +1,17 @@
 //---------------------------------------------------------------------//
 //-------------------------------FUNCTIONS-----------------------------//
 //---------------------------------------------------------------------//
+function addApplicationRequest(values, tenantID) {
+  console.log('test from addApp api');
+  console.log(values, tenantID);
+
+  let respReq = { status: 'addAppReqSuccess' };
+
+  return respReq;
+}
+//---------------------------------------------------------------------//
 function applicationsListRequest(values) {
-    console.log('test from apps api');
+    console.log('test from appsList api');
     console.log(values);
 
     let respAppsList = { status: 'appsListSuccess', tenant_id: values,
@@ -15,7 +24,7 @@ function applicationsListRequest(values) {
 }
 //---------------------------------------------------------------------//
 function devicesListRequest(values) {
-    console.log('test from device api');
+    console.log('test from devsList api');
     console.log(values);
 
     let respDevsList = { status: 'devsListSuccess', app_id: values.app_id,
@@ -29,8 +38,8 @@ function devicesListRequest(values) {
 //---------------------------------------------------------------------//
 //---------------------------------------------------------------------//
 function dashboardDeviceRequest(values, appId, appName) {
-    console.log('test from dash api');
-    console.log(values);
+    console.log('test from dashDev api');
+    console.log(values, appId, appName);
     
     let respDashDevice = { status: 'dashDeviceSuccess',
     app_id: appId, app_name: appName, dev_id: values.dev_id, dev_name: values.dev_name,
@@ -43,6 +52,7 @@ function dashboardDeviceRequest(values, appId, appName) {
 }
 //---------------------------------------------------------------------//
 module.exports = {
+  addApplicationRequest,
   applicationsListRequest,
   devicesListRequest,
   dashboardDeviceRequest

@@ -7,17 +7,36 @@ document.addEventListener('DOMContentLoaded', () => {
     socket.addEventListener('open', () => {
         const currentPath = window.location.pathname;
         const menuApplications = document.getElementById("menu-applications");
+        const submitButton = document.getElementById("submitForm");
 
+        const submitForm = () => {
+            let appNameInput = document.getElementById('appNameInput');
+            let descriptionInput = document.getElementById('descriptionInput');
+            
+            let appNameValue = appNameInput.value;
+            let descriptionValue = descriptionInput.value;
+            let message = {app_name: appNameValue, description: descriptionValue};
+    
+            const req = { status: 'addAppReq', message: message };
+            socket.send(JSON.stringify(req));
+
+            appNameInput.value = '';
+            descriptionInput.value = '';
+            document.getElementById('app_AddApp').style.display = "none";
+        }
         const sendApplicationsListRequest = () => {
             const message = { status: 'displayApplications', message: 'Applications List Request.' };
             socket.send(JSON.stringify(message));
         };
 
+        submitButton.addEventListener('click', (event) => {
+            event.preventDefault();
+            submitForm();
+        });
         menuApplications.addEventListener('click', (event) => {
             event.preventDefault();
             sendApplicationsListRequest();
         });
-
         if (currentPath.includes('applications.html')) {
             sendApplicationsListRequest();
         }
@@ -28,14 +47,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const messageFromServer = JSON.parse(event.data);
             console.log('Message from server:', messageFromServer);
 
-            if (messageFromServer.status === 'appsListSuccess') {
+            if ( messageFromServer.status === 'appsListSuccess' ) {
                 console.log('Request compleled.');
                 displayApplicationsList(messageFromServer.message);
-            } else {
+            } else if ( messageFromServer.status === 'addAppReqSuccess' ) {
+                alert('Add Application Compleled!');
+            } 
+            else {
                 console.log('Request failed, pls try again.');
             }
         } catch (error) {
-            console.error('Error parsing JSON:', error);
+            console.log('Error, pls try again.');
         }
     });    
 });
@@ -103,4 +125,4 @@ function displayApplicationsList(items) {
         tbody.appendChild(row);
     });
 }
-//---------------------------------------------------------------------// 
+//---------------------------------------------------------------------//
