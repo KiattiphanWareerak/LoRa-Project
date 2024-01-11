@@ -84,7 +84,7 @@ body {
     background: rgba(75, 140, 255, 255);
 }
 .sidebar:hover {
-    width: 250px;
+    width: 40%;
     transition: 0.25s;
 }
 .logo {
@@ -280,7 +280,7 @@ tfoot td {
     color: tomato;
     font-size: 25px;
 }
-.form_headder{
+.modal_container .form_headder{
     position: absolute;
     text-align: left;
     width: 300px;
@@ -291,7 +291,7 @@ tfoot td {
     border-bottom: 1rem;
 }
 
-.form {
+.modal_container .form {
     position: fixed;
     top: 50%;
     left: 50%;
@@ -313,6 +313,39 @@ tfoot td {
     transition: all 0.2s ease;
     background: rgb(67, 194, 236);
     margin-top: 10px; /* Adjust the margin-top as needed */
+}
+/* * * Setting Part * * */
+.setting body{
+    max-width: 400px;
+    margin: 50px auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+.setting form{
+    display: flex;
+    flex-direction: column;
+}
+.setting label{
+    margin-bottom: 8px;
+}
+.setting input{
+    padding: 8px;
+    margin-bottom: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+.setting button{
+    padding: 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.setting button:hover {
+    background-color: #0056b3;
 }
 /* * * FAQs Part * * */
 @import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap");
