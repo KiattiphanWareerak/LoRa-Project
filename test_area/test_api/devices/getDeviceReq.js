@@ -24,20 +24,9 @@ function getDeviceRequest_to_chirpstack(devEUI) {
       console.log(err);
       return;
     }
-    console.log(resp.toObject());
     console.log('Get Device has been completed.');
-
-    const utcTimestamp = "2023-10-30T12:00:53.000Z";
-    const utcDate = new Date(utcTimestamp);
-    
-    // timezone
-    utcDate.setHours(utcDate.getHours() + 7);
-    
-    console.log(utcDate);
-    
-
-
+    console.log(resp.toObject());
   });
 }
 
-getDeviceRequest_to_chirpstack("24c5d9e6325811b8");
+getDeviceRequest_to_chirpstack("9c65f9fffe42ec2c");

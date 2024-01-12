@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Received Data Graph</title>
+  <!-- เพิ่มไฟล์ Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <!-- สร้าง canvas เพื่อแสดงกราฟ -->
+  <canvas id="receivedGraph" width="800" height="400"></canvas>
+
+  <script>
+    // นำเข้าข้อมูล
+    const data = {
+      name: 'Received',
+      timestampsList: [
+        { seconds: 1693501200, nanos: 0 },
+        { seconds: 1696093200, nanos: 0 },
+        { seconds: 1698771600, nanos: 0 },
+        { seconds: 1701363600, nanos: 0 },
+        { seconds: 1704042000, nanos: 0 }
+      ],
+      datasetsList: [{ label: 'rx_count', dataList: [1, 1821, 0, 0, 0] }],
+      kind: 1
+    };
+
+    // Extract timestamps and data from the received data
+    const timestamps = data.timestampsList.map(timestamp => timestamp.seconds);
+    const dataList = data.datasetsList[0].dataList;
+
+    // Create a context for the canvas
+    const ctx = document.getElementById('receivedGraph').getContext('2d');
+
+    // Create a line chart using Chart.js
+    const receivedGraph = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: timestamps,
+        datasets: [{
+          label: data.datasetsList[0].label,
+          data: dataList,
+          fill: false,
+          borderColor: 'rgba(75, 192, 192, 1)',
+          tension: 0.1
+        }]
+      },
+      options: {
+        scales: {
+          x: {
+            type: 'linear',
+            position: 'bottom'
+          }
+        }
+      }
+    });
+  </script>
+</body>
+</html>

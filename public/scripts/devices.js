@@ -100,7 +100,7 @@ function displayDevicesList(items, appID, appName) {
         
         // Last Seen column
         var lastSeenCell = document.createElement('td');
-        lastSeenCell.textContent = formatLastSeen(item.last_seen);
+        lastSeenCell.textContent = formatLastSeen(item.dev_lastSeen);
         row.appendChild(lastSeenCell);
         
         // Append the row to the tbody

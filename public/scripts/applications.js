@@ -5,8 +5,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const socket = new WebSocket('ws://localhost:3000');
 
     socket.addEventListener('open', () => {
+        // display Applictions part
         const currentPath = window.location.pathname;
         const menuApplications = document.getElementById("menu-applications");
+
+        const sendApplicationsListRequest = () => {
+            const message = { status: 'displayApplications', message: 'Applications List Request.' };
+            socket.send(JSON.stringify(message));
+        };
+
+        menuApplications.addEventListener('click', (event) => {
+            event.preventDefault();
+            sendApplicationsListRequest();
+        });
+        
+        if (currentPath.includes('applications.html')) {
+            sendApplicationsListRequest();
+        }
+
+        // add applications part
         const submitButton = document.getElementById("submitForm");
 
         const submitForm = () => {
@@ -24,22 +41,11 @@ document.addEventListener('DOMContentLoaded', () => {
             descriptionInput.value = '';
             document.getElementById('app_AddApp').style.display = "none";
         }
-        const sendApplicationsListRequest = () => {
-            const message = { status: 'displayApplications', message: 'Applications List Request.' };
-            socket.send(JSON.stringify(message));
-        };
 
         submitButton.addEventListener('click', (event) => {
             event.preventDefault();
             submitForm();
         });
-        menuApplications.addEventListener('click', (event) => {
-            event.preventDefault();
-            sendApplicationsListRequest();
-        });
-        if (currentPath.includes('applications.html')) {
-            sendApplicationsListRequest();
-        }
     });
 
     socket.addEventListener('message', (event) => {
@@ -47,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const messageFromServer = JSON.parse(event.data);
             console.log('Message from server:', messageFromServer);
 
-            if ( messageFromServer.status === 'appsListSuccess' ) {
+            if ( messageFromServer.status === 'appsListAndDevCountSuccess' ) {
                 console.log('Request compleled.');
                 displayApplicationsList(messageFromServer.message);
             } else if ( messageFromServer.status === 'addAppReqSuccess' ) {
@@ -71,7 +77,7 @@ function displayApplicationsList(items) {
 
     let count = 0;
     // Loop through the items and append rows to the tbody
-    items.forEach(function(item, index) {
+    items.apps_list.forEach(function(item, index) {
         var row = document.createElement('tr');
 
         // Checkbox column
@@ -118,7 +124,7 @@ function displayApplicationsList(items) {
 
         // Number of registered devices column
         var registeredDeviceCell = document.createElement('td');
-        registeredDeviceCell.textContent = item.app_num;
+        registeredDeviceCell.textContent = item.dev_totalCount;
         row.appendChild(registeredDeviceCell);
 
         // Append the row to the tbody

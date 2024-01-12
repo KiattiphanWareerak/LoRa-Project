@@ -29,4 +29,4 @@ function getDeviceKeyRequest_to_chirpstack(devEUI) {
   });
 }
 
-getDeviceKeyRequest_to_chirpstack("");
+getDeviceKeyRequest_to_chirpstack("9c65f9fffe42ec2c");

@@ -10,40 +10,64 @@ let globalTenantId;
 let globalAppId, globalAppName;
 let globalDevId, globalDevName;
 //---------------------------------------------------------------------//
-function myApp(values) {
+async function myApp(values) {
     let resp;
 
     if ( values.status === 'login' ) {
-        resp = dataBaseServices.loginRequest(values.message);
+        try {
+            resp = await dataBaseServices.loginRequest(values.message);
 
-        if ( resp.status === 'loginSuccess' ) {
-            tenant_id = '0000-0000-0000-0001';
-            globalTenantId = tenant_id;
-            return resp;
-        }
+            if (resp.status === 'loginSuccess') {
+              tenant_id = '52f14cd4-c6f1-4fbd-8f87-4025e1d49242';
+            //   tenant_id = '51d73e09-c29e-4cb1-9c9c-32b48b815fc6';
+              globalTenantId = tenant_id;
+
+              return resp;
+            } else {
+                return { status: 'loginFailed', data: 'ID or Password incorrect!' };
+            }
+          } catch (error) {
+            console.log(error);
+          }
     } else if (values.status === 'displayApplications') {
-        resp = testApiService.applicationsListRequest(globalTenantId);
-        let parseResp = resp;
-        
-        if ( parseResp.status === 'appsListSuccess') {
-            return parseResp;
+        try {
+            resp = await chirpStackServices.applicationsAndDeviceTotalCount(globalTenantId);
+            // resp = testApiService.applicationsListRequest(globalTenantId);
+            let parseResp = resp;
+    
+            if ( parseResp.status === 'appsListAndDevCountSuccess') {
+                return parseResp;
+            }
+        } catch (error) {
+            console.log(error);
         }
     } else if (values.status === 'displayRefreshDevices') {
-        let data = { app_id: globalAppId, app_name: globalAppName };
-        resp = testApiService.devicesListRequest(data);
-        let parseResp = resp;
+        try {
+            let data = { app_id: globalAppId, app_name: globalAppName };
 
-        if ( parseResp.status === 'devsListSuccess') {
-            return parseResp;
+            resp = await chirpStackServices.devicesListRequest(data);
+            // resp = testApiService.devicesListRequest(data);
+            let parseResp = resp;
+        
+            if ( parseResp.status === 'devsListSuccess') {
+                return parseResp;
+            }
+        } catch (error) {
+            console.log(error);
         }
     } else if (values.status === 'appIdClickRequest') {
-        resp = testApiService.devicesListRequest(values.message);
-        let parseResp = resp;
-    
-        if ( parseResp.status === 'devsListSuccess') {
-            globalAppId = values.message.app_id;
-            globalAppName = values.message.app_name;
-            return parseResp;
+        try {
+            resp = await chirpStackServices.devicesListRequest(values.message);
+            // resp = testApiService.devicesListRequest(values.message);
+            let parseResp = resp;
+        
+            if ( parseResp.status === 'devsListSuccess') {
+                globalAppId = values.message.app_id;
+                globalAppName = values.message.app_name;
+                return parseResp;
+            }
+        } catch (error) {
+            console.log(error);
         }
     } else if (values.status === 'displayRefreshDashDevice') {
         let data = { message: { dev_id: globalDevId, dev_name: globalDevName},

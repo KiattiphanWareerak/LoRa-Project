@@ -50,64 +50,107 @@ function addApplicationRequest(items, tenantID) {
   });
 }
 //---------------------------------------------------------------------//
-function applicationsListRequest(values) {
-  // Create a request to list applications.
-  const createReq = new application_pb.ListApplicationsRequest();
-  createReq.setLimit(99);
-  createReq.setOffset(0);
-  createReq.setTenantId(values);
+async function applicationsAndDeviceTotalCount(values) {
+  try {
+    return new Promise(async (resolve, reject) => {
+      const respAppsListReq = await applicationsListRequest(values);
+      let respForward = respAppsListReq;
   
-  applicationService.list(createReq, metadata, (err, resp) => {
-  if (err !== null) {
-      console.log(err);
+      for (const appId of respForward.apps_list) {
+        const respDevsListReq = await devicesTotalRequest(appId);
+        appId.dev_totalCount = respDevsListReq;
+      }
+
+      resolve({ status: 'appsListAndDevCountSuccess', message: respForward});
+    })
+  } catch (error) {
+    console.error(error);
   }
-
-  console.log('list applications has been completed.');
-  let resp_listApplicationsReq = resp.toObject().resultList.map(item => ({
-    id: item.id,
-    name: item.name,
-    description: item.description,
-  }));
-  resp_listApplicationsReq.totalCount = resp.toObject().totalCount;
-  
-  let respReq = { status: 'addAppReqSuccess', message: resp_listApplicationsReq};
-  console.log(respReq);
-
-  return respReq;
-  });
 }
 //---------------------------------------------------------------------//
-function devicesListRequest(values) {
+async function applicationsListRequest(values) {
+  try {
+    const createReq = new application_pb.ListApplicationsRequest();
+    createReq.setLimit(99);
+    createReq.setTenantId(values);
+    
+    return new Promise((resolve, reject) => {
+      applicationService.list(createReq, metadata, (err, resp) => {
+        if (err !== null) {
+          reject(err);
+          return;
+        }
+
+        console.log('Applications list request has been completed.');
+
+        const appsListData = resp.toObject().resultList.map(item => ({
+          app_id: item.id,
+          app_name: item.name,
+          app_description: item.description,
+          dev_totalCount: 0,
+        }));
+
+        const respAppsListReq = {
+          apps_totalCount: resp.toObject().totalCount,
+          apps_list: appsListData
+        };
+        resolve(respAppsListReq);
+      });
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+//---------------------------------------------------------------------//
+async function devicesTotalRequest(values) {
   // Create a request to list devices
   const createReq = new device_pb.ListDevicesRequest();
   createReq.setLimit(99);
-  createReq.setApplicationId(values); //Application ID
+  createReq.setApplicationId(values.app_id); // Application ID
 
-  deviceService.list(createReq, metadata, (err, resp) => {
+  return new Promise((resolve, reject) => {
+    deviceService.list(createReq, metadata, (err, resp) => {
+      if (err !== null) {
+        reject(err);
+        return;
+      }
+
+      console.log('Devices total request has been completed.');
+
+      const dev_totalCount = resp.toObject().totalCount;
+
+      resolve(dev_totalCount); 
+    });
+  });
+}
+//---------------------------------------------------------------------//
+async function devicesListRequest(values) {
+  // Create a request to list devices
+  const createReq = new device_pb.ListDevicesRequest();
+  createReq.setLimit(99);
+  createReq.setApplicationId(values.app_id); //Application ID
+
+  return new Promise((resolve, reject) => {
+    deviceService.list(createReq, metadata, (err, resp) => {
       if (err !== null) {
           console.log(err);
           return;
       }
-      console.log(resp);
 
-      let devices = resp.array[1]; //list devices at index 1
-      console.log(devices);
+      console.log('Devices list request has been completed.');
 
-      for (const device of devices) {
-          let devEUI = device[0]; // DevEUI at index 0
-          let devName = device[4]; // Device name at index 4
+      let respDevsListReq = resp.toObject().resultList.map(item => ({
+        dev_name: item.name ? item.name : undefined,
+        dev_id: item.devEui ? item.devEui : undefined,
+        dev_lastSeen: item.lastSeenAt && item.lastSeenAt.seconds ? new Date(item.lastSeenAt.seconds * 1000 + item.lastSeenAt.nanos / 1e9) : undefined,
+      }));
 
-          console.log("DevEUI:", devEUI);
-          console.log("Device Name:", devName);
-      }
-
-      let respReq = { status: 'devsListSuccess', message: resp_listApplicationsReq};
-      console.log(respReq);
-    
-      return respReq;
+      resolve({ status: 'devsListSuccess', message: respDevsListReq, 
+      app_id: values.app_id, app_name: values.app_name});
     });
+  });
 }
-//---------------------------------------------------------------------//
 //---------------------------------------------------------------------//
 function dashboardDeviceRequest(values, appId, appName) { 
   console.log('test from dash api');
@@ -124,6 +167,7 @@ function dashboardDeviceRequest(values, appId, appName) {
 }
 //---------------------------------------------------------------------//
 module.exports = {
+  applicationsAndDeviceTotalCount,
   addApplicationRequest,
   applicationsListRequest,
   devicesListRequest,

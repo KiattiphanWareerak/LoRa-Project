@@ -36,7 +36,9 @@ function enqueueDeviceQueueItemRequest_to_chripstack(devEUI) {
       console.log(err);
       return;
     }
-    console.log(resp.toObject());
+
+    data = resp.toObject().rxPackets.datasetsList;
+    console.log(data);
     console.log('Enqueue Device has been compleled.');
   });
 }
