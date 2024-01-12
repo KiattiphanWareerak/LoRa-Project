@@ -4,15 +4,15 @@
 document.addEventListener('DOMContentLoaded', () => {
     const socket = new WebSocket('ws://localhost:3000');
 
+    const sendApplicationsListRequest = () => {
+        const message = { status: 'displayApplications', message: 'Applications List Request.' };
+        socket.send(JSON.stringify(message));
+    };
+
     socket.addEventListener('open', () => {
-        // display Applictions part
+        // Display applictions
         const currentPath = window.location.pathname;
         const menuApplications = document.getElementById("menu-applications");
-
-        const sendApplicationsListRequest = () => {
-            const message = { status: 'displayApplications', message: 'Applications List Request.' };
-            socket.send(JSON.stringify(message));
-        };
 
         menuApplications.addEventListener('click', (event) => {
             event.preventDefault();
@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
             sendApplicationsListRequest();
         }
 
-        // add applications part
+        // Add application button
         const submitButton = document.getElementById("submitForm");
 
         const submitForm = () => {
@@ -46,6 +46,36 @@ document.addEventListener('DOMContentLoaded', () => {
             event.preventDefault();
             submitForm();
         });
+
+        // Delete application button
+        const delAppButton = document.getElementById('deleteForm');
+
+        const deleteForm = () => {
+            let appIDs = [];
+            for (let i = 0; i < document.querySelectorAll("input[type='checkbox']").length; i++) {
+                if (document.querySelectorAll("input[type='checkbox']")[i].checked) {
+                    const checkedCheckbox = document.querySelectorAll("input[type='checkbox']")[i];
+
+                    const appIDCell = checkedCheckbox.closest("tr").querySelector("td:nth-child(4)");
+              
+                    if (appIDCell) {
+                      const appID = appIDCell.textContent;
+                      appIDs.push(appID);
+                    } else {
+                      console.error("appID cell not found");
+                    }
+                }
+            }
+            const message = appIDs.map((appID) => ({ app_id: appID }));
+            const req = { status: 'delAppReq', message: message };
+            socket.send(JSON.stringify(req));
+            document.getElementById('app_DelApp').style.display = "none";
+        }
+
+        delAppButton.addEventListener('click', (event) => {
+            event.preventDefault();
+            deleteForm();
+        })
     });
 
     socket.addEventListener('message', (event) => {
@@ -57,7 +87,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log('Request compleled.');
                 displayApplicationsList(messageFromServer.message);
             } else if ( messageFromServer.status === 'addAppReqSuccess' ) {
-                alert('Add Application Compleled!');
+                alert('Add application completed!');
+                sendApplicationsListRequest();
+            } else if ( messageFromServer.status === 'delAppReqSuccess' ) {
+                alert('Delete application completed!');
+                sendApplicationsListRequest();
             } 
             else {
                 console.log('Request failed, pls try again.');
@@ -75,6 +109,18 @@ function displayApplicationsList(items) {
 
     tbody.innerHTML = '';
 
+    // Header and Middle title
+    let newH1Element = document.createElement('h1');
+    let newH4Element = document.createElement('h4');
+    newH1Element.textContent = 'Applications';
+    newH4Element.innerHTML = `<a href="applications.html" >Applications</a> `;
+    let headerTitleDiv = document.querySelector('.header--title');
+    let locatedDiv = document.querySelector('.located');
+    headerTitleDiv.innerHTML = '';
+    locatedDiv.innerHTML = '';
+    headerTitleDiv.appendChild(newH1Element);
+    locatedDiv.appendChild(newH4Element);
+    
     let count = 0;
     // Loop through the items and append rows to the tbody
     items.apps_list.forEach(function(item, index) {

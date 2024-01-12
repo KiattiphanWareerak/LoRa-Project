@@ -4,17 +4,82 @@
 document.addEventListener('DOMContentLoaded', () => {
     const socket = new WebSocket('ws://localhost:3000');
 
-    socket.addEventListener('open', () => {
-        const currentPath = window.location.pathname;
+    // Display devices
+    const sendDevicesListRequest = () => {
+        const message = { status: 'displayRefreshDevices', message: 'Deivces List Request.' };
+        socket.send(JSON.stringify(message));
+    };
 
-        const sendDevicesListRequest = () => {
-            const message = { status: 'displayRefreshDevices', message: 'Deivces List Request.' };
-            socket.send(JSON.stringify(message));
-        };
+    socket.addEventListener('open', () => {
+        // Display devices
+        const currentPath = window.location.pathname;
 
         if (currentPath.includes('devices.html')) {
             sendDevicesListRequest();
         }
+
+        // Add device button
+        const addDevNextButton = document.getElementById("addDevNext");
+        const addDevConfirmButton = document.getElementById("addDevConfirm");
+        let messageToAddDevReq;
+
+        const nextAddDev = () => {
+            let devNameInput = document.getElementById('devNameInput');
+            let devIdInput = document.getElementById('devIdInput');
+        
+            messageToAddDevReq = { dev_name: devNameInput.value, dev_id: devIdInput.value };
+        
+            devIdInput.value = '';
+            devNameInput.value = '';
+        };
+
+        const addDevConfirm = () => {
+            let devKeyInput = document.getElementById('devKeyInput');
+            messageToAddDevReq.dev_key = devKeyInput.value;        
+            
+            const req = { status: 'addDevReq', message: messageToAddDevReq };
+            socket.send(JSON.stringify(req));
+        }
+
+        addDevNextButton.addEventListener('click', (event) => {
+            event.preventDefault();
+            nextAddDev();
+        })
+
+        addDevConfirmButton.addEventListener('click', (event) => {
+            event.preventDefault();
+            addDevConfirm();
+        })
+
+        // Delete device button
+        const delDevButton = document.getElementById('delDevConfirm');
+
+        const delDevForm = () => {
+            let devIDs = [];
+            for (let i = 0; i < document.querySelectorAll("input[type='checkbox']").length; i++) {
+                if (document.querySelectorAll("input[type='checkbox']")[i].checked) {
+                    const checkedCheckbox = document.querySelectorAll("input[type='checkbox']")[i];
+
+                    const devIDCell = checkedCheckbox.closest("tr").querySelector("td:nth-child(4)");
+              
+                    if (devIDCell) {
+                      const devID = devIDCell.textContent;
+                      devIDs.push(devID);
+                    } else {
+                      console.error("appID cell not found");
+                    }
+                }
+            }
+            const message = devIDs.map((devID) => ({ dev_id: devID }));
+            const req = { status: 'delDevReq', message: message };
+            socket.send(JSON.stringify(req));
+            document.getElementById('dev_DelDev').style.display = "none";
+        }
+
+        delDevButton.addEventListener('click', (event) => {
+            event.preventDefault();
+            delDevForm();
+        })
     });
 
     socket.addEventListener('message', (event) => {
@@ -26,7 +91,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log('Request compleled.');
                 displayDevicesList(messageFromServer.message, 
                     messageFromServer.app_id, messageFromServer.app_name);
-            } else {
+            } else if (messageFromServer.status === 'createDevKeyReqSuccess') {
+                alert('Add device completed!');
+                sendDevicesListRequest();
+            } else if ( messageFromServer.status === 'delDevReqSuccess' ) {
+                alert('Delete application completed!');
+                sendDevicesListRequest();
+            } 
+            else {
                 console.log('Request failed, pls try again.');
             }
         } catch (error) {
@@ -42,13 +114,16 @@ function displayDevicesList(items, appID, appName) {
 
     tbody.innerHTML = '';
 
-    // Header title
+    // Header and Middle title
     let newH1Element = document.createElement('h1');
     let newH4Element = document.createElement('h4');
     newH1Element.textContent = appName;
-    newH4Element.innerHTML = `> <a>${appName}</a></h4>`;
+    newH4Element.innerHTML = `<a href="applications.html" >Applications</a>
+     > <a>${appName}</a></h4>`;
     let headerTitleDiv = document.querySelector('.header--title');
     let locatedDiv = document.querySelector('.located');
+    headerTitleDiv.innerHTML = '';
+    locatedDiv.innerHTML = '';
     headerTitleDiv.appendChild(newH1Element);
     locatedDiv.appendChild(newH4Element);
 

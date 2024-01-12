@@ -91,11 +91,36 @@ async function myApp(values) {
             return parseResp;
         }
     } else if (values.status === 'addAppReq') {
-        resp = testApiService.addApplicationRequest(values.message,
+        resp = await chirpStackServices.addApplicationRequest(values.message,
             globalTenantId);
+        // resp = testApiService.addApplicationRequest(values.message,
+        //     globalTenantId);
         let parseResp = resp;
 
         if ( parseResp.status === 'addAppReqSuccess') {
+            return parseResp;
+        }
+    } else if (values.status === 'delAppReq') {
+        resp = await chirpStackServices.deleteApplicationRequest(values.message,
+            globalTenantId);
+        let parseResp = resp;
+
+        if ( parseResp.status === 'delAppReqSuccess') {
+            return parseResp;
+        }
+    } else if (values.status === 'addDevReq') {
+        resp = await chirpStackServices.addDeviceAndCreateDeviceKey(values.message,
+            globalAppId);
+        let parseResp = resp;
+
+        if ( parseResp.status === 'createDevKeyReqSuccess') {
+            return parseResp;
+        }
+    } else if (values.status === 'delDevReq') {
+        resp = await chirpStackServices.deleteDeviceRequest(values.message);
+        let parseResp = resp;
+
+        if ( parseResp.status === 'delDevReqSuccess') {
             return parseResp;
         }
     }

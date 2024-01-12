@@ -134,14 +134,14 @@
                 </div>
                 <div>
                     <label for="devName">Device Name:</label>
-                    <input type="text" class="devName" required>
+                    <input type="text" id="devNameInput" class="devName" required>
                 </div>
                 <div>
                     <label for="devEUI">Device EUI:</label>
-                    <input type="text" class="devEUI" required>
+                    <input type="text" id="devIdInput" class="devEUI" required>
                 </div>
                 <div>
-                    <button class="modal_button" onclick="nextModal()">Next</button>
+                    <button class="modal_button" id="addDevNext" onclick="nextModal()">Next</button>
                 </div>
             </div>
 
@@ -152,10 +152,10 @@
                 </div>
                 <div>
                     <label for="dev_Appkey">Key:</label>
-                    <input type="text" class="dev_Appkey" required>
+                    <input type="text" id="devKeyInput" class="dev_Appkey" required>
                 </div>
                 <div>
-                    <button class="modal_button" onclick="closeModal('dev_AddAppkey')">Submit</button>
+                    <button class="modal_button" id="addDevConfirm" onclick="closeModal('dev_AddAppkey')">Submit</button>
                 </div>
             </div>
 
@@ -169,7 +169,7 @@
                     <input type="text" class="devName" required>
                 </div>
                 <div>
-                    <button class="modal_button">Confirm</button>
+                    <button class="modal_button" id="delDevConfirm">Confirm</button>
                 </div>
             </div>
         </div>

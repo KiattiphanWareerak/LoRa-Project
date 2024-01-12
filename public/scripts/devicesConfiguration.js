@@ -40,14 +40,16 @@ document.addEventListener('DOMContentLoaded', () => {
 function displayDashboardDevice(items, app_name, dev_name) {
     // tbody.innerHTML = '';
 
-    // Header title
+    // Header and Middle title
     let newH1Element = document.createElement('h1');
     let newH4Element = document.createElement('h4');
     newH1Element.textContent = dev_name;
-    newH4Element.innerHTML = `</h4>> <a href="devices.html" id="appLink">${app_name}</a> > <a>${dev_name}</a></h4>`;
+    newH4Element.innerHTML = `</h4><a href="applications.html" >Applications</a>
+     > <a href="devices.html" id="appLink">${app_name}</a> > <a>${dev_name}</a></h4>`;
     
     let headerTitleDiv = document.querySelector('.header--title');
     let locatedDiv = document.querySelector('.located');
+    locatedDiv.innerHTML = '';
     
     headerTitleDiv.appendChild(newH1Element);
     locatedDiv.appendChild(newH4Element);

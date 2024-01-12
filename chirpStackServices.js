@@ -26,30 +26,6 @@ metadata.set("authorization", "Bearer " + apiToken);
 //---------------------------------------------------------------------//
 //-------------------------------FUNCTIONS-----------------------------//
 //---------------------------------------------------------------------//
-function addApplicationRequest(items, tenantID) {
-  // Create a new application.
-  const newApplication = new application_pb.Application();
-  newApplication.setName(items.app_name);
-  newApplication.setDescription(items.description);
-  newApplication.setTenantId(tenantID);
-
-  // Create a request to create application.
-  const createReq = new application_pb.CreateApplicationRequest();
-  createReq.setApplication(newApplication);
-
-  applicationService.create(createReq, metadata, (err, resp) => {
-    if (err !== null) {
-      console.log(err);
-      return;
-    }
-    console.log('New application has been created.\n' + resp);
-
-    let respReq = { status: 'addAppReqSuccess' };
-
-    return respReq;
-  });
-}
-//---------------------------------------------------------------------//
 async function applicationsAndDeviceTotalCount(values) {
   try {
     return new Promise(async (resolve, reject) => {
@@ -84,10 +60,10 @@ async function applicationsListRequest(values) {
         console.log('Applications list request has been completed.');
 
         const appsListData = resp.toObject().resultList.map(item => ({
-          app_id: item.id,
-          app_name: item.name,
-          app_description: item.description,
-          dev_totalCount: 0,
+          app_id: item.id ? item.id : undefined,
+          app_name: item.name ? item.name : 'Never added application.',
+          app_description: item.description ? item.description : undefined,
+          dev_totalCount: undefined,
         }));
 
         const respAppsListReq = {
@@ -125,6 +101,58 @@ async function devicesTotalRequest(values) {
   });
 }
 //---------------------------------------------------------------------//
+async function addApplicationRequest(values, tenantID) {
+  try {
+    // Create a new application.
+    const newApplication = new application_pb.Application();
+    newApplication.setName(values.app_name);
+    newApplication.setDescription(values.description);
+    newApplication.setTenantId(tenantID);
+    
+    return new Promise((resolve, reject) => {
+      // Create a request to create application.
+      const createReq = new application_pb.CreateApplicationRequest();
+      createReq.setApplication(newApplication);
+
+      applicationService.create(createReq, metadata, (err, resp) => {
+        if (err !== null) {
+          console.log(err);
+          return;
+        }
+        console.log('New application has been created.');
+
+        resolve({ status: 'addAppReqSuccess' });
+      });
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
+//---------------------------------------------------------------------//
+async function deleteApplicationRequest(values) {
+  try {    
+    return new Promise((resolve, reject) => {
+      for (const appID of values) {
+        // Create a request to delete an application.
+        const createReq = new application_pb.DeleteApplicationRequest();
+        createReq.setId(appID.app_id);
+  
+        applicationService.delete(createReq, metadata, (err, resp) => {
+          if (err !== null) {
+            console.log(err);
+            return;
+          }
+          console.log('Delete an application has been completed.');
+        });
+      }
+
+      resolve({ status: 'delAppReqSuccess' });
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
+//---------------------------------------------------------------------//
 async function devicesListRequest(values) {
   // Create a request to list devices
   const createReq = new device_pb.ListDevicesRequest();
@@ -141,7 +169,7 @@ async function devicesListRequest(values) {
       console.log('Devices list request has been completed.');
 
       let respDevsListReq = resp.toObject().resultList.map(item => ({
-        dev_name: item.name ? item.name : undefined,
+        dev_name: item.name ? item.name : 'Never added device in this application.',
         dev_id: item.devEui ? item.devEui : undefined,
         dev_lastSeen: item.lastSeenAt && item.lastSeenAt.seconds ? new Date(item.lastSeenAt.seconds * 1000 + item.lastSeenAt.nanos / 1e9) : undefined,
       }));
@@ -150,6 +178,105 @@ async function devicesListRequest(values) {
       app_id: values.app_id, app_name: values.app_name});
     });
   });
+}
+//---------------------------------------------------------------------//
+async function addDeviceAndCreateDeviceKey(values, appID) {
+  try {
+    return new Promise(async (resolve, reject) => {
+      const respAddDevReq = await addDeviceRequest(values, appID);
+      console.log(respAddDevReq);
+      let respForward = respAddDevReq.message;
+      const respAddDevKeyReq = await createDeviceKeyRequest(respForward)
+      resolve(respAddDevKeyReq);
+    })
+  } catch (error) {
+    console.error(error);
+  }
+}
+//---------------------------------------------------------------------//
+async function addDeviceRequest(values, appID) {
+  try {
+    return new Promise((resolve, reject) => {
+      // Create a new device.
+      const newDevice = new device_pb.Device();
+      newDevice.setApplicationId(appID);
+      newDevice.setName(values.dev_name);
+      newDevice.setDevEui(values.dev_id);
+      newDevice.setDeviceProfileId("74085133-a46e-4ce8-b175-4d1b2d2545f9");
+      newDevice.setDescription("");
+      newDevice.setIsDisabled(true);
+      newDevice.setSkipFcntCheck(true);
+
+      // Create a request to add a new device.
+      const createReq = new device_pb.CreateDeviceRequest();
+      createReq.setDevice(newDevice);
+
+      deviceService.create(createReq, metadata, (err, resp) => {
+      if (err !== null) {
+          console.log(err);
+          return;
+      }
+      console.log('New device has been created.');
+
+      resolve({ status: 'addAppReqSuccess', message: { 
+        dev_id: values.dev_id, dev_key: values.dev_key }});
+      });
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+//---------------------------------------------------------------------//
+async function createDeviceKeyRequest(values) {
+  try {
+    return new Promise((resolve, reject) => {
+      // Create a device key (OTAA Key).
+      const deviceKey = new device_pb.DeviceKeys();
+      deviceKey.setDevEui(values.dev_id);
+      deviceKey.setNwkKey(values.dev_key); // LoRaWAN 1.0.x
+      // deviceKey.setAppKey(appKey); // LoRaWAN 1.1.x
+
+      // Create a request to add a device key.
+      const createReq = new device_pb.CreateDeviceKeysRequest();
+      createReq.setDeviceKeys(deviceKey);
+
+      deviceService.createKeys(createReq, metadata, (err, resp) => {
+      if (err !== null) {
+          console.log(err);
+          return;
+      }
+      console.log('App Key (OTAA) has been created.');
+
+      resolve({ status: 'createDevKeyReqSuccess' });
+      });
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+//---------------------------------------------------------------------//
+async function deleteDeviceRequest(values) {
+  try {
+    return new Promise((resolve, reject) => {
+      for (const devID of values) {
+        // Create a request to delete a device.
+        const createReq = new device_pb.DeleteDeviceRequest();
+        createReq.setDevEui(devID.dev_id);
+  
+        deviceService.delete(createReq, metadata, (err, resp) => {
+          if (err !== null) {
+              console.log(err);
+              return;
+          }
+          console.log('Device has been deleted.');
+        });
+      }
+
+      resolve({ status: 'delDevReqSuccess' });
+    });
+  } catch (error) {
+    console.log(error);
+  }
 }
 //---------------------------------------------------------------------//
 function dashboardDeviceRequest(values, appId, appName) { 
@@ -167,10 +294,13 @@ function dashboardDeviceRequest(values, appId, appName) {
 }
 //---------------------------------------------------------------------//
 module.exports = {
+  addDeviceAndCreateDeviceKey,
   applicationsAndDeviceTotalCount,
   addApplicationRequest,
   applicationsListRequest,
   devicesListRequest,
+  deleteApplicationRequest,
+  deleteDeviceRequest,
   dashboardDeviceRequest
 };
 //---------------------------------------------------------------------//
