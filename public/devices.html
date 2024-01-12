@@ -1,131 +1,84 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8 /">
-        <title>Devices Page</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="styles/mainStyles.css" />
-        <link
-            rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-        />
-    </head>
-    <body>
-        <div class="sidebar">
-            <div class="logo"></div>
-            <ul class="menu">
-                <li class="active">
-                    <a href="applications.html">
-                        <i class="fas fa-user"></i>
-                        <span>Application</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="applications.html">
-                        <i class="fas fa-tachometer-alt"></i>
-                        <span>Dashboard</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="settingPage.html">
-                        <i class="fas fa-cog"></i>
-                        <span>Setting</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="faqsPage.html">
-                        <i class="fas fa-question-circle"></i>
-                        <span>FAQ</span>
-                    </a>
-                </li>
-                <li class="logout">
-                    <a href="index.html">
-                        <i class="fas fa-sign-out-alt"></i>
-                        <span>Logout</span>
-                    </a>
-                </li>
-            </ul>
+<head>
+    <!-- Meta tags -->
+    <meta charset="UTF-8">
+    <title>Devices Page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- External stylesheets -->
+    <link rel="stylesheet" href="styles/mainStyles.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="logo"></div>
+        <ul class="menu">
+            <!-- Dashboard link -->
+            <li>
+                <a href="#">
+                    <i class="fa-solid fa-chart-pie"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <!-- Active Application link -->
+            <li class="active">
+                <a href="applications.html">
+                    <i class="fa-solid fa-microchip"></i>
+                    <span>Application</span>
+                </a>
+            </li>
+            <!-- Setting link -->
+            <li>
+                <a href="settingPage.html">
+                    <i class="fas fa-user"></i>
+                    <span>Account Setting</span>
+                </a>
+            </li>
+            <!-- FAQ link -->
+            <li>
+                <a href="faqsPage.html">
+                    <i class="fas fa-question-circle"></i>
+                    <span>FAQ</span>
+                </a>
+            </li>
+            <!-- Logout link -->
+            <li class="logout">
+                <a href="index.html">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main content -->
+    <div class="main--content">
+        <!-- Header -->
+        <div class="header--wrapper">
+            <div class="header--title">
+                <!-- Application title (commented out) -->
+                <!-- <h1>My-App-1</h1> -->
+            </div>
+            <div class="user--info">
+                <img src="components/user.png" alt="" />
+            </div>
         </div>
 
-        <div class="main--content">
-            <div class="header--wrapper">
-                <div class="header--title">
-                    <!-- <h1>My-App-1</h1> -->
-                </div>
-                <div class="user--info">
-                    <img src="components/user.png" 
-                    alt="" />
-                </div>
+        <!-- Middle content -->
+        <div class="mid--contents">
+            <div class="located">
+                <!-- Breadcrumb for navigation -->
+                <h4><a href="applications.html">Applications</a></h4>
+                <!-- Add more breadcrumb items if needed -->
             </div>
-            <div class="mid--contents">
-                <div class="located">
-                    <h4><a href="applications.html">Applications</a></h4>
-                    <!-- <h4>></h4>
-                    <h4><a>My-App-1</a></h4> -->
-                </div>
-                <div class="button-group">
-                    <button class="button-config" onclick="openModal('dev_ConfigApp')">Application Configuration</button>
-                    <button class="button-add" onclick="openModal('dev_AddDevice')">Add</button>
-                    <button class="button-del" onclick="openModal('dev_DelDev')">Delete</button>
-                </div>
-            </div>
-            <div class="app-name">
-                <div class="app-table">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th><input type="checkbox" id="selectAll" name="selectAll"></th>
-                                <th>No.</th>
-                                <th>Device name</th>
-                                <th>Device EUI</th>
-                                <th>Last Seen</th>
-                            </tr>
-                        </thead>
-                        <tbody id="data-table">
-                            <tr>
-                                <td><input type="checkbox" name="dev-1" /></td>
-                                <td>1</td>
-                                <td><a href="devicesConfiguration.html">Max-01</a></td>
-                                <td>***aed-*******-33ff</td>
-                                <td>20:16:22 25/12/23</td>
-                            </tr>
-                            <tr>
-                                <td><input type="checkbox" name="dev-2" /></td>
-                                <td>2</td>
-                                <td>Max-02</td>
-                                <td>***596-*******-a5fc</td>
-                                <td>00:02:46 01/01/24</td>
-                            </tr>
-                            <tr>
-                                <td><input type="checkbox" name="dev-3" /></td>
-                                <td>3</td>
-                                <td>ASIP-Test</td>
-                                <td>***32f-*******-f6ae</td>
-                                <td>never</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+            <!-- Buttons for application management -->
+            <div class="button-group">
+                <button class="button-config" onclick="openModal('dev_ConfigApp')">Application Configuration</button>
+                <button class="button-add" onclick="openModal('dev_AddDevice')">Add</button>
+                <button class="button-del" onclick="openModal('dev_DelDev')">Delete</button>
             </div>
         </div>
-        <div class="modal_container">
-            <div class="form" id="dev_ConfigApp">
-                <span class="close" onclick="closeModal('dev_ConfigApp')">&times;</span>
-                <div class="form_headder">
-                    <h4>Application Configuration</h4>
-                </div>
-                <div>
-                    <label for="appName">Application Name:</label>
-                    <input type="text" class="appName" required>
-                </div>
-                <div>
-                    <label for="Description">Description:</label>
-                    <input type="text" class="Description">
-                </div>
-                <div>
-                    <button class="modal_button">Confirm</button>
-                </div>
-            </div>
 
             <div class="form" id="dev_AddDevice">
                 <span class="close" onclick="closeModal('dev_AddDevice')">&times;</span>
@@ -173,7 +126,89 @@
                 </div>
             </div>
         </div>
-    </body>
+    </div>
+
+    <!-- Modal container -->
+    <div class="modal_container">
+        <!-- Application Configuration Modal -->
+        <div class="form" id="dev_ConfigApp">
+            <span class="close" onclick="closeModal('dev_ConfigApp')">&times;</span>
+            <div class="form_headder">
+                <h4>Application Configuration</h4>
+            </div>
+            <!-- Form inputs -->
+            <div>
+                <label for="appName">Application Name:</label>
+                <input type="text" class="appName" required>
+            </div>
+            <div>
+                <label for="Description">Description:</label>
+                <input type="text" class="Description">
+            </div>
+            <!-- Confirm button -->
+            <div>
+                <button class="modal_button">Confirm</button>
+            </div>
+        </div>
+
+        <!-- Add Device Modal -->
+        <div class="form" id="dev_AddDevice">
+            <span class="close" onclick="closeModal('dev_AddDevice')">&times;</span>
+            <div class="form_headder">
+                <h4>Add Device</h4>
+            </div>
+            <!-- Form inputs -->
+            <div>
+                <label for="devName">Device Name:</label>
+                <input type="text" class="devName" required>
+            </div>
+            <div>
+                <label for="devEUI">Device EUI:</label>
+                <input type="text" class="devEUI" required>
+            </div>
+            <!-- Next button -->
+            <div>
+                <button class="modal_button" onclick="nextModal()">Next</button>
+            </div>
+        </div>
+
+        <!-- Add Appkey Modal -->
+        <div class="form" id="dev_AddAppkey">
+            <span class="close" onclick="closeModal('dev_AddAppkey')">&times;</span>
+            <div class="form_headder">
+                <h4>Add Device > Appkey or OTAA key</h4>
+            </div>
+            <!-- Form inputs -->
+            <div>
+                <label for="dev_Appkey">Key:</label>
+                <input type="text" class="dev_Appkey" required>
+            </div>
+            <!-- Submit button -->
+            <div>
+                <button class="modal_button" onclick="closeModal('dev_AddAppkey')">Submit</button>
+            </div>
+        </div>
+
+        <!-- Delete Device Modal -->
+        <div class="form" id="dev_DelDev">
+            <span class="close" onclick="closeModal('dev_DelDev')">&times;</span>
+            <div class="form_headder">
+                <h4>Delete Device</h4>
+            </div>
+            <!-- Form inputs -->
+            <div>
+                <label for="devName">Device Name:</label>
+                <input type="text" class="devName" required>
+            </div>
+            <!-- Confirm button -->
+            <div>
+                <button class="modal_button">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
     <script src="scripts/webScript.js"></script>
     <script src="scripts/devices.js"></script>
-</html>  
+</body>
+</html>

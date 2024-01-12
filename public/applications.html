@@ -1,62 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8 /">
-        <title>Applications Page</title>
-        <link rel="stylesheet" href="styles/mainStyles.css" />
+<head>
+    <!-- Meta tags -->
+    <meta charset="UTF-8" />
+    <title>Applications Page</title>
+    <link rel="stylesheet" href="styles/mainStyles.css" />
 
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link
-            rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-        />
-    </head>
-    <body>
-        <div class="sidebar">
-            <div class="logo"></div>
-            <ul class="menu">
-                <li>
-                    <a href="#">
-                        <i class="fas fa-tachometer-alt"></i>
-                        <span>Dashboard</span>
-                    </a>
-                </li>
-                <li class="active" id="menu-applications">
-                    <a>
-                        <i class="fas fa-user"></i>
-                        <span>Application</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="settingPage.html">
-                        <i class="fas fa-cog"></i>
-                        <span>Setting</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="faqsPage.html">
-                        <i class="fas fa-question-circle"></i>
-                        <span>FAQ</span>
-                    </a>
-                </li>
-                <li class="logout">
-                    <a href="index.html">
-                        <i class="fas fa-sign-out-alt"></i>
-                        <span>Logout</span>
-                    </a>
-                </li>
-            </ul>
+    <!-- Responsive design meta tag -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="logo"></div>
+        <ul class="menu">
+            <!-- Dashboard link -->
+            <li>
+                <a href="#">
+                    <i class="fa-solid fa-chart-pie"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <!-- Active Application link -->
+            <li class="active" id="menu-applications">
+                <a>
+                    <i class="fa-solid fa-microchip"></i>
+                    <span>Application</span>
+                </a>
+            </li>
+            <!-- Setting link -->
+            <li>
+                <a href="settingPage.html">
+                    <i class="fas fa-user"></i>
+                    <span>Account Setting</span>
+                </a>
+            </li>
+            <!-- FAQ link -->
+            <li>
+                <a href="faqsPage.html">
+                    <i class="fas fa-question-circle"></i>
+                    <span>FAQ</span>
+                </a>
+            </li>
+            <!-- Logout link -->
+            <li class="logout">
+                <a href="index.html">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main content -->
+    <div class="main--content">
+        <!-- Header -->
+        <div class="header--wrapper">
+            <div class="header--title">
+                <h1>Application</h1>
+            </div>
+            <div class="user--info">
+                <img src="components/user.png" alt="" />
+            </div>
         </div>
 
-        <div class="main--content">
-            <div class="header--wrapper">
-                <div class="header--title">
-                    <h1>Application</h1>
-                </div>
-                <div class="user--info">
-                    <img src="components/user.png" 
-                    alt="" />
-                </div>
+        <!-- Middle content -->
+        <div class="mid--contents">
+            <div class="located">
+                <h4>Application</h4>
             </div>
             <div class="mid--contents">
                 <div class="located">
@@ -99,24 +113,6 @@
                 </div>
             </div>
         </div>
-        <div class="modal_container">
-            <div class="form" id="app_AddApp">
-                <span class="close" onclick="closeModal('app_AddApp')">&times;</span>
-                <div class="form_headder">
-                    <h4>Add Application</h4>
-                </div>
-                <div>
-                    <label for="appName">Application Name:</label>
-                    <input type="text" id="appNameInput" required>
-                </div>
-                <div>
-                    <label for="Description">Description:</label>
-                    <input type="text" id="descriptionInput">
-                </div>
-                <div>
-                    <button class="modal_button" id="submitForm">Submit</button>
-                </div>
-            </div>
 
             <div class="form" id="app_DelApp">
                 <span class="close" onclick="closeModal('app_DelApp')">&times;</span>
@@ -132,7 +128,53 @@
                 </div>
             </div>
         </div>
-    </body>
+    </div>
+
+    <!-- Modal container -->
+    <div class="modal_container">
+        <!-- Add Application Modal -->
+        <div class="form" id="app_AddApp">
+            <!-- Close button -->
+            <span class="close" onclick="closeModal('app_AddApp')">&times;</span>
+            <div class="form_headder">
+                <h4>Add Application</h4>
+            </div>
+            <!-- Form inputs -->
+            <div>
+                <label for="appName">Application Name:</label>
+                <input type="text" id="appNameInput" required>
+            </div>
+            <div>
+                <label for="Description">Description:</label>
+                <input type="text" id="descriptionInput">
+            </div>
+            <!-- Submit button -->
+            <div>
+                <button class="modal_button" id="submitForm">Submit</button>
+            </div>
+        </div>
+
+        <!-- Delete Application Modal -->
+        <div class="form" id="app_DelApp">
+            <!-- Close button -->
+            <span class="close" onclick="closeModal('app_DelApp')">&times;</span>
+            <div class="form_headder">
+                <h4>Delete Application</h4>
+            </div>
+            <!-- Form inputs -->
+            <div>
+                <label for="appName">Application Name:</label>
+                <input type="text" class="appName" required>
+            </div>
+            <!-- Confirm button -->
+            <div>
+                <button class="modal_button">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
     <script src="scripts/webScript.js"></script>
     <script src="scripts/applications.js"></script>
-</html>  
+</body>
+</html>

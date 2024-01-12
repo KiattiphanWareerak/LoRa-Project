@@ -84,7 +84,7 @@ body {
     background: rgba(75, 140, 255, 255);
 }
 .sidebar:hover {
-    width: 40%;
+    width: 250px;
     transition: 0.25s;
 }
 .logo {
