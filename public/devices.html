@@ -79,51 +79,35 @@
                 <button class="button-del" onclick="openModal('dev_DelDev')">Delete</button>
             </div>
         </div>
-
-            <div class="form" id="dev_AddDevice">
-                <span class="close" onclick="closeModal('dev_AddDevice')">&times;</span>
-                <div class="form_headder">
-                    <h4>Add Device</h4>
-                </div>
-                <div>
-                    <label for="devName">Device Name:</label>
-                    <input type="text" id="devNameInput" class="devName" required>
-                </div>
-                <div>
-                    <label for="devEUI">Device EUI:</label>
-                    <input type="text" id="devIdInput" class="devEUI" required>
-                </div>
-                <div>
-                    <button class="modal_button" id="addDevNext" onclick="nextModal()">Next</button>
-                </div>
-            </div>
-
-            <div class="form" id="dev_AddAppkey">
-                <span class="close" onclick="closeModal('dev_AddAppkey')">&times;</span>
-                <div class="form_headder">
-                    <h4>Add Device > Appkey or OTAA key</h4>
-                </div>
-                <div>
-                    <label for="dev_Appkey">Key:</label>
-                    <input type="text" id="devKeyInput" class="dev_Appkey" required>
-                </div>
-                <div>
-                    <button class="modal_button" id="addDevConfirm" onclick="closeModal('dev_AddAppkey')">Submit</button>
-                </div>
-            </div>
-
-            <div class="form" id="dev_DelDev">
-                <span class="close" onclick="closeModal('dev_DelDev')">&times;</span>
-                <div class="form_headder">
-                    <h4>Delete Device</h4>
-                </div>
-                <div>
-                    <label for="devName">Device Name:</label>
-                    <input type="text" class="devName" required>
-                </div>
-                <div>
-                    <button class="modal_button" id="delDevConfirm">Confirm</button>
-                </div>
+        <div class="dev-name">
+            <div class="dev-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" id="select-all" name="selectAll"></th>
+                            <th>No.</th>
+                            <th>Device name</th>
+                            <th>Device ID</th>
+                            <th>Last Seen</th>
+                        </tr>
+                    </thead>
+                    <tbody id="data-table">
+                        <tr>
+                            <td><input type="checkbox" name="app1" /></td>
+                            <td>1</td>
+                            <td><a href="devices.html">My-App-1</a></td>
+                            <td>xxADzXxxxArd-***</td>
+                            <td>3</td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" name="app2" /></td>
+                            <td>2</td>
+                            <td>new-app</td>
+                            <td>xxcdaXxxxAff-***</td>
+                            <td>3</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -168,7 +152,7 @@
             </div>
             <!-- Next button -->
             <div>
-                <button class="modal_button" onclick="nextModal()">Next</button>
+                <button class="modal_button" id="addDevNext" onclick="nextModal()">Next</button>
             </div>
         </div>
 
@@ -185,7 +169,7 @@
             </div>
             <!-- Submit button -->
             <div>
-                <button class="modal_button" onclick="closeModal('dev_AddAppkey')">Submit</button>
+                <button class="modal_button" id="addDevConfirm" onclick="closeModal('dev_AddAppkey')">Submit</button>
             </div>
         </div>
 
@@ -202,7 +186,7 @@
             </div>
             <!-- Confirm button -->
             <div>
-                <button class="modal_button">Confirm</button>
+                <button class="modal_button" id="delDevConfirm">Confirm</button>
             </div>
         </div>
     </div>

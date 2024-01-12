@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Add application button
-        const submitButton = document.getElementById("submitForm");
+        const addAppButton = document.getElementById("addAppConfirm");
 
         const submitForm = () => {
             let appNameInput = document.getElementById('appNameInput');
@@ -42,13 +42,13 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('app_AddApp').style.display = "none";
         }
 
-        submitButton.addEventListener('click', (event) => {
+        addAppButton.addEventListener('click', (event) => {
             event.preventDefault();
             submitForm();
         });
 
         // Delete application button
-        const delAppButton = document.getElementById('deleteForm');
+        const delAppButton = document.getElementById('delAppConfirm');
 
         const deleteForm = () => {
             let appIDs = [];

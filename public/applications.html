@@ -81,51 +81,36 @@
                     <button class="button-del" onclick="openModal('app_DelApp')">Delete Application</button>
                 </div>
             </div>
-            <div class="app-name">
-                <div class="app-table">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th><input type="checkbox" id="select-all" name="selectAll"></th>
-                                <th>No.</th>
-                                <th>Application name</th>
-                                <th>Application ID</th>
-                                <th>Registered Device</th>
-                            </tr>
-                        </thead>
-                        <tbody id="data-table">
-                            <tr>
-                                <td><input type="checkbox" name="app1" /></td>
-                                <td>1</td>
-                                <td><a href="devices.html">My-App-1</a></td>
-                                <td>xxADzXxxxArd-***</td>
-                                <td>3</td>
-                            </tr>
-                            <tr>
-                                <td><input type="checkbox" name="app2" /></td>
-                                <td>2</td>
-                                <td>new-app</td>
-                                <td>xxcdaXxxxAff-***</td>
-                                <td>3</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
         </div>
-
-            <div class="form" id="app_DelApp">
-                <span class="close" onclick="closeModal('app_DelApp')">&times;</span>
-                <div class="form_headder">
-                    <h4>Delete Application</h4>
-                </div>
-                <div>
-                    <label for="appName">Application Name:</label>
-                    <input type="text" class="appName" required>
-                </div>
-                <div>
-                    <button class="modal_button" id="deleteForm">Confirm</button>
-                </div>
+        <div class="app-name">
+            <div class="app-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" id="select-all" name="selectAll"></th>
+                            <th>No.</th>
+                            <th>Application name</th>
+                            <th>Application ID</th>
+                            <th>Registered Device</th>
+                        </tr>
+                    </thead>
+                    <tbody id="data-table">
+                        <tr>
+                            <td><input type="checkbox" name="app1" /></td>
+                            <td>1</td>
+                            <td><a href="devices.html">My-App-1</a></td>
+                            <td>xxADzXxxxArd-***</td>
+                            <td>3</td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" name="app2" /></td>
+                            <td>2</td>
+                            <td>new-app</td>
+                            <td>xxcdaXxxxAff-***</td>
+                            <td>3</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -150,7 +135,7 @@
             </div>
             <!-- Submit button -->
             <div>
-                <button class="modal_button" id="submitForm">Submit</button>
+                <button class="modal_button" id="addAppConfirm">Submit</button>
             </div>
         </div>
 
@@ -168,7 +153,7 @@
             </div>
             <!-- Confirm button -->
             <div>
-                <button class="modal_button">Confirm</button>
+                <button class="modal_button" id="delAppConfirm">Confirm</button>
             </div>
         </div>
     </div>
