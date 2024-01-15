@@ -196,6 +196,20 @@ body {
 .located h4 {
     margin: 0 3px; /* Adjust the margin as needed */
   }
+/* * * * Map Display Part * * * */
+.gateway-map {
+    padding-bottom: 50%;
+    position: relative;
+}
+
+.gateway-map iframe {
+    border-radius: 12px;
+    height: 50%;
+    width: 100%;
+    left: 0;
+    top: 0;
+    position: absolute;
+}
 
 /* * * * Button Part * * * */
 .button-group{
@@ -229,6 +243,15 @@ button:active {
     padding: 2rem;
 }
 .app-table{
+    width: 100%;
+}
+.dev-name{
+    background: #fff;
+    margin-top: 1rem;
+    border-radius: 10px;
+    padding: 2rem;
+}
+.dev-table{
     width: 100%;
 }
 table {
