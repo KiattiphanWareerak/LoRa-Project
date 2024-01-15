@@ -39,6 +39,8 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const req = { status: 'addDevReq', message: messageToAddDevReq };
             socket.send(JSON.stringify(req));
+
+            devKeyInput.value = '';
         }
 
         addDevNextButton.addEventListener('click', (event) => {

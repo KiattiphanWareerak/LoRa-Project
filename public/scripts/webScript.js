@@ -82,7 +82,7 @@ questions.forEach((question) => {
 /*  *   *   *   * SelectAll-checkbox Function   *   *   *   *   */
 
 document.addEventListener('DOMContentLoaded', function () {
-    document.getElementById('selectAll').addEventListener('click', function () {
+    document.getElementById('select-all').addEventListener('click', function () {
         // Get all checkboxes in the tbody
         const checkboxes = document.querySelectorAll('#data-table input[type="checkbox"]');
 
