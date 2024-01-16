@@ -75,8 +75,8 @@
             <!-- Buttons for application management -->
             <div class="button-group">
                 <button class="button-config" onclick="openModal('dev_ConfigApp')">Application Configuration</button>
-                <button class="button-add" onclick="openModal('dev_AddDevice')">Add</button>
-                <button class="button-del" onclick="openModal('dev_DelDev')">Delete</button>
+                <button class="button-add" id="addDeviceButton" onclick="openModal('dev_AddDevice')">Add Device</button>
+                <button class="button-del" onclick="openModal('dev_DelDev')">Delete Device</button>
             </div>
         </div>
         <div class="dev-name">
@@ -123,15 +123,15 @@
             <!-- Form inputs -->
             <div>
                 <label for="appName">Application Name:</label>
-                <input type="text" class="appName" required>
+                <input type="text" id="appNameInput" class="appName"  required>
             </div>
             <div>
                 <label for="Description">Description:</label>
-                <input type="text" class="Description">
+                <input type="text" id="descriptionInput" class="Description">
             </div>
             <!-- Confirm button -->
             <div>
-                <button class="modal_button" id="appConfigConfirms">Confirm</button>
+                <button class="modal_button" id="appConfigConfirm">Confirm</button>
             </div>
         </div>
 
@@ -152,7 +152,7 @@
             </div>
             <!-- Next button -->
             <div>
-                <button class="modal_button" id="addDevNext" onclick="nextModal()">Next</button>
+                <button class="modal_button" id="addDevNext">Next</button>
             </div>
         </div>
 

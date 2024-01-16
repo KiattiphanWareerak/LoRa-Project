@@ -1,8 +1,30 @@
 //---------------------------------------------------------------------// 
 //------------------------------EVENTS---------------------------------// 
 //---------------------------------------------------------------------//
+const generate128BitRandom = () => {
+    const buffer = crypto.getRandomValues(new Uint8Array(16));
+    const hexString = Array.from(buffer).map(byte => byte.toString(16).padStart(2, '0')).join('');
+    return hexString;
+  
+}
+const generate64BitRandom = () => {
+    const buffer = crypto.getRandomValues(new Uint8Array(8));
+    const hexString = Array.from(buffer).map(byte => byte.toString(16).padStart(2, '0')).join('');
+    return hexString;
+  
+}
+
 document.addEventListener('DOMContentLoaded', () => {
-    const socket = new WebSocket('ws://localhost:3000');
+    const socket = new WebSocket('ws://localhost:3001');
+
+    const addDeviceButton = document.getElementById('addDeviceButton');
+    addDeviceButton.addEventListener("click", (event) => {
+        event.preventDefault();
+
+        let devIdInput = document.getElementById('devIdInput');
+        devIdInput.value = generate64BitRandom();
+        console.log(generate64BitRandom());
+    })
 
     // Display devices
     const sendDevicesListRequest = () => {
@@ -11,12 +33,37 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     socket.addEventListener('open', () => {
-        // Display devices
+        // Display devices event
         const currentPath = window.location.pathname;
 
         if (currentPath.includes('devices.html')) {
             sendDevicesListRequest();
         }
+
+        // Application configs button
+        const appConfigButton = document.getElementById("appConfigConfirm");
+
+        const appConfigConfirm = () => {
+            let appNameInput = document.getElementById('appNameInput');
+            let descriptionInput = document.getElementById('descriptionInput');
+            
+            let appNameValue = appNameInput.value;
+            let descriptionValue = descriptionInput.value;
+            let message = {app_name: appNameValue, app_desp: descriptionValue};
+    
+            const req = { status: 'appConfigReq', message: message };
+            socket.send(JSON.stringify(req));
+
+            appNameInput.value = '';
+            descriptionInput.value = '';
+            document.getElementById('dev_ConfigApp').style.display = "none";
+        };
+
+        appConfigButton.addEventListener('click', (event) => {
+            event.preventDefault();
+            appConfigConfirm();
+        })
+
 
         // Add device button
         const addDevNextButton = document.getElementById("addDevNext");
@@ -31,6 +78,10 @@ document.addEventListener('DOMContentLoaded', () => {
         
             devIdInput.value = '';
             devNameInput.value = '';
+            document.getElementById('dev_AddDevice').style.display = "none";
+            document.getElementById('dev_AddAppkey').style.display = "block";
+            let devKeyInput = document.getElementById('devKeyInput');
+            devKeyInput.value = generate128BitRandom();
         };
 
         const addDevConfirm = () => {
@@ -41,6 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
             socket.send(JSON.stringify(req));
 
             devKeyInput.value = '';
+            document.getElementById('dev_AddDevice').style.display = "none";
         }
 
         addDevNextButton.addEventListener('click', (event) => {
@@ -56,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Delete device button
         const delDevButton = document.getElementById('delDevConfirm');
 
-        const delDevForm = () => {
+        const delDevConfirm = () => {
             let devIDs = [];
             for (let i = 0; i < document.querySelectorAll("input[type='checkbox']").length; i++) {
                 if (document.querySelectorAll("input[type='checkbox']")[i].checked) {
@@ -80,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         delDevButton.addEventListener('click', (event) => {
             event.preventDefault();
-            delDevForm();
+            delDevConfirm();
         })
     });
 
@@ -98,6 +150,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 sendDevicesListRequest();
             } else if ( messageFromServer.status === 'delDevReqSuccess' ) {
                 alert('Delete application completed!');
+                sendDevicesListRequest();
+            } else if ( messageFromServer.status === 'appConfigReqSuccess' ) {
+                alert('Config application completed!');
                 sendDevicesListRequest();
             } 
             else {
@@ -154,7 +209,7 @@ function displayDevicesList(items, appID, appName) {
         devNameLink.setAttribute('dev-id', item.dev_id);
         devNameLink.addEventListener('click', function(event) {
             event.preventDefault();
-            const socket = new WebSocket('ws://localhost:3000');
+            const socket = new WebSocket('ws://localhost:3001');
 
             socket.addEventListener('open', () => {
                 let devId = this.getAttribute('dev-id');

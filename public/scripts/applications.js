@@ -2,7 +2,7 @@
 //------------------------------EVENTS---------------------------------// 
 //---------------------------------------------------------------------// 
 document.addEventListener('DOMContentLoaded', () => {
-    const socket = new WebSocket('ws://localhost:3000');
+    const socket = new WebSocket('ws://localhost:3001');
 
     const sendApplicationsListRequest = () => {
         const message = { status: 'displayApplications', message: 'Applications List Request.' };
@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Add application button
         const addAppButton = document.getElementById("addAppConfirm");
 
-        const submitForm = () => {
+        const addAppConfirm = () => {
             let appNameInput = document.getElementById('appNameInput');
             let descriptionInput = document.getElementById('descriptionInput');
             
@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         addAppButton.addEventListener('click', (event) => {
             event.preventDefault();
-            submitForm();
+            addAppConfirm();
         });
 
         // Delete application button
@@ -148,7 +148,7 @@ function displayApplicationsList(items) {
         appNameLink.setAttribute('app-id', item.app_id);
         appNameLink.addEventListener('click', function(event) {
             event.preventDefault();
-            const socket = new WebSocket('ws://localhost:3000');
+            const socket = new WebSocket('ws://localhost:3001');
 
             socket.addEventListener('open', () => {
                 let appID = this.getAttribute('app-id');

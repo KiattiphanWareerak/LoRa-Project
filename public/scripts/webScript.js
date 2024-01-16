@@ -49,10 +49,10 @@ function closeModal(Modal) {
     document.getElementById(Modal).style.display = "none";
 }
 
-function nextModal() {
-    document.getElementById('dev_AddDevice').style.display = "none";
-    document.getElementById('dev_AddAppkey').style.display = "block";
-}
+// function nextModal() {
+//     document.getElementById('dev_AddDevice').style.display = "none";
+//     document.getElementById('dev_AddAppkey').style.display = "block";
+// }
 /*
 // Close the modal if the user clicks outside the modal content
 window.addEventListener('click', function (event) {

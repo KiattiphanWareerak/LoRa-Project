@@ -26,6 +26,36 @@ metadata.set("authorization", "Bearer " + apiToken);
 //---------------------------------------------------------------------//
 //-------------------------------FUNCTIONS-----------------------------//
 //---------------------------------------------------------------------//
+async function applicationConfigurationsRequest(values, appId, tenantId) {
+  try {
+    return new Promise((resolve, reject) => {
+      // Create an application.
+      const updateApplication = new application_pb.Application();
+      updateApplication.setId(appId);
+      updateApplication.setName(values.app_name);
+      updateApplication.setDescription(values.app_desp);
+      updateApplication.setTenantId(tenantId);
+
+      // Create a request to update an application.
+      const createReq = new application_pb.UpdateApplicationRequest();
+      createReq.setApplication(updateApplication);
+
+      applicationService.update(createReq, metadata, (err, resp) => {
+      if (err !== null) {
+          console.log(err);
+          return;
+      }
+      console.log('Update an application has been completed.');
+
+      resolve({ status: 'appConfigReqSuccess' });
+      });
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+//---------------------------------------------------------------------//
 async function applicationsAndDeviceTotalCount(values) {
   try {
     return new Promise(async (resolve, reject) => {
@@ -294,6 +324,7 @@ function dashboardDeviceRequest(values, appId, appName) {
 }
 //---------------------------------------------------------------------//
 module.exports = {
+  applicationConfigurationsRequest,
   addDeviceAndCreateDeviceKey,
   applicationsAndDeviceTotalCount,
   addApplicationRequest,

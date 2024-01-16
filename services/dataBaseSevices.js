@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------//
 async function loginRequest(items) {
-  const message = { status: 'loginSuccess', data: 'Welcome to ChirpStack!' };
+  const message = { status: 'loginSuccess', message: 'Welcome to ChirpStack!' };
 
   return message;
 }

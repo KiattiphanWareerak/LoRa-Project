@@ -2,31 +2,35 @@
 //------------------------------EVENTS---------------------------------// 
 //---------------------------------------------------------------------//
 document.addEventListener('DOMContentLoaded', () => {
-    const socket = new WebSocket('ws://localhost:3000');
+    const socket = new WebSocket('ws://localhost:3001');
 
-    const loginForm = document.getElementById('login-form');
+    socket.addEventListener('open', () => {
+        console.log('WebSocket connection established');
 
-    loginForm.addEventListener('submit', (event) => {
-        event.preventDefault();
+        const loginForm = document.getElementById('login-form');
 
-        const input_id = document.getElementById('username');
-        const input_pw = document.getElementById('password');
+        loginForm.addEventListener('submit', (event) => {
+            event.preventDefault();
 
-        const user_id = input_id.value;
-        const user_pw = input_pw.value;
+            const input_id = document.getElementById('username');
+            const input_pw = document.getElementById('password');
+
+            const user_id = input_id.value;
+            const user_pw = input_pw.value;
+            
+            if (user_id == 'admin' && user_pw == 'admin') {
+                const message = { status: 'login', message: {
+                    user_id: user_id, user_pw: user_pw
+                } };
+
+                socket.send(JSON.stringify(message));
+            } else {
+                input_id.value = '';
+                input_pw.value = '';
         
-        if (user_id == 'admin' && user_pw == 'admin') {
-            const message = { status: 'login', data: {
-                user_id: user_id, user_pw: user_pw
-            } };
-
-            socket.send(JSON.stringify(message));
-        } else {
-            input_id.value = '';
-            input_pw.value = '';
-    
-            return alert('Only admins.');
-        }
+                return alert('Only admins.');
+            }
+        });
     });
 
     socket.addEventListener('message', (event) => {
@@ -43,6 +47,6 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             console.error('Error parsing JSON:', error);
         }
-    });    
+    });
 });
 //---------------------------------------------------------------------// 

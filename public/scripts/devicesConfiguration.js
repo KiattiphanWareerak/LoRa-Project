@@ -2,7 +2,7 @@
 //------------------------------EVENTS---------------------------------// 
 //---------------------------------------------------------------------//
 document.addEventListener('DOMContentLoaded', () => {
-    const socket = new WebSocket('ws://localhost:3000');
+    const socket = new WebSocket('ws://localhost:3001');
 
     socket.addEventListener('open', () => {
         const currentPath = window.location.pathname;
