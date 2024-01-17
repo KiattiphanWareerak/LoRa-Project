@@ -6,17 +6,25 @@ const application_grpc = require("@chirpstack/chirpstack-api/api/application_grp
 const application_pb = require("@chirpstack/chirpstack-api/api/application_pb");
 const device_grpc = require("@chirpstack/chirpstack-api/api/device_grpc_pb");
 const device_pb = require("@chirpstack/chirpstack-api/api/device_pb");
+const gateway_grpc = require("@chirpstack/chirpstack-api/api/gateway_grpc_pb");
+const gateway_pb = require("@chirpstack/chirpstack-api/api/gateway_pb");
 
 // This must point to the ChirpStack API interface.
-const serverChirpStack = "192.168.50.54:8080";
+// const serverChirpStack = "192.168.50.54:8080";
+const serverChirpStack = "202.28.95.234:8080";
 // The API token (can be obtained through the ChirpStack web-interface).
-const apiToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjaGlycHN0YWNrIiwiaXNzIjoiY2hpcnBzdGFjayIsInN1YiI6IjJmZjMzODRiLWZjYzgtNDE5OS1hNmY0LWVjYWEwNzUyMmE5NiIsInR5cCI6ImtleSJ9.HcJsMD_Vv-oPUFHqRIDo_xPlJOPPzNeNxSsixNXTRX0";
+const apiToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjaGlycHN0YWNrIiwiaXNzIjoiY2hpcnBzdGFjayIsInN1YiI6ImIyODg5NjU1LWM5ODUtNDVmNi05YTBhLTNmODEzMzJkNjgzNCIsInR5cCI6ImtleSJ9.agvFQkC8fFaX2mQeK61UGXfLMwtsVmslK3BD_T2SqOI";
+// const apiToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjaGlycHN0YWNrIiwiaXNzIjoiY2hpcnBzdGFjayIsInN1YiI6IjJmZjMzODRiLWZjYzgtNDE5OS1hNmY0LWVjYWEwNzUyMmE5NiIsInR5cCI6ImtleSJ9.HcJsMD_Vv-oPUFHqRIDo_xPlJOPPzNeNxSsixNXTRX0";
 // Create the client for the Service.
 const applicationService = new application_grpc.ApplicationServiceClient(
   serverChirpStack,
   grpc.credentials.createInsecure(),
 );
 const deviceService = new device_grpc.DeviceServiceClient(
+  serverChirpStack,
+  grpc.credentials.createInsecure(),
+);
+const gatewayService = new gateway_grpc.GatewayServiceClient(
   serverChirpStack,
   grpc.credentials.createInsecure(),
 );
@@ -67,7 +75,7 @@ async function applicationsAndDeviceTotalCount(values) {
         appId.dev_totalCount = respDevsListReq;
       }
 
-      resolve({ status: 'appsListAndDevCountSuccess', message: respForward});
+      resolve({ request: 'displayApplications', message: { status: 'success', data: respForward }});
     })
   } catch (error) {
     console.error(error);
@@ -232,7 +240,8 @@ async function addDeviceRequest(values, appID) {
       newDevice.setApplicationId(appID);
       newDevice.setName(values.dev_name);
       newDevice.setDevEui(values.dev_id);
-      newDevice.setDeviceProfileId("74085133-a46e-4ce8-b175-4d1b2d2545f9");
+      newDevice.setDeviceProfileId('222ebb6d-e497-4ef2-825b-db8ec5fd1680');
+      // newDevice.setDeviceProfileId("74085133-a46e-4ce8-b175-4d1b2d2545f9");
       newDevice.setDescription("");
       newDevice.setIsDisabled(true);
       newDevice.setSkipFcntCheck(true);
@@ -323,6 +332,30 @@ function dashboardDeviceRequest(values, appId, appName) {
   return respDashDevice;
 }
 //---------------------------------------------------------------------//
+// dashboardMainRequest("a840412126cc4150");
+
+function dashboardMainRequest(values) { 
+  try {
+    return new Promise((resolve, reject) => {
+      // Create a request to add a device key.
+      const createReq = new gateway_pb.GetGatewayRequest();
+      createReq.setGatewayId(values);
+
+      gatewayService.get(createReq, metadata, (err, resp) => {
+      if (err !== null) {
+          console.log(err);
+          return;
+      }
+      console.log('Get gateway has been completed.');
+
+      console.log(resp.toObject());
+      });
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+//---------------------------------------------------------------------//
 module.exports = {
   applicationConfigurationsRequest,
   addDeviceAndCreateDeviceKey,
@@ -332,6 +365,7 @@ module.exports = {
   devicesListRequest,
   deleteApplicationRequest,
   deleteDeviceRequest,
-  dashboardDeviceRequest
+  dashboardDeviceRequest,
+  dashboardMainRequest
 };
 //---------------------------------------------------------------------//

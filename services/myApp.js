@@ -11,30 +11,28 @@ let globalAppId, globalAppName;
 let globalDevId, globalDevName;
 //---------------------------------------------------------------------//
 async function myApp(values) {
-    let resp;
-
     try {
         return new Promise(async (resolve, reject) => {
-            if ( values.status === 'login' ) {
-                resp = await dataBaseServices.loginRequest(values.message);
-                let parseResp = resp;
+            if ( values.request === 'login' ) {
+                const resp = await dataBaseServices.loginRequest(values.message.data);
 
-                if (resp.status === 'loginSuccess') {
-                    tenant_id = '52f14cd4-c6f1-4fbd-8f87-4025e1d49242';
-                    //   tenant_id = '51d73e09-c29e-4cb1-9c9c-32b48b815fc6';
+                if ( resp.message.status === 'success' ) {
+                    let tenant_id = '52f14cd4-c6f1-4fbd-8f87-4025e1d49242';
+                    // let tenant_id = '52f14cd4-c6f1-4fbd-8f87-4025e1d49242';
                     globalTenantId = tenant_id;
                     
-                    resolve(parseResp);
+                    resolve(resp);
                 } else {
-                    resolve({ status: 'loginFailed', data: 'ID or Password incorrect!' });
+                    resolve({ request: 'login', message: { status: 'failed', data: undefined }});
                 }
-            } else if (values.status === 'displayApplications') {
-                resp = await chirpStackServices.applicationsAndDeviceTotalCount(globalTenantId);
+            } else if ( values.request === 'displayApplications' ) {
+                const resp = await chirpStackServices.applicationsAndDeviceTotalCount(globalTenantId);
                 // resp = testApiService.applicationsListRequest(globalTenantId);
-                let parseResp = resp;
         
-                if ( parseResp.status === 'appsListAndDevCountSuccess') {
-                    resolve(parseResp);
+                if ( resp.message.status === 'success') {
+                    resolve(resp);
+                } else {
+                    resolve({ request: 'displayApplications', message: { status: 'failed', data: undefined }});
                 }
             } else if (values.status === 'displayRefreshDevices') {
                 let data = { app_id: globalAppId, app_name: globalAppName };
@@ -122,7 +120,7 @@ async function myApp(values) {
                 }
             }
             else {
-                return (console.log('Request Error, pls try again.'));
+                return { status: 'Failed', message: 'Request to ChitpStack Failed' };
             }
         });
     } catch (error) {

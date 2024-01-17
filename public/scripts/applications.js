@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const socket = new WebSocket('ws://localhost:3001');
 
     const sendApplicationsListRequest = () => {
-        const message = { status: 'displayApplications', message: 'Applications List Request.' };
+        const message = { request: 'displayApplications', message: { status: undefined, data:  undefined }};
         socket.send(JSON.stringify(message));
     };
 
@@ -83,9 +83,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const messageFromServer = JSON.parse(event.data);
             console.log('Message from server:', messageFromServer);
 
-            if ( messageFromServer.status === 'appsListAndDevCountSuccess' ) {
-                console.log('Request compleled.');
-                displayApplicationsList(messageFromServer.message);
+            if ( messageFromServer.request === 'displayApplications' ) {
+                if (messageFromServer.message.status === 'success') {
+                    displayApplicationsList(messageFromServer.message.data);
+                } else {
+                    alert('Status: ', messageFromServer.message.status);
+                }
             } else if ( messageFromServer.status === 'addAppReqSuccess' ) {
                 alert('Add application completed!');
                 sendApplicationsListRequest();

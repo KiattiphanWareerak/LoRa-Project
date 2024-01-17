@@ -28,6 +28,7 @@ app.post('/service', async (req, res) => {
     const result = await checkReq.myApp(message);
 
     // Send the response
+    console.log(result);
     res.send(JSON.stringify(result));
 });
 
