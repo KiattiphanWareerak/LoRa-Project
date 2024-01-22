@@ -5,8 +5,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const socket = new WebSocket('ws://localhost:3001');
 
     const sendApplicationsListRequest = () => {
-        const message = { request: 'displayApplications', message: { status: undefined, data:  undefined }};
-        socket.send(JSON.stringify(message));
+        const req = { request: 'dispApp', message: { 
+            status: undefined, 
+            data:  undefined 
+        }};
+        socket.send(JSON.stringify(req));
     };
 
     socket.addEventListener('open', () => {
@@ -32,9 +35,11 @@ document.addEventListener('DOMContentLoaded', () => {
             
             let appNameValue = appNameInput.value;
             let descriptionValue = descriptionInput.value;
-            let message = {app_name: appNameValue, description: descriptionValue};
+            let addAppData = {app_name: appNameValue, app_desc: descriptionValue};
     
-            const req = { status: 'addAppReq', message: message };
+            const req = { request: 'addApp', message: { 
+                status: undefined, 
+                data: addAppData }};
             socket.send(JSON.stringify(req));
 
             appNameInput.value = '';
@@ -66,9 +71,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
             }
-            const message = appIDs.map((appID) => ({ app_id: appID }));
-            const req = { status: 'delAppReq', message: message };
+            let appIDsSelect = appIDs.map((appID) => ({ app_id: appID }));
+
+            const req = { request: 'delApp', message: { 
+                status: undefined, 
+                data: appIDsSelect 
+            }};
             socket.send(JSON.stringify(req));
+
             document.getElementById('app_DelApp').style.display = "none";
         }
 
@@ -83,24 +93,32 @@ document.addEventListener('DOMContentLoaded', () => {
             const messageFromServer = JSON.parse(event.data);
             console.log('Message from server:', messageFromServer);
 
-            if ( messageFromServer.request === 'displayApplications' ) {
+            if ( messageFromServer.request === 'dispApp' ) {
                 if (messageFromServer.message.status === 'success') {
                     displayApplicationsList(messageFromServer.message.data);
                 } else {
-                    alert('Status: ', messageFromServer.message.status);
+                    alert('Request: ' + messageFromServer.request + ', Status: ' + messageFromServer.message.status);
                 }
-            } else if ( messageFromServer.status === 'addAppReqSuccess' ) {
-                alert('Add application completed!');
-                sendApplicationsListRequest();
-            } else if ( messageFromServer.status === 'delAppReqSuccess' ) {
-                alert('Delete application completed!');
-                sendApplicationsListRequest();
+            } else if ( messageFromServer.request === 'addApp' ) {
+                if (messageFromServer.message.status === 'success') {
+                    alert('Add application has been completed.');
+                    sendApplicationsListRequest();
+                } else {
+                    alert('Request: ' + messageFromServer.request + ', Status: ' + messageFromServer.message.status);
+                }
+            } else if ( messageFromServer.request === 'delApp' ) {
+                if (messageFromServer.message.status === 'success') {
+                    alert('Delete application has been completed.');
+                    sendApplicationsListRequest();
+                } else {
+                    alert('Request: ' + messageFromServer.request + ', Status: ' + messageFromServer.message.status);
+                }
             } 
             else {
-                console.log('Request failed, pls try again.');
+                console.log('Error: ', messageFromServer);
             }
         } catch (error) {
-            console.log('Error, pls try again.');
+            console.log('Error parsing JSON:', error);
         }
     });    
 });
@@ -156,8 +174,12 @@ function displayApplicationsList(items) {
             socket.addEventListener('open', () => {
                 let appID = this.getAttribute('app-id');
                 let appName = item.app_name;
-                const message = { status: 'appIdClickRequest', message: { app_id: appID, app_name: appName } };
-                socket.send(JSON.stringify(message));
+
+                const req = { request: 'enterAppId', message: { 
+                    status: undefined, 
+                    data: { app_id: appID, app_name: appName 
+                }}};
+                socket.send(JSON.stringify(req));
 
                 window.location.href = 'devices.html';
             });

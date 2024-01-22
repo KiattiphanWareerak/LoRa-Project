@@ -1,21 +1,7 @@
 //---------------------------------------------------------------------// 
 //------------------------------EVENTS---------------------------------// 
 //---------------------------------------------------------------------//
-const generate128BitRandom = () => {
-    const buffer = crypto.getRandomValues(new Uint8Array(16));
-    const hexString = Array.from(buffer).map(byte => byte.toString(16).padStart(2, '0')).join('');
-    return hexString;
-  
-}
-const generate64BitRandom = () => {
-    const buffer = crypto.getRandomValues(new Uint8Array(8));
-    const hexString = Array.from(buffer).map(byte => byte.toString(16).padStart(2, '0')).join('');
-    return hexString;
-  
-}
-
 document.addEventListener('DOMContentLoaded', () => {
-    const socket = new WebSocket('ws://localhost:3001');
 
     const addDeviceButton = document.getElementById('addDeviceButton');
     addDeviceButton.addEventListener("click", (event) => {
@@ -28,9 +14,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Display devices
     const sendDevicesListRequest = () => {
-        const message = { status: 'displayRefreshDevices', message: 'Deivces List Request.' };
+        const message = { request: 'dispDev', message: { 
+            status: undefined, 
+            data: undefined
+        }};
         socket.send(JSON.stringify(message));
     };
+
+    const socket = new WebSocket('ws://localhost:3001');
 
     socket.addEventListener('open', () => {
         // Display devices event
@@ -51,7 +42,10 @@ document.addEventListener('DOMContentLoaded', () => {
             let descriptionValue = descriptionInput.value;
             let message = {app_name: appNameValue, app_desp: descriptionValue};
     
-            const req = { status: 'appConfigReq', message: message };
+            const req = { request: 'appConfig', message: { 
+                status: undefined, 
+                data: message 
+            }};
             socket.send(JSON.stringify(req));
 
             appNameInput.value = '';
@@ -68,13 +62,13 @@ document.addEventListener('DOMContentLoaded', () => {
         // Add device button
         const addDevNextButton = document.getElementById("addDevNext");
         const addDevConfirmButton = document.getElementById("addDevConfirm");
-        let messageToAddDevReq;
+        let messageToAddDev;
 
         const nextAddDev = () => {
             let devNameInput = document.getElementById('devNameInput');
             let devIdInput = document.getElementById('devIdInput');
         
-            messageToAddDevReq = { dev_name: devNameInput.value, dev_id: devIdInput.value };
+            messageToAddDev = { dev_name: devNameInput.value, dev_id: devIdInput.value };
         
             devIdInput.value = '';
             devNameInput.value = '';
@@ -86,9 +80,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const addDevConfirm = () => {
             let devKeyInput = document.getElementById('devKeyInput');
-            messageToAddDevReq.dev_key = devKeyInput.value;        
+            messageToAddDev.dev_key = devKeyInput.value;        
             
-            const req = { status: 'addDevReq', message: messageToAddDevReq };
+            const req = { request: 'addDev', message: {
+                status: undefined, 
+                data: messageToAddDev 
+            }};
             socket.send(JSON.stringify(req));
 
             devKeyInput.value = '';
@@ -124,9 +121,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
             }
-            const message = devIDs.map((devID) => ({ dev_id: devID }));
-            const req = { status: 'delDevReq', message: message };
+            let messageToDelDev = devIDs.map((devID) => ({ dev_id: devID }));
+
+            const req = { request: 'delDev', message: {
+                status: undefined, 
+                data: messageToDelDev 
+            }};
             socket.send(JSON.stringify(req));
+
             document.getElementById('dev_DelDev').style.display = "none";
         }
 
@@ -141,22 +143,38 @@ document.addEventListener('DOMContentLoaded', () => {
             const messageFromServer = JSON.parse(event.data);
             console.log('Message from server:', messageFromServer);
 
-            if (messageFromServer.status === 'devsListSuccess') {
-                console.log('Request compleled.');
-                displayDevicesList(messageFromServer.message, 
-                    messageFromServer.app_id, messageFromServer.app_name);
-            } else if (messageFromServer.status === 'createDevKeyReqSuccess') {
-                alert('Add device completed!');
-                sendDevicesListRequest();
-            } else if ( messageFromServer.status === 'delDevReqSuccess' ) {
-                alert('Delete application completed!');
-                sendDevicesListRequest();
-            } else if ( messageFromServer.status === 'appConfigReqSuccess' ) {
-                alert('Config application completed!');
-                sendDevicesListRequest();
+            if (messageFromServer.request === 'enterAppId' || messageFromServer.request === 'dispDev' ) {
+                if (messageFromServer.message.status === 'success') {
+                    displayDevicesList(messageFromServer.message.data.devs_list, 
+                        messageFromServer.message.data.app_id,
+                        messageFromServer.message.data.app_name);
+                } else {
+                    alert('Request: ' + messageFromServer.request + ', Status: ' + messageFromServer.message.status);
+                }
+            } else if (messageFromServer.request === 'addDev') {
+                if (messageFromServer.message.status === 'success') {
+                    alert('Add device has been completed.');
+                    sendDevicesListRequest();
+                } else {
+                    alert('Request: ' + messageFromServer.request + ', Status: ' + messageFromServer.message.status);
+                }
+            } else if ( messageFromServer.request === 'delDev' ) {
+                if (messageFromServer.message.status === 'success') {
+                    alert('Delete application has been completed.');
+                    sendDevicesListRequest();
+                } else {
+                    alert('Request: ' + messageFromServer.request + ', Status: ' + messageFromServer.message.status);
+                }
+            } else if ( messageFromServer.request === 'appConfig' ) {
+                if (messageFromServer.message.status === 'success') {
+                    alert('Config application has been completed.');
+                    sendDevicesListRequest();
+                } else {
+                    alert('Request: ' + messageFromServer.request + ', Status: ' + messageFromServer.message.status);
+                }
             } 
             else {
-                console.log('Request failed, pls try again.');
+                console.log('Error: ', messageFromServer);
             }
         } catch (error) {
             console.error('Error parsing JSON:', error);
@@ -214,9 +232,12 @@ function displayDevicesList(items, appID, appName) {
             socket.addEventListener('open', () => {
                 let devId = this.getAttribute('dev-id');
                 let devName = item.dev_name;
-                const message = { status: 'devNameClickRequest', 
-                message: { dev_id: devId, dev_name: devName }};
-                socket.send(JSON.stringify(message));
+                
+                const req = { request: 'enterDevId', 
+                    message: { status: undefined,
+                        data: { dev_id: devId, dev_name: devName }
+                    }};
+                socket.send(JSON.stringify(req));
 
                 window.location.href = 'devicesConfiguration.html';
             });
@@ -249,5 +270,18 @@ var lastSeenDate = new Date(items);
 var formattedDate = lastSeenDate.toLocaleTimeString('en-US', { hour12: false }) + ' ' +
                     lastSeenDate.toLocaleDateString('en-US');
 return formattedDate;
+}
+//---------------------------------------------------------------------//
+const generate128BitRandom = () => {
+    const buffer = crypto.getRandomValues(new Uint8Array(16));
+    const hexString = Array.from(buffer).map(byte => byte.toString(16).padStart(2, '0')).join('');
+    return hexString;
+  
+}
+const generate64BitRandom = () => {
+    const buffer = crypto.getRandomValues(new Uint8Array(8));
+    const hexString = Array.from(buffer).map(byte => byte.toString(16).padStart(2, '0')).join('');
+    return hexString;
+  
 }
 //---------------------------------------------------------------------//

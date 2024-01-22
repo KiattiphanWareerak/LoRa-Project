@@ -41,12 +41,12 @@ function dashboardDeviceRequest(values, appId, appName) {
     console.log('test from dashDev api');
     console.log(values, appId, appName);
     
-    let respDashDevice = { status: 'dashDeviceSuccess',
-    app_id: appId, app_name: appName, dev_id: values.dev_id, dev_name: values.dev_name,
-      message: [
-        { packets: "20", rssi: "-50", snr: "55" },
-        { packets: "25", resi: "-25", snr: "55" }
-    ]};
+    let respDashDevice = { request: 'enterDevId', message: { 
+      status: 'success', 
+      data: { app_id: appId, app_name: appName, dev_id: values.dev_id, dev_name: values.dev_name, 
+        dev_dash: [{ packets: "20", rssi: "-50", snr: "55" },
+        { packets: "25", resi: "-25", snr: "55" }]
+    }}};
 
   return respDashDevice;
 }

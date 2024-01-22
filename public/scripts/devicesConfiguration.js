@@ -8,8 +8,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const currentPath = window.location.pathname;
 
         const sendDashboardDeviceRequest = () => {
-            const message = { status: 'displayRefreshDashDevice', data: 'Dashborad Device Request.' };
-            socket.send(JSON.stringify(message));
+            const req = { request: 'dispDashDev', message: { 
+                status: undefined, 
+                data: undefined 
+            }};
+            socket.send(JSON.stringify(req));
         };
 
         if (currentPath.includes('devicesConfiguration.html')) {
@@ -22,12 +25,19 @@ document.addEventListener('DOMContentLoaded', () => {
             const messageFromServer = JSON.parse(event.data);
             console.log('Message from server:', messageFromServer);
 
-            if (messageFromServer.status === 'dashDeviceSuccess') {
-                console.log('Request compleled.');
-                displayDashboardDevice(messageFromServer.message, messageFromServer.app_name, 
-                    messageFromServer.dev_name);
-            } else {
-                console.log('Request failed, pls try again.');
+            if (messageFromServer.request === 'enterDevId' || messageFromServer.request === 'dispDashDev') {
+                if (messageFromServer.message.status === 'success') {
+                    alert('Device dashboard  has been completed.');
+
+                    displayDashboardDevice(messageFromServer.message.data.dev_dash, 
+                        messageFromServer.message.data.app_name, 
+                        messageFromServer.message.data.dev_name);
+                } else {
+                    alert('Request: ' + messageFromServer.request + ', Status: ' + messageFromServer.message.status);
+                }
+            } 
+            else {
+                console.log('Error: ', messageFromServer);
             }
         } catch (error) {
             console.error('Error parsing JSON:', error);
@@ -37,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
 //---------------------------------------------------------------------// 
 //-----------------------------FUNCTIONS-------------------------------// 
 //---------------------------------------------------------------------// 
-function displayDashboardDevice(items, app_name, dev_name) {
+function displayDashboardDevice(values, app_name, dev_name) {
     // tbody.innerHTML = '';
 
     // Header and Middle title
@@ -53,5 +63,17 @@ function displayDashboardDevice(items, app_name, dev_name) {
     
     headerTitleDiv.appendChild(newH1Element);
     locatedDiv.appendChild(newH4Element);
+
+    // Dashboard tab
+
+    // Configuration tab
+    let DeviceConfigurationDiv = document.getElementById('Configuration');
+
+    // Queue tab
+
+    // Events tab
+
+    // LoRaWAN frame tab
+
 }
 //---------------------------------------------------------------------//
