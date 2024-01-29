@@ -2,9 +2,9 @@ const grpc = require("@grpc/grpc-js");
 const tenant_grpc = require("@chirpstack/chirpstack-api/api/tenant_grpc_pb");
 const tenant_pb = require("@chirpstack/chirpstack-api/api/tenant_pb");
 // This must point to the ChirpStack API interface.
-const serverChirpStack = "192.168.50.54:8080";
+const serverChirpStack = "202.28.95.234:8080";
 // The API token (can be obtained through the ChirpStack web-interface).
-const apiToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjaGlycHN0YWNrIiwiaXNzIjoiY2hpcnBzdGFjayIsInN1YiI6ImUyMTVhYTBlLTc1MjktNDkzMi05NDZjLWUyZmE1Mzc0MzM1YSIsInR5cCI6ImtleSJ9.pJuZ2xkxT6ItsQ3nTROFlRTVIBf4nVzlX6BrcWu-Gq4";
+const apiToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjaGlycHN0YWNrIiwiaXNzIjoiY2hpcnBzdGFjayIsInN1YiI6IjViZTdhYjlhLTkyYjMtNDFjMi05MWZkLTJmZWUyZTMyYjkxNCIsInR5cCI6ImtleSJ9.ebiRNuybsq2jBmkO2ecgr4VxHOZi1qpbACxmOvrLpxs";
 // Create the client for the DeviceService.
 const tenantService = new tenant_grpc.TenantServiceClient(
   serverChirpStack,

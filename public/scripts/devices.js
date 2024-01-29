@@ -38,19 +38,27 @@ document.addEventListener('DOMContentLoaded', () => {
             let appNameInput = document.getElementById('appNameInput');
             let descriptionInput = document.getElementById('descriptionInput');
             
-            let appNameValue = appNameInput.value;
-            let descriptionValue = descriptionInput.value;
-            let message = {app_name: appNameValue, app_desp: descriptionValue};
-    
-            const req = { request: 'appConfig', message: { 
-                status: undefined, 
-                data: message 
-            }};
-            socket.send(JSON.stringify(req));
+            let appNameValue = appNameInput.value.trim();
+            let descriptionValue = descriptionInput.value.trim();
 
-            appNameInput.value = '';
-            descriptionInput.value = '';
-            document.getElementById('dev_ConfigApp').style.display = "none";
+            let appNameRegex = /^[a-zA-Z0-9_\-@]+$/;
+
+            if (!appNameRegex.test(appNameValue) || appNameValue === '') {
+                alert('Please enter the application name again.\n' + 
+                '(English lowercase-uppercase, numbers 0-9, "_, "-", and "@")');
+            } else {
+                let message = {app_name: appNameValue, app_desc: descriptionValue};
+    
+                const req = { request: 'appConfig', message: { 
+                    status: undefined, 
+                    data: message 
+                }};
+                socket.send(JSON.stringify(req));
+
+                appNameInput.value = '';
+                descriptionInput.value = '';
+                document.getElementById('dev_ConfigApp').style.display = "none";
+            }
         };
 
         appConfigButton.addEventListener('click', (event) => {
@@ -146,8 +154,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (messageFromServer.request === 'enterAppId' || messageFromServer.request === 'dispDev' ) {
                 if (messageFromServer.message.status === 'success') {
                     displayDevicesList(messageFromServer.message.data.devs_list, 
-                        messageFromServer.message.data.app_id,
-                        messageFromServer.message.data.app_name);
+                        messageFromServer.message.data.app_config);
                 } else {
                     alert('Request: ' + messageFromServer.request + ', Status: ' + messageFromServer.message.status);
                 }
@@ -184,17 +191,24 @@ document.addEventListener('DOMContentLoaded', () => {
 //---------------------------------------------------------------------// 
 //-----------------------------FUNCTIONS-------------------------------// 
 //---------------------------------------------------------------------// 
-function displayDevicesList(items, appID, appName) {
+function displayDevicesList(items, appConfig) {
     let tbody = document.getElementById('data-table');
 
     tbody.innerHTML = '';
 
+    // Application Configuration Modal
+    let appNameInput = document.getElementById('appNameInput');
+    let descriptionInput = document.getElementById('descriptionInput');
+            
+    appNameInput.value = appConfig.application.name;
+    descriptionInput.value = appConfig.application.description;
+
     // Header and Middle title
     let newH1Element = document.createElement('h1');
     let newH4Element = document.createElement('h4');
-    newH1Element.textContent = appName;
+    newH1Element.textContent = appConfig.application.name;
     newH4Element.innerHTML = `<a href="applications.html" >Applications</a>
-     > <a>${appName}</a></h4>`;
+     > <a>${appConfig.application.name}</a></h4>`;
     let headerTitleDiv = document.querySelector('.header--title');
     let locatedDiv = document.querySelector('.located');
     headerTitleDiv.innerHTML = '';
