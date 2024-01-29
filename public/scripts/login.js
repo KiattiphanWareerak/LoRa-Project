@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (messageFromServer.message.status === 'success') {
                     input_id.value = '';
                     input_pw.value = '';
-                    window.location.href = 'applications.html';
+                    window.location.href = 'dashboard.html';
                 } else {
                     input_id.value = '';
                     input_pw.value = '';

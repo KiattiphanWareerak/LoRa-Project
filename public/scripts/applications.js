@@ -33,18 +33,32 @@ document.addEventListener('DOMContentLoaded', () => {
             let appNameInput = document.getElementById('appNameInput');
             let descriptionInput = document.getElementById('descriptionInput');
             
-            let appNameValue = appNameInput.value;
-            let descriptionValue = descriptionInput.value;
-            let addAppData = {app_name: appNameValue, app_desc: descriptionValue};
-    
-            const req = { request: 'addApp', message: { 
-                status: undefined, 
-                data: addAppData }};
-            socket.send(JSON.stringify(req));
-
-            appNameInput.value = '';
-            descriptionInput.value = '';
-            document.getElementById('app_AddApp').style.display = "none";
+            let appNameValue = appNameInput.value.trim();
+            
+            let appNameRegex = /^[a-zA-Z0-9_\-@]+$/;
+            
+            if (appNameValue === '') {
+                alert('Please enter the application name.');
+            } else if (!appNameRegex.test(appNameValue)) {
+                alert('Please enter the application name in English lowercase-uppercase, numbers 0-9, "_", "-", and "@".');
+            } else {
+                let descriptionValue = descriptionInput.value.trim();
+            
+                let addAppData = { app_name: appNameValue, app_desc: descriptionValue };
+            
+                const req = {
+                    request: 'addApp',
+                    message: {
+                        status: undefined,
+                        data: addAppData
+                    }
+                };
+                socket.send(JSON.stringify(req));
+            
+                appNameInput.value = '';
+                descriptionInput.value = '';
+                document.getElementById('app_AddApp').style.display = "none";
+            }            
         }
 
         addAppButton.addEventListener('click', (event) => {
@@ -144,7 +158,7 @@ function displayApplicationsList(items) {
     
     let count = 0;
     // Loop through the items and append rows to the tbody
-    items.apps_list.forEach(function(item, index) {
+    items.app_list.resultList.forEach(function(item, index) {
         var row = document.createElement('tr');
 
         // Checkbox column
@@ -166,14 +180,14 @@ function displayApplicationsList(items) {
         var appNameLink = document.createElement('a');
         appNameLink.href = 'javascript:void(0)';
         // Add click event listener to appNameLink
-        appNameLink.setAttribute('app-id', item.app_id);
+        appNameLink.setAttribute('app-id', item.id);
         appNameLink.addEventListener('click', function(event) {
             event.preventDefault();
             const socket = new WebSocket('ws://localhost:3001');
 
             socket.addEventListener('open', () => {
                 let appID = this.getAttribute('app-id');
-                let appName = item.app_name;
+                let appName = item.name;
 
                 const req = { request: 'enterAppId', message: { 
                     status: undefined, 
@@ -184,18 +198,18 @@ function displayApplicationsList(items) {
                 window.location.href = 'devices.html';
             });
         });
-        appNameLink.textContent = item.app_name;
+        appNameLink.textContent = item.name;
         appNameCell.appendChild(appNameLink);
         row.appendChild(appNameCell);
 
         // Application ID column
         var appIdCell = document.createElement('td');
-        appIdCell.textContent = item.app_id;
+        appIdCell.textContent = item.id;
         row.appendChild(appIdCell);
 
-        // Number of registered devices column
+        // Description column
         var registeredDeviceCell = document.createElement('td');
-        registeredDeviceCell.textContent = item.dev_totalCount;
+        registeredDeviceCell.textContent = item.description;
         row.appendChild(registeredDeviceCell);
 
         // Append the row to the tbody
