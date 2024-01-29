@@ -2,14 +2,10 @@
 <html lang="en">
 <head>
     <!-- Meta tags -->
-    <meta charset="UTF-8" />
-    <title>Applications Page</title>
+    <meta charset="UTF-8">
+    <title>Device Profiles</title>
+    <!-- External stylesheets -->
     <link rel="stylesheet" href="styles/mainStyles.css" />
-
-    <!-- Responsive design meta tag -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <!-- Font Awesome CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
 <body>
@@ -25,20 +21,20 @@
                 </a>
             </li>
             <!-- Device Profiles link -->
-            <li>
+            <li class="active" id="menu-applications">
                 <a href="deviceProfiles.html">
                     <i class="fa-solid fa-chart-pie"></i>
                     <span>Device Profiles</span>
                 </a>
             </li>
-            <!-- Active Application link -->
-            <li class="active" id="menu-applications">
-                <a>
+            <!-- Application link -->
+            <li>
+                <a href="applications.html">
                     <i class="fa-solid fa-microchip"></i>
                     <span>Application</span>
                 </a>
             </li>
-            <!-- Setting link -->
+            <!-- Account Setting link (active) -->
             <li>
                 <a href="settingPage.html">
                     <i class="fas fa-user"></i>
@@ -67,51 +63,52 @@
         <!-- Header -->
         <div class="header--wrapper">
             <div class="header--title">
-                <h1>Application</h1>
+                <!-- Title for Account Setting -->
+                <h1>Device Profiles</h1>
             </div>
             <div class="user--info">
-                <img src="components/user.png" alt="" />
+                <!-- Profile picture -->
+                <img src="components/user.png" alt="Profile Picture" id="profilePicture">
             </div>
         </div>
-
         <!-- Middle content -->
         <div class="mid--contents">
             <div class="located">
-                <h4>Application</h4>
+                <!-- Breadcrumb for navigation -->
+                <h4><a href="deviceProfiles.html">Device Profiles</a></h4>
+                <!-- Add more breadcrumb items if needed -->
             </div>
-            <div class="mid--contents">
-                <div class="button-group">
-                    <button class="button-add" onclick="openModal('app_AddApp')">Add Application</button>
-                    <button class="button-del" onclick="openModal('app_DelApp')">Delete Application</button>
-                </div>
+            <!-- Buttons for application management -->
+            <div class="button-group">
+                <button class="button-add" id="addDeviceButton" onclick="openModal('deviceProfile_add')">Add Device-Profile</button>
+                <button class="button-del" onclick="openModal('deviceProfile_del')">Delete Device-Profile</button>
             </div>
         </div>
-        <div class="app-name">
-            <div class="app-table">
+        <div class="profile-name">
+            <div class="profile-table">
                 <table>
                     <thead>
                         <tr>
                             <th><input type="checkbox" id="select-all" name="selectAll"></th>
-                            <th>No.</th>
-                            <th>Application name</th>
-                            <th>Application ID</th>
-                            <th>Description</th>
+                            <th>Name</th>
+                            <th>Region</th>
+                            <th>MAC Version</th>
+                            <th>Revision</th>
+                            <th>Support OTAA</th>
+                            <th>Support Class-B</th>
+                            <th>Support Class-C</th>
                         </tr>
                     </thead>
                     <tbody id="data-table">
                         <tr>
                             <td><input type="checkbox" name="app1" /></td>
-                            <td>1</td>
-                            <td><a href="devices.html">My-App-1</a></td>
-                            <td>xxADzXxxxArd-***</td>
-                            <td>Description goes here</td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" name="app2" /></td>
-                            <td>2</td>
-                            <td>new-app</td>
-                            <td>xxcdaXxxxAff-***</td>
-                            <td>Description goes here</td>
+                            <td><a href="devices.html">device-profile-1</a></td>
+                            <td>AS923</td>
+                            <td>LoRaWAN 1.0.2</td>
+                            <td>A</td>
+                            <td><i class="fa-solid fa-check check_icon"></i></td>
+                            <td><i class="fa-solid fa-check check_icon"></i></td>
+                            <td><i class="fa-solid fa-xmark xmark_icon"></i></td>
                         </tr>
                     </tbody>
                 </table>
@@ -121,23 +118,20 @@
 
     <!-- Modal container -->
     <div class="modal_container">
-        <!-- Add Application Modal -->
-        <div class="form" id="app_AddApp">
-            <!-- Close button -->
-            <i class="fa-solid fa-xmark" onclick="closeModal('app_AddApp')">&times;</i>
+        <!-- Add Device Profile Modal -->
+        <div class="form" id="deviceProfile_add">
+            <span class="close" onclick="closeModal('deviceProfile_add')">&times;</span>
             <div class="form_headder">
-                <h4>Add Application</h4>
+                <h4>Add device-profile</h4>
             </div>
             <!-- Form inputs -->
             <div>
-                <label for="appName">Application Name:</label>
-                <br>
-                <input type="text" id="appNameInput" required>
+                <label for="deviceProfile_NameInput">Profile Name:</label>
+                <input type="text" id="deviceProfile_NameInput" required>
             </div>
             <div>
                 <label for="Description">Description:</label>
-                <br>
-                <textarea name="Description" id="descriptionInput" cols="30" rows="5"></textarea>
+                <textarea name="description" id="deviceProfile_descriptionInput" cols="30" rows="5"></textarea>
             </div>
             <!-- Submit button -->
             <div>
@@ -146,11 +140,11 @@
         </div>
 
         <!-- Delete Application Modal -->
-        <div class="form" id="app_DelApp">
+        <div class="form" id="deviceProfile_del">
             <!-- Close button -->
-            <span class="close" onclick="closeModal('app_DelApp')">&times;</span>
+            <span class="close" onclick="closeModal('deviceProfile_del')">&times;</span>
             <div class="form_headder">
-                <h4>Delete Application</h4>
+                <h4>Delete device-profile</h4>
             </div>
             <!-- Form inputs -->
             <div>
@@ -163,9 +157,7 @@
             </div>
         </div>
     </div>
-
-    <!-- Scripts -->
-    <script src="scripts/webScript.js"></script>
-    <script src="scripts/applications.js"></script>
 </body>
+<!-- Scripts -->
+<script src="scripts/webScript.js"></script>
 </html>

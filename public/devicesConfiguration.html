@@ -4,7 +4,7 @@
     <!-- Meta tags -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Design</title>
+    <title>Device Configuration</title>
 
     <!-- External stylesheets -->
     <link rel="stylesheet" href="styles/mainStyles.css" />
@@ -20,6 +20,13 @@
                 <a href="dashboard.html">
                     <i class="fa-solid fa-chart-pie"></i>
                     <span>Dashboard</span>
+                </a>
+            </li>
+            <!-- Device Profiles link -->
+            <li>
+                <a href="deviceProfiles.html">
+                    <i class="fa-solid fa-chart-pie"></i>
+                    <span>Device Profiles</span>
                 </a>
             </li>
             <!-- Active Application link -->
@@ -91,13 +98,46 @@
                 <!-- Tab contents -->
                 <div class="content_box">
                     <div id="Dashboard" class="tab_content">
-                        <h3>Dashboard</h3>
-                        <p>Dashboard content goes here.</p>
+                        <div>
+                            <label for="device_Name">Name</label>
+                            <br>
+                            <input type="text" placeholder="Name" id="device_Name" required>
+                        </div>
+                        <div>
+                            <label for="Description">Description</label>
+                            <br>
+                            <textarea name="description" id="Description" cols="30" rows="5"></textarea>
+                        </div>
+                        <div class="display_2_elements">
+                            <label for="devEUI">Device EUI (EUI64)</label>
+                            <label for="joinEUI">Join EUI (EUI64)</label>
+                        </div>
+                        <div class="display_2_elements">
+                            <input type="text" id="devIdInput" class="devEUI" required>
+                            <input type="text" id="joinIdInput" class="joinEUI">
+                        </div>
+                        <div>
+                            <label for="deviceProfile">Device profile</label>
+                            <div>Device-Profile dropdown-Box goes here.</div>
+                        </div>
                     </div>
 
                     <div id="Configuration" class="tab_content">
-                        <h3>Configuration</h3>
-                        <p>Configuration content goes here.</p>
+                        <div class="data-content">
+                            <div class="device_section">
+                                <div><label for="device_Name">Name:</label></div>
+                                <div><input type="text" id="device_Name" required></div>
+                                <br>
+                                <div><label for="Description">Description:</label></div>
+                                <div><textarea name="description" id="Description" cols="30" rows="5"></textarea></div>
+                            </div>
+                            <div></div>
+                            <div></div>
+                        </div>
+                        <div class="data-content"></div>
+                        <h3>Tags</h3>
+                        <div class="data-content"></div>
+                        <h3>Variables</h3>
                     </div>
 
                     <div id="Queue" class="tab_content">

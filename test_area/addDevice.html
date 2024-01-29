@@ -1,31 +1,39 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./styles/RegStyles.css">
-    <title>Add Device</title>
-</head>
+<title>Registration Page</title>
+<link rel="stylesheet" href="styles/style.css"> </head>
 <body>
-    <div class="container">
-        <h1>Add Device</h1>
-        <form id="add-device-form">
-            <label for="device-name">Device Name:</label>
-            <input type="text" id="device-name" name="device-name" required>
-            
-            <label for="device-eui">Device EUI:</label>
-            <input type="text" id="device-eui" name="device-eui" required>
-            
-            <button type="submit" id="add-device-button">Register Device</button>
-        </form>
+  <h1>Registration Form</h1>
+  <form action="/register" method="post"> <div class="row">
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name" required>
     </div>
-
-    <script>
-        document.getElementById("add-device-form").addEventListener("submit", function (event) {
-            event.preventDefault(); // Prevent the form from submitting normally
-            alert("Success"); // Display the success alert
-            window.location.href = "setAppKey.html"; // Redirect to setAppKey.html
-        });
-    </script>
+    <div class="row">
+      <label for="description">Description:</label>
+      <textarea id="description" name="description" rows="5"></textarea>
+    </div>
+    <div class="row">
+      <label for="dropdown1">Dropdown 1:</label>
+      <select id="dropdown1" name="dropdown1">
+        <option value="">Select an option</option>
+        </select>
+      <label for="dropdown2">Dropdown 2:</label>
+      <select id="dropdown2" name="dropdown2">
+        <option value="">Select an option</option>
+        </select>
+    </div>
+    <div class="row">
+      <label for="dropdown3">Dropdown 3:</label>
+      <select id="dropdown3" name="dropdown3">
+        <option value="">Select an option</option>
+        </select>
+      <label for="dropdown4">Dropdown 4:</label>
+      <select id="dropdown4" name="dropdown4">
+        <option value="">Select an option</option>
+        </select>
+    </div>
+    <button type="submit">Register</button>
+  </form>
 </body>
 </html>

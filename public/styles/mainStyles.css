@@ -68,6 +68,17 @@ body {
     background-color: #7360ff;
     transition: all .3s ease-in-out;
 }
+.data-content{
+    background-color: #747474;
+}
+input{
+    border: 1px solid #333;
+    padding: 8px;
+}
+textarea{
+    border: 1px solid #333;
+    padding: 8px;
+}
 
 /* * * * Sidebar Part * * * */
 .sidebar {
@@ -235,7 +246,7 @@ body {
 button:active {
     transform: scale(0.96);
 }
-/* * * * Table for Application * * * */
+/* * * * Table Part * * * */
 .app-name{
     background: #fff;
     margin-top: 1rem;
@@ -254,6 +265,15 @@ button:active {
 .dev-table{
     width: 100%;
 }
+.profile-name{
+    background: #fff;
+    margin-top: 1rem;
+    border-radius: 10px;
+    padding: 2rem;
+}
+.profile-table{
+    width: auto;
+}
 table {
     width: 100%;
     border-collapse: collapse;
@@ -263,16 +283,17 @@ thead {
 }
 
 th {
-    padding: 15px;
-    text-align: left;
+    padding: 12px;
+    text-align: center;
 }
 tbody{
     background: #fff;
 }
 td {
-    padding: 15px;
+    padding: 12px;
     font-size: 14px;
     color: #333;
+    text-align: center;
 }
 tr:nth-child(even) {
     background: #fff;
@@ -284,6 +305,12 @@ tfoot{
 }
 tfoot td {
     padding: 15px;
+}
+.check_icon {
+    color: green; /* Set the color for the check icon to green */
+}
+.xmark_icon {
+    color: red; /* Set the color for the xmark icon to red */
 }
 
 /* * * * Modal Part * * * */
