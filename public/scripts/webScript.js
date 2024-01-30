@@ -48,22 +48,37 @@ function openModal(Modal) {
 function closeModal(Modal) {
     document.getElementById(Modal).style.display = "none";
 }
+/*  *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   */
 
-// function nextModal() {
-//     document.getElementById('dev_AddDevice').style.display = "none";
-//     document.getElementById('dev_AddAppkey').style.display = "block";
-// }
-/*
-// Close the modal if the user clicks outside the modal content
-window.addEventListener('click', function (event) {
-    var modals = document.querySelectorAll('.form');
-    for (var i = 0; i < modals.length; i++) {
-        var modal = modals[i];
-        if (event.target.closest('.form') !== modal) {
-            modal.style.display = "none";
-        }
-    }
-}); */
+/*  *   *   *   *   Dropdown (list) Function   *   *   *   *   */
+const dropdowns = document.querySelectorAll('.dropdown');
+dropdowns.forEach(dropdown => {
+    const select = dropdown.querySelector('.select');
+    const caret = dropdown.querySelector('.caret');
+    const list_menu = dropdown.querySelector('.list_menu');
+    const options = dropdown.querySelector('.list_menu li');
+    const selected = dropdown.querySelector('.selected');
+
+    select.addEventListener('click', () => {
+        select.classList.toggle('select-clicked');
+        caret.classList.toggle('caret-rotate');
+        list_menu.classList.toggle('list_menu-open');
+    });
+
+    options.forEach(option => {
+        option.addEventListener('click', () => {
+            selected.innerText = option.innerText;
+            select.classList.remove('select-click');
+            caret.classList.remove('caret-rotate');
+            list_menu.classList.remove('list_menu-open');
+
+            options.forEach(option => {
+                option.classList.remove('list_menu.active');
+            });
+            option.classList.add('list_menu.active');
+        });
+    });
+});
 /*  *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   */
 
 /*  *   *   *   *   FAQs Drop-down Function   *   *   *   *   */

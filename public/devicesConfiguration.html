@@ -14,7 +14,7 @@
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="logo"></div>
-        <ul class="menu">
+        <ul class="side_menu">
             <!-- Dashboard link -->
             <li>
                 <a href="dashboard.html">
@@ -117,8 +117,19 @@
                             <input type="text" id="joinIdInput" class="joinEUI">
                         </div>
                         <div>
-                            <label for="deviceProfile">Device profile</label>
-                            <div>Device-Profile dropdown-Box goes here.</div>
+                            <div>Device-Profile</div>
+                            <div class="dropdown">
+                                <div class="select">
+                                    <span class="selected">Select your device profile</span>
+                                    <div class="caret"></div>
+                                </div>
+                                <ul class="list_menu">
+                                    <li>LoRaWAN 1.0.1</li>
+                                    <li>LoRaWAN 1.0.2</li>
+                                    <li class="active">LoRaWAN 1.0.3</li>
+                                    <li>LoRaWAN 1.1.2</li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
 
