@@ -670,6 +670,8 @@ async function getDeviceProfile(values, apiToken) {
   }
 }
 //---------------------------------------------------------------------//
+// getEvents("24c5d9e6325820f4", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjaGlycHN0YWNrIiwiaXNzIjoiY2hpcnBzdGFjayIsInN1YiI6Ijc3M2Y5OGQwLTk5YTMtNDVjMS1hY2JhLThhOTQzYzdiODFiZiIsInR5cCI6ImtleSJ9.FiCRWLwVlG9mm5_KqUm52afDzMZRJ5qc4jQJz4waxZI");
+
 async function getEvents(values, apiToken) {
   try {
     // Create the Metadata object.
@@ -678,17 +680,16 @@ async function getEvents(values, apiToken) {
 
     return new Promise((resolve, reject) => {
       // Create a request to get event.
-      const createReq = new tenant_pb.ListTenantsRequest();
-      createReq.setLimit(99);
-      createReq.setUserId("2232ce09-7731-4d69-bae3-eb0431346065");
+      const createReq = new internal_pb.StreamDeviceEventsRequest();
+      createReq.setDevEui(values);
 
-      tenantService.list(createReq, metadata, (err, resp) => {
+      internalService.streamDeviceEvents(createReq, metadata, (err, resp) => {
         if (err !== null) {
           console.log(err);
           return;
         }
         console.log('Stream Device Events has been completed.');
-        console.log(resp.toObject());
+        console.log(resp);
         resolve(resp.toObject());
       });
     });
@@ -774,18 +775,24 @@ async function getQueueItems(values, apiToken) {
   }
 }
 //---------------------------------------------------------------------//
+async function loginRequest(values) { 
+  // Create the Metadata object.
+  const metadata = new grpc.Metadata();
+  metadata.set("authorization", "Bearer " + apiToken);
+
+  return new Promise((resolve, reject) => {
+
+  });
+}
+//---------------------------------------------------------------------//
 async function functions(values) { 
-  try {
-    // Create the Metadata object.
-    const metadata = new grpc.Metadata();
-    metadata.set("authorization", "Bearer " + apiToken);
+  // Create the Metadata object.
+  const metadata = new grpc.Metadata();
+  metadata.set("authorization", "Bearer " + apiToken);
 
-    return new Promise((resolve, reject) => {
+  return new Promise((resolve, reject) => {
 
-    });
-  } catch (error) {
-    console.log(error);
-  }
+  });
 }
 //---------------------------------------------------------------------//
 module.exports = {
@@ -801,5 +808,6 @@ module.exports = {
   devicesListRequest,
   enterDeviceRequest,
   getApplicationRequest,
+  loginRequest,
 };
 //---------------------------------------------------------------------//

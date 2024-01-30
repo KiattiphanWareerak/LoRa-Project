@@ -1,10 +1,12 @@
 //---------------------------------------------------------------------// 
 //------------------------------EVENTS---------------------------------// 
 //---------------------------------------------------------------------//
+const apiToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjaGlycHN0YWNrIiwiaXNzIjoiY2hpcnBzdGFjayIsInN1YiI6Ijc3M2Y5OGQwLTk5YTMtNDVjMS1hY2JhLThhOTQzYzdiODFiZiIsInR5cCI6ImtleSJ9.FiCRWLwVlG9mm5_KqUm52afDzMZRJ5qc4jQJz4waxZI"
+
 document.addEventListener('DOMContentLoaded', () => {
     const socket = new WebSocket('ws://localhost:3001');
 
-    const registerButton = document.getElementById('register');
+    const registerForm = document.getElementById('registration-form');
     const input_un = document.getElementById('user-name');
     const input_em = document.getElementById('email');
     const input_pw = document.getElementById('password');
@@ -13,13 +15,13 @@ document.addEventListener('DOMContentLoaded', () => {
     socket.addEventListener('open', () => {
         console.log('WebSocket connection established with WebServer');
 
-        registerButton.addEventListener('register', (event) => {
+        registerForm.addEventListener('submit', (event) => {
             event.preventDefault();
             
             // Check if user-name follows the specified pattern
-            const usernamePattern = /^[A-Z][a-zA-Z_]{4,}$/; // Regex pattern
+            const usernamePattern = /^[A-Z][a-zA-Z_]{2,}$/; // Regex pattern
             if (!usernamePattern.test(input_un.value)) {
-                alert('Invalid username format. Please use only letters, numbers, or underscores (_) for the username.\nThe username should start with an uppercase letter and be at least 5 characters long.');
+                alert('Invalid username format. Please use only letters, numbers, or underscores (_) for the username.\nThe username should start with an uppercase letter and be at least 3 characters long.');
                 return; // Stop further execution
             } 
 
@@ -34,7 +36,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 status: undefined,
                 data: { user_name: input_un.value.trim(),
                     user_em: input_em.value.trim(),
-                    user_pw: input_pw.value.trim() }
+                    user_pw: input_pw.value.trim(),
+                    api_token: apiToken }
             }};
 
             socket.send(JSON.stringify(messageToServer));
@@ -63,4 +66,4 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
-//---------------------------------------------------------------------// 
+//---------------------------------------------------------------------//

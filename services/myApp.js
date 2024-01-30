@@ -141,6 +141,7 @@ async function myApp(values) {
                 }
             }
             else if ( values.request === 'register' ) {
+                globalApiToken = values.message.data.api_token;
                 const respFromCreateUser = await chirpStackServices.createUser(values.message.data, globalApiToken);
 
                 if ( respFromCreateUser.request === 'createUser' && respFromCreateUser.message.status === 'success' ) {

@@ -14,18 +14,13 @@ document.addEventListener('DOMContentLoaded', () => {
         loginForm.addEventListener('submit', (event) => {
             event.preventDefault();
             
-            if (input_id.value == 'admin' && input_pw.value == 'admin') {
-                const message = { request: 'login', message:
-                { status: undefined,
-                    data: { user_id: input_id.value, user_pw: input_pw.value }
-                }};
+            const message = { request: 'login', message:
+            { status: undefined,
+                data: { user_id: input_id.value.trim(), user_pw: input_pw.value.trim() }
+            }};
 
-                socket.send(JSON.stringify(message));
-            } else {
-                input_id.value = '';
-                input_pw.value = '';
-                alert('Only admins.');
-            }
+            socket.send(JSON.stringify(message));
+
         });
     });
 
