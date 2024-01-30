@@ -66,7 +66,9 @@ function displayDashboardDevice(values, app_name) {
     // Dashboard tab
 
     // Configuration tab
-    let DeviceConfigurationDiv = document.getElementById('Configuration');
+    let dasd = document.getElementById("Description");
+    dasd.textContent = values.dev_config.device.description;
+  
 
     // Queue tab
 
