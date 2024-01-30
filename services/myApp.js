@@ -132,7 +132,11 @@ async function myApp(values) {
 
                     if ( respFromProfileUser.request === 'profileUser' && respFromProfileUser.message.status === 'success' ) {
                         globalUserId = respFromProfileUser.message.data.user_profile.user.id;
-                        globalTenantId = respFromProfileUser.message.data.user_profile.tenantsList[0].tenantId;
+                        if (respFromProfileUser.message.data.user_profile.tenantsList === null) {
+                            globalTenantId = respFromProfileUser.message.data.user_profile.tenantsList[0].tenantId;
+                        } else {
+                            globalTenantId = "52f14cd4-c6f1-4fbd-8f87-4025e1d49242";
+                        }
 
                         console.log("USER ID: ", globalUserId);
                         console.log("USER TOKEN: ",globalUserToken);

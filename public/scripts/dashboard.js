@@ -1,1 +1,0 @@
-alert("Welcome to LoRa Managment Web Application by COE2023-08!");

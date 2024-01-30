@@ -32,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('Message from server:', messageFromServer);
 
         if (messageFromServer.request === 'loginUser' && messageFromServer.message.status === 'success') {
+            alert("Welcome to LoRa Managment Web Application by COE2023-08!");
             input_id.value = '';
             input_pw.value = '';
             window.location.href = 'dashboard.html';

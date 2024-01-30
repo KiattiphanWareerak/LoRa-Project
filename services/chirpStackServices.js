@@ -747,6 +747,7 @@ async function profileUserRequest(apiToken) {
       }
       console.log('Profile Response has been completed.');
 
+      console.log(resp.toObject());
       resolve({ request: 'profileUser', message: { 
         status: 'success', 
         data: { user_profile: resp.toObject() }}
