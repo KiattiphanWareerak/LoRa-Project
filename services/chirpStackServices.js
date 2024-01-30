@@ -253,7 +253,7 @@ async function createDeviceKeyRequest(values, apiToken) {
   }
 }
 //---------------------------------------------------------------------//
-async function createTenant(userName, apiToken) { 
+async function createTenant(values, apiToken) { 
   // Create the Metadata object.
   const metadata = new grpc.Metadata();
   metadata.set("authorization", "Bearer " + apiToken);
@@ -261,7 +261,7 @@ async function createTenant(userName, apiToken) {
   return new Promise((resolve, reject) => {
     // Create a tenant.
     const newTenant = new tenant_pb.Tenant();
-    newTenant.setName(userName);
+    newTenant.setName(values.user_name);
     newTenant.setCanHaveGateways(true);
     newTenant.setPrivateGatewaysUp(false);
     newTenant.setPrivateGatewaysDown(false);

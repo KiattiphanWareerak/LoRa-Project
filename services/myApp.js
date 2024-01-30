@@ -149,10 +149,10 @@ async function myApp(values) {
                 const respFromCreateUser = await chirpStackServices.createUser(values.message.data, netWorkApiToken);
 
                 if ( respFromCreateUser.request === 'createUser' && respFromCreateUser.message.status === 'success' ) {
-                    const respFromCreateTenant = await chirpStackServices.createTenant(respFromCreateUser.message.data.user_name, globalApiToken);
+                    const respFromCreateTenant = await chirpStackServices.createTenant(respFromCreateUser.message.data, netWorkApiToken);
 
                     if ( respFromCreateTenant.request === 'createTenant' && respFromCreateTenant.message.status === 'success' ) {
-                        const respFromCreateTenantUser = await chirpStackServices.createTenantUser(respFromCreateTenant.message.data, globalApiToken);
+                        const respFromCreateTenantUser = await chirpStackServices.createTenantUser(respFromCreateTenant.message.data, netWorkApiToken);
 
                         if ( respFromCreateTenantUser.request === 'createTenantUser' && respFromCreateTenant.message.status === 'success' ) {
                             resolve(respFromCreateTenantUser);
