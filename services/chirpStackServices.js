@@ -10,6 +10,12 @@ const device_profile_grpc = require("@chirpstack/chirpstack-api/api/device_profi
 const device_profile_pb = require("@chirpstack/chirpstack-api/api/device_profile_pb");
 const gateway_grpc = require("@chirpstack/chirpstack-api/api/gateway_grpc_pb");
 const gateway_pb = require("@chirpstack/chirpstack-api/api/gateway_pb");
+const internal_grpc = require("@chirpstack/chirpstack-api/api/internal_grpc_pb");
+const internal_pb = require("@chirpstack/chirpstack-api/api/internal_pb");
+const tenant_grpc = require("@chirpstack/chirpstack-api/api/tenant_grpc_pb");
+const tenant_pb = require("@chirpstack/chirpstack-api/api/tenant_pb");
+const user_grpc = require("@chirpstack/chirpstack-api/api/user_grpc_pb");
+const user_pb = require("@chirpstack/chirpstack-api/api/user_pb");
 
 const common_common_pb = require("@chirpstack/chirpstack-api/common/common_pb");
 const google_protobuf_timestamp_pb = require("google-protobuf/google/protobuf/timestamp_pb");
@@ -23,23 +29,38 @@ const applicationService = new application_grpc.ApplicationServiceClient(
   serverChirpStack,
   grpc.credentials.createInsecure(),
 );
+
 const deviceService = new device_grpc.DeviceServiceClient(
   serverChirpStack,
   grpc.credentials.createInsecure(),
 );
+
 const deviceProfileService = new device_profile_grpc.DeviceProfileServiceClient(
   serverChirpStack,
   grpc.credentials.createInsecure(),
 );
+
 const gatewayService = new gateway_grpc.GatewayServiceClient(
+  serverChirpStack,
+  grpc.credentials.createInsecure(),
+);
+
+const internalService = new internal_grpc.InternalServiceClient(
+  serverChirpStack,
+  grpc.credentials.createInsecure(),
+);
+
+const tenantService = new tenant_grpc.TenantServiceClient(
+  serverChirpStack,
+  grpc.credentials.createInsecure(),
+);
+
+const userService = new user_grpc.UserServiceClient(
   serverChirpStack,
   grpc.credentials.createInsecure(),
 );
 //---------------------------------------------------------------------//
 //-------------------------------FUNCTIONS-----------------------------//
-// The API token (can be obtained through the ChirpStack web-interface).
-// const apiToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjaGlycHN0YWNrIiwiaXNzIjoiY2hpcnBzdGFjayIsInN1YiI6ImIyODg5NjU1LWM5ODUtNDVmNi05YTBhLTNmODEzMzJkNjgzNCIsInR5cCI6ImtleSJ9.agvFQkC8fFaX2mQeK61UGXfLMwtsVmslK3BD_T2SqOI";
-// const apiToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjaGlycHN0YWNrIiwiaXNzIjoiY2hpcnBzdGFjayIsInN1YiI6IjJmZjMzODRiLWZjYzgtNDE5OS1hNmY0LWVjYWEwNzUyMmE5NiIsInR5cCI6ImtleSJ9.HcJsMD_Vv-oPUFHqRIDo_xPlJOPPzNeNxSsixNXTRX0";
 //---------------------------------------------------------------------//
 async function addApplicationRequest(values, apiToken, tenantID) {
   try {
@@ -251,6 +272,125 @@ async function createDeviceKeyRequest(values, apiToken) {
   } catch (error) {
     console.log(error);
   }
+}
+//---------------------------------------------------------------------//
+async function createTenant(values, apiToken) { 
+  // Create the Metadata object.
+  const metadata = new grpc.Metadata();
+  metadata.set("authorization", "Bearer " + apiToken);
+
+  return new Promise((resolve, reject) => {
+    // Create a tenant.
+    const newTenant = new tenant_pb.Tenant();
+    newTenant.setName(values.user_name);
+    newTenant.setCanHaveGateways(true);
+    newTenant.setPrivateGatewaysUp(false);
+    newTenant.setPrivateGatewaysDown(false);
+    newTenant.setMaxGatewayCount(0);
+    newTenant.setMaxDeviceCount(0);
+
+    // Create a request to create a tenant.
+    const createReq = new tenant_pb.CreateTenantRequest();
+    createReq.setTenant(newTenant);
+
+    tenantService.create(createReq, metadata, (err, resp) => {
+    if (err !== null) {
+        console.log(err.details);
+        resolve({ request: 'createTenant', message: { 
+          status: 'failed', 
+          data: err.message }
+        });
+        return;
+    }
+    console.log('Creaate a tenant has been completed.');
+
+    resolve({ request: 'createTenant', message: { 
+      status: 'success', 
+      data: { tenant_id: resp.toObject().id,
+        user_name: values.user_name, 
+        user_id: values.user_id,
+        user_em: values.user_em,
+        user_pw: values.user_pw }
+      }});
+    });
+  });
+}
+//---------------------------------------------------------------------//
+async function createUser(values, apiToken) { 
+  // Create the Metadata object.
+  const metadata = new grpc.Metadata();
+  metadata.set("authorization", "Bearer " + apiToken);
+
+  return new Promise((resolve, reject) => {
+    // Create a tenant for user
+    const userTenant = new user_pb.User();
+    userTenant.setEmail(values.user_em);
+    userTenant.setIsAdmin(false);
+    userTenant.setIsActive(true);
+
+    // Create a user to use an application.
+    const createReq = new user_pb.CreateUserRequest();
+    createReq.setUser(userTenant);
+    createReq.setPassword(values.user_pw);
+
+    userService.create(createReq, metadata, (err, resp) => {
+      if (err !== null) {
+        console.log(err.details);
+        resolve({ request: 'createUser', message: { 
+          status: 'failed', 
+          data: err.message }
+        });
+        return;
+      }
+      console.log('Creaate a user has been completed.');
+
+      resolve({ request: 'createUser', message: { 
+        status: 'success', 
+        data: { user_name: values.user_name, 
+          user_id: resp.toObject().id,
+          user_em: values.user_em,
+          user_pw: values.user_pw }
+        }});
+    });
+  });
+}
+//---------------------------------------------------------------------//
+async function createTenantUser(values, apiToken) { 
+  // Create the Metadata object.
+  const metadata = new grpc.Metadata();
+  metadata.set("authorization", "Bearer " + apiToken);
+
+  return new Promise((resolve, reject) => {
+    // Create a tenant user.
+    const tenantUser = new tenant_pb.TenantUser();
+    tenantUser.setTenantId(values.tenant_id);
+    tenantUser.setUserId(values.user_id);
+    tenantUser.setIsAdmin(false);
+    tenantUser.setIsDeviceAdmin(true);
+    tenantUser.setIsGatewayAdmin(false);
+    tenantUser.setEmail(values.user_em);
+
+    // Create a request to create a tenant user.
+    const createReq = new tenant_pb.AddTenantUserRequest();
+    createReq.setTenantUser(tenantUser);
+
+    tenantService.addUser(createReq, metadata, (err, resp) => {
+      if (err !== null) {
+          console.log(err.details);
+          resolve({ request: 'createTenantUser', message: { 
+            status: 'failed', 
+            data: err.message }
+          });
+          return;
+      }
+      console.log('Creaate a tenant user has been completed.');
+
+      resolve({ request: 'createTenantUser', message: { 
+          status: 'success', 
+          data: resp.toObject()
+        }});
+    });
+  });
 }
 //---------------------------------------------------------------------//
 async function deleteApplicationRequest(values, apiToken) {
@@ -530,7 +670,7 @@ async function getDeviceProfile(values, apiToken) {
   }
 }
 //---------------------------------------------------------------------//
-async function getEvent(values, apiToken) {
+async function getEvents(values, apiToken) {
   try {
     // Create the Metadata object.
     const metadata = new grpc.Metadata();
@@ -538,17 +678,17 @@ async function getEvent(values, apiToken) {
 
     return new Promise((resolve, reject) => {
       // Create a request to get event.
-      const createReq = new device_pb.GetDeviceNextFCntDownRequest();
-      createReq.setDevEui(values);
+      const createReq = new tenant_pb.ListTenantsRequest();
+      createReq.setLimit(99);
+      createReq.setUserId("2232ce09-7731-4d69-bae3-eb0431346065");
 
-
-      deviceService.getNextFCntDown(createReq, metadata, (err, resp) => {
+      tenantService.list(createReq, metadata, (err, resp) => {
         if (err !== null) {
           console.log(err);
           return;
         }
-        console.log('Get Event has been completed.');
-
+        console.log('Stream Device Events has been completed.');
+        console.log(resp.toObject());
         resolve(resp.toObject());
       });
     });
@@ -653,6 +793,9 @@ module.exports = {
   addDeviceAndCreateDeviceKey,
   applicationConfigurationsRequest,
   applicationsListRequest,
+  createTenant,
+  createUser,
+  createTenantUser,
   deleteApplicationRequest,
   deleteDeviceRequest,
   devicesListRequest,

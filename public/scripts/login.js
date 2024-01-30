@@ -13,14 +13,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         loginForm.addEventListener('submit', (event) => {
             event.preventDefault();
-
-            const user_id = input_id.value;
-            const user_pw = input_pw.value;
             
-            if (user_id == 'admin' && user_pw == 'admin') {
+            if (input_id.value == 'admin' && input_pw.value == 'admin') {
                 const message = { request: 'login', message:
                 { status: undefined,
-                    data: { user_id: user_id, user_pw: user_pw }
+                    data: { user_id: input_id.value, user_pw: input_pw.value }
                 }};
 
                 socket.send(JSON.stringify(message));

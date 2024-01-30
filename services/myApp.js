@@ -140,8 +140,26 @@ async function myApp(values) {
                     resolve({ request: 'login', message: { status: 'failed', data: undefined }});
                 }
             }
+            else if ( values.request === 'register' ) {
+                const respFromCreateUser = await chirpStackServices.createUser(values.message.data, globalApiToken);
+
+                if ( respFromCreateUser.request === 'createUser' && respFromCreateUser.message.status === 'success' ) {
+                    const respFromCreateTenant = await chirpStackServices.createTenant(respFromCreateUser.message.data, globalApiToken);
+
+                    if ( respFromCreateTenant.request === 'createTenant' && respFromCreateTenant.message.status === 'success' ) {
+                        const respFromCreateTenantUser = await chirpStackServices.createTenantUser(respFromCreateTenant.message.data, globalApiToken);
+
+                        if ( respFromCreateTenantUser.request === 'createTenantUser' && respFromCreateTenant.message.status === 'success' ) {
+                            respFromCreateTenantUser.request = 'register';
+                            resolve(respFromCreateTenantUser);
+                        }
+                    } 
+                } else {
+                    resolve(respFromCreateUser);
+                }
+            }
             else {
-                return { request: 'unknow', message: { status: 'failed', data: 'Unknow request from Client.' }};
+                resolve({ request: 'unknow', message: { status: 'failed', data: 'Unknow request from Client.' }});
             }
         });
     } catch (error) {
