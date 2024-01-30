@@ -10,6 +10,7 @@ const server = http.createServer(app);
 
 // set the service
 const checkReq = require('./services/myApp.js');
+const { log } = require('console');
 
 // Set the port and IP address for the server
 const PORT = 3002;
@@ -25,11 +26,15 @@ app.post('/service', async (req, res) => {
     console.log(message);
 
     // Do something with the message
-    const result = await checkReq.myApp(message);
+    try {
+        const result = await checkReq.myApp(message);
 
-    // Send the response
-    console.log(result);
-    res.send(JSON.stringify(result));
+        // Send the response
+        console.log(result);
+        res.send(JSON.stringify(result));
+    } catch (error) {
+        console.log(error);
+    }
 });
 
 // Start the server

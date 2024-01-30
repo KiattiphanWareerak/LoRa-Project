@@ -103,36 +103,26 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     socket.addEventListener('message', (event) => {
-        try {
-            const messageFromServer = JSON.parse(event.data);
-            console.log('Message from server:', messageFromServer);
+        const messageFromServer = JSON.parse(event.data);
+        console.log('Message from server:', messageFromServer);
 
-            if ( messageFromServer.request === 'dispApp' ) {
-                if (messageFromServer.message.status === 'success') {
-                    displayApplicationsList(messageFromServer.message.data);
-                } else {
-                    alert('Request: ' + messageFromServer.request + ', Status: ' + messageFromServer.message.status);
-                }
-            } else if ( messageFromServer.request === 'addApp' ) {
-                if (messageFromServer.message.status === 'success') {
-                    alert('Add application has been completed.');
-                    sendApplicationsListRequest();
-                } else {
-                    alert('Request: ' + messageFromServer.request + ', Status: ' + messageFromServer.message.status);
-                }
-            } else if ( messageFromServer.request === 'delApp' ) {
-                if (messageFromServer.message.status === 'success') {
-                    alert('Delete application has been completed.');
-                    sendApplicationsListRequest();
-                } else {
-                    alert('Request: ' + messageFromServer.request + ', Status: ' + messageFromServer.message.status);
-                }
-            } 
-            else {
-                console.log('Error: ', messageFromServer);
-            }
-        } catch (error) {
-            console.log('Error parsing JSON:', error);
+        if ( messageFromServer.request === 'dispApp' && messageFromServer.message.status === 'success' ) {
+            displayApplicationsList(messageFromServer.message.data);
+            return;
+        } 
+        if ( messageFromServer.request === 'addApp' && messageFromServer.message.status === 'success' ) {
+            alert('Add application has been completed.');
+            sendApplicationsListRequest();
+            return;
+        } else {
+            alert('Add application failed.');
+        }
+        if ( messageFromServer.request === 'delApp' && messageFromServer.message.status === 'success' ) {
+            alert('Delete application has been completed.');
+            sendApplicationsListRequest();
+            return;
+        } else {
+            alert('Delete application failed.');
         }
     });    
 });

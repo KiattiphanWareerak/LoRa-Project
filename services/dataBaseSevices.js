@@ -38,7 +38,7 @@ async function applicationListMatchingRequest(globalUserToken, respFromChirpStac
   }
 }
 //---------------------------------------------------------------------// 
-async function loginRequest(values) {
+async function login(values) {
   const message = { request: 'login', message: { 
     status: 'success', 
     data: { user_token: "83b547ed-667e-4fdf-b2e7-548b53af1afe", 
@@ -52,6 +52,6 @@ async function loginRequest(values) {
 //---------------------------------------------------------------------// 
 module.exports = {
   applicationListMatchingRequest,
-  loginRequest
+  login
 };
 //---------------------------------------------------------------------//

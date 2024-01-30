@@ -1,8 +1,6 @@
 //---------------------------------------------------------------------// 
 //------------------------------EVENTS---------------------------------// 
 //---------------------------------------------------------------------//
-const apiToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjaGlycHN0YWNrIiwiaXNzIjoiY2hpcnBzdGFjayIsInN1YiI6Ijc3M2Y5OGQwLTk5YTMtNDVjMS1hY2JhLThhOTQzYzdiODFiZiIsInR5cCI6ImtleSJ9.FiCRWLwVlG9mm5_KqUm52afDzMZRJ5qc4jQJz4waxZI"
-
 document.addEventListener('DOMContentLoaded', () => {
     const socket = new WebSocket('ws://localhost:3001');
 
@@ -36,8 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 status: undefined,
                 data: { user_name: input_un.value.trim(),
                     user_em: input_em.value.trim(),
-                    user_pw: input_pw.value.trim(),
-                    api_token: apiToken }
+                    user_pw: input_pw.value.trim() }
             }};
 
             socket.send(JSON.stringify(messageToServer));
@@ -48,21 +45,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const messageFromServer = JSON.parse(event.data);
         console.log('Message from server:', messageFromServer);
 
-        if (messageFromServer.request === 'register') {
-            if (messageFromServer.message.status === 'success') {
-                alert("Registration Successful!");
-                input_un.value = '';
-                input_em.value = '';
-                input_pw.value = '';
-                input_pw_cf.value = '';
-                window.location.href = 'index.html';
-            } 
-        } else {
+        if (messageFromServer.message.status === 'failed') {
+            alert("Registration failed.");
             input_un.value = '';
             input_em.value = '';
             input_pw.value = '';
             input_pw_cf.value = '';
-            console.log('Error: ', messageFromServer.message.status);
+        } else {
+            alert("Registration Successful!");
+            input_un.value = '';
+            input_em.value = '';
+            input_pw.value = '';
+            input_pw_cf.value = '';
+            window.location.href = 'index.html';
         }
     });
 });
