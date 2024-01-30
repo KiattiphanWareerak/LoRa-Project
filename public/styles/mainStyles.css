@@ -111,9 +111,6 @@ textarea{
     background-color: #7360ff;
     transition: all .3s ease-in-out;
 }
-.data-content{
-    background-color: #747474;
-}
 
 /* * * * Sidebar Part * * * */
 .sidebar {
@@ -317,7 +314,23 @@ input:checked + .toggle_button-label::before{
 .toggle_button input{
     display: none;
 }
+/* * * * Data display Part * * * */
+.section {
+    width: 100%;
+    display: inline-block; /* Ensure the div only spans the width of the label */
+}
+.section h3 {
+    width: 100%;
+    margin: 5px;
+    color: rgba(75, 140, 255, 255);
+}
 
+.section hr {
+    width: 100%;
+    height: 2px;
+    background-color: rgba(75, 140, 255, 255); /* You can set the color to black or any other color */
+    margin: 5px 0; /* Optional: Add some space between the label and the line */
+}
 /* * * * Table Part * * * */
 .app-name{
     background: #fff;
@@ -496,7 +509,7 @@ tfoot td {
     box-shadow: 0 0 0.8em #26489a;
 }
 .select:hover {
-    background: #323741;
+    background: #9eb0d6;
 }
 .caret {
     width: 0;

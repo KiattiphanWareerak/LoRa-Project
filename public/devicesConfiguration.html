@@ -98,75 +98,76 @@
                 <!-- Tab contents -->
                 <div class="content_box">
                     <div id="Dashboard" class="tab_content">
-                        <div>
-                            <label for="device_Name">Name</label>
-                            <br>
-                            <input type="text" placeholder="Name" id="device_Name" required>
-                        </div>
-                        <div>
-                            <label for="Description">Description</label>
-                            <br>
-                            <textarea name="description" id="Description" cols="30" rows="5"></textarea>
-                        </div>
-                        <div class="display_2_elements">
-                            <div class="left-element">
-                                <label for="devEUI">Device EUI (EUI64)</label>
-                                <div><input type="text" id="devIdInput" class="devEUI" required></div>
-                            </div>
-                            <div class="right-element">
-                                <label for="joinEUI">Join EUI (EUI64)</label>
-                                <div><input type="text" id="joinIdInput" class="joinEUI"></div>
-                            </div>
-                        </div>
-                        <div>
-                            <div>Device-Profile</div>
-                            <div class="dropdown">
-                                <div class="select">
-                                    <span class="selected">Select your device profile</span>
-                                    <div class="caret"></div>
-                                </div>
-                                <ul class="list_menu">
-                                    <li>LoRaWAN 1.0.1</li>
-                                    <li>LoRaWAN 1.0.2</li>
-                                    <li class="active">LoRaWAN 1.0.3</li>
-                                    <li>LoRaWAN 1.1.2</li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="display_2_elements">
-                            <div class="left-element">
-                                <label>Device is disabled</label>
-                                <div class="toggle_button">
-                                    <input type="checkbox" id="device_disabled-check">
-                                    <label for="device_disabled-check" class="toggle_button-label"></Label>
-                                </div>
-                            </div>
-                            <div class="right-element">
-                                <label>Disable frame counter validation</label>
-                                <div class="toggle_button">
-                                    <input type="checkbox" id="frame-counter-validation_disabled-check">
-                                    <label for="frame-counter-validation_disabled-check" class="toggle_button-label"></Label></label>
-                                </div>
-                            </div>
-                        </div>
                     </div>
-
                     <div id="Configuration" class="tab_content">
-                        <div class="data-content">
-                            <div class="device_section">
-                                <div><label for="device_Name">Name:</label></div>
-                                <div><input type="text" id="device_Name" required></div>
-                                <br>
-                                <div><label for="Description">Description:</label></div>
-                                <div><textarea name="description" id="Description" cols="30" rows="5"></textarea></div>
+                        <div class="data-content" id="device-info">
+                            <div class="section">
+                                <h3>Device</h3>
+                                <hr>
                             </div>
-                            <div></div>
-                            <div></div>
+                            <div>
+                                <label for="device_Name">Name</label>
+                                <input type="text" placeholder="Name" id="device_Name" required>
+                            </div>
+                            <div>
+                                <label for="Description">Description</label>
+                                <br>
+                                <textarea name="description" id="Description" cols="30" rows="5"></textarea>
+                            </div>
+                            <div class="display_2_elements">
+                                <div class="left-element">
+                                    <label for="devEUI">Device EUI (EUI64)</label>
+                                    <div><input type="text" id="devIdInput" class="devEUI" required></div>
+                                </div>
+                                <div class="right-element">
+                                    <label for="joinEUI">Join EUI (EUI64)</label>
+                                    <div><input type="text" id="joinIdInput" class="joinEUI"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div>Device-Profile</div>
+                                <div class="dropdown">
+                                    <div class="select">
+                                        <span class="selected">Select your device profile</span>
+                                        <div class="caret"></div>
+                                    </div>
+                                    <ul class="list_menu">
+                                        <li>LoRaWAN 1.0.1</li>
+                                        <li>LoRaWAN 1.0.2</li>
+                                        <li class="active">LoRaWAN 1.0.3</li>
+                                        <li>LoRaWAN 1.1.2</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="display_2_elements">
+                                <div class="left-element">
+                                    <label>Device is disabled</label>
+                                    <div class="toggle_button">
+                                        <input type="checkbox" id="device_disabled-check">
+                                        <label for="device_disabled-check" class="toggle_button-label"></Label>
+                                    </div>
+                                </div>
+                                <div class="right-element">
+                                    <label>Disable frame counter validation</label>
+                                    <div class="toggle_button">
+                                        <input type="checkbox" id="frame-counter-validation_disabled-check">
+                                        <label for="frame-counter-validation_disabled-check" class="toggle_button-label"></Label></label>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="data-content"></div>
-                        <h3>Tags</h3>
-                        <div class="data-content"></div>
-                        <h3>Variables</h3>
+                        <div class="data-content" id="device-tags">
+                            <div class="section">
+                                <h3>Tags</h3>
+                                <hr>
+                            </div>
+                        </div>
+                        <div class="data-content" id="device-variables">
+                            <div class="section">
+                                <h3>Variables</h3>
+                                <hr>
+                            </div>
+                        </div>
                     </div>
 
                     <div id="Queue" class="tab_content">
