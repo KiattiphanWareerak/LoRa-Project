@@ -6,8 +6,51 @@
     box-sizing: border-box;
     font-family: "Poppins", sans-serif;
 }
+/* * * * Display Setting * * * */
 body {
     display: flex;
+}
+.display_2_elements {
+    display: flex;
+    justify-content: space-between; /* Adjust as needed */
+}
+
+.left-element,
+.right-element {
+    width: 48%; /* Adjust the width as needed, leaving some space for margin/padding */
+}
+
+.left-element label,
+.right-element label {
+    display: block;
+    margin-bottom: 5px; /* Adjust as needed */
+}
+
+.left-element input,
+.right-element input {
+    width: 100%; /* Input takes full width of its container */
+    padding: 8px; /* Adjust as needed */
+    box-sizing: border-box;
+    border: 1px solid #ccc; /* Example border style, adjust as needed */
+}
+
+/* Add additional styles if needed */
+
+input{
+    width: 100%;
+    border-radius: 10px;
+    border-right: 10px;
+    margin-bottom: 1.5rem;
+    border: 1px solid #333;
+    padding: 8px;
+}
+textarea{
+    width: 100%;
+    border-radius: 10px;
+    resize: none;
+    margin-bottom: 1.5rem;
+    border: 1px solid #333;
+    padding: 8px;
 }
 
 /* * * * tab swiching Part * * * */
@@ -71,14 +114,6 @@ body {
 .data-content{
     background-color: #747474;
 }
-input{
-    border: 1px solid #333;
-    padding: 8px;
-}
-textarea{
-    border: 1px solid #333;
-    padding: 8px;
-}
 
 /* * * * Sidebar Part * * * */
 .sidebar {
@@ -96,7 +131,7 @@ textarea{
 }
 .sidebar:hover {
     width: 250px;
-    transition: 0.25s;
+    transition: 0.5s;
 }
 .logo {
     height: 80px;
@@ -246,6 +281,43 @@ textarea{
 button:active {
     transform: scale(0.96);
 }
+.toggle_button {
+    width: 100%;
+    height: 100vh;
+    background-color: #fff;
+    display: flex;
+    align-items: baseline;
+    padding-top: 10px;
+    justify-content: left;
+}
+.toggle_button-label {
+    background-color: #d2d2d2;
+    width: 80px;
+    height: 40px;
+    border-radius: 200px;
+    cursor: pointer;
+    position: relative;
+}
+.toggle_button-label::before {
+    position: absolute;
+    content: '';
+    background-color: #fff;
+    width: 30px;
+    height: 30px;
+    border-radius: 30px;
+    margin: 5px;
+    transition: 0.2s;
+}
+input:checked + .toggle_button-label{
+    background-color: green;
+}
+input:checked + .toggle_button-label::before{
+    transform: translateX(40px);
+}
+.toggle_button input{
+    display: none;
+}
+
 /* * * * Table Part * * * */
 .app-name{
     background: #fff;
@@ -401,18 +473,19 @@ tfoot td {
 .dropdown{
     min-width: 15em;
     position: relative;
-    margin: 2em;
+    margin-top: 0.5em;
+    margin-bottom: 2rem;
 }
 .dropdown * {
     box-sizing: border-box;
 }
 .select{
-    background: #2a2f3b;
-    color: #fff;
+    background: transparent;
+    color: black;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border: 2px #2a2f3b solid;
+    border: 1px #2a2f3b solid;
     border-radius: 10px;
     padding: 1em;
     cursor: pointer;
@@ -430,7 +503,7 @@ tfoot td {
     height: 0;
     border-left: 5px solid transparent;
     border-right: 5px solid transparent;
-    border-top: 6px solid #fff;
+    border-top: 6px solid #000000;
     transition: 0.3s;
 }
 .caret {
@@ -439,9 +512,9 @@ tfoot td {
 .list_menu {
     list-style: none;
     padding: 0.2em 0.5em;
-    background: #323741;
-    border: 1px #363a43 solid;
-    box-shadow: 0 0.5em 1em rgba(0 , 0, 0, 0.2);
+    background: #476fbf;
+    border: 1px #e0a184 solid;
+    box-shadow: 0 0.5em 1em rgba(224, 201, 27, 0.2);
     border-radius: 10px;
     color: #9fa5b5;
     position: absolute;
@@ -461,10 +534,10 @@ tfoot td {
     cursor: pointer;
 }
 .list_menu li:hover {
-    background: #2a2d35;
+    background: #d61378;
 }
 .list_menu.active {
-    background: #23242a;
+    background: #33b621;
 }
 .list_menu-open {
     display: block;

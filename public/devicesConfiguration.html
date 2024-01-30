@@ -109,12 +109,14 @@
                             <textarea name="description" id="Description" cols="30" rows="5"></textarea>
                         </div>
                         <div class="display_2_elements">
-                            <label for="devEUI">Device EUI (EUI64)</label>
-                            <label for="joinEUI">Join EUI (EUI64)</label>
-                        </div>
-                        <div class="display_2_elements">
-                            <input type="text" id="devIdInput" class="devEUI" required>
-                            <input type="text" id="joinIdInput" class="joinEUI">
+                            <div class="left-element">
+                                <label for="devEUI">Device EUI (EUI64)</label>
+                                <div><input type="text" id="devIdInput" class="devEUI" required></div>
+                            </div>
+                            <div class="right-element">
+                                <label for="joinEUI">Join EUI (EUI64)</label>
+                                <div><input type="text" id="joinIdInput" class="joinEUI"></div>
+                            </div>
                         </div>
                         <div>
                             <div>Device-Profile</div>
@@ -129,6 +131,22 @@
                                     <li class="active">LoRaWAN 1.0.3</li>
                                     <li>LoRaWAN 1.1.2</li>
                                 </ul>
+                            </div>
+                        </div>
+                        <div class="display_2_elements">
+                            <div class="left-element">
+                                <label>Device is disabled</label>
+                                <div class="toggle_button">
+                                    <input type="checkbox" id="device_disabled-check">
+                                    <label for="device_disabled-check" class="toggle_button-label"></Label>
+                                </div>
+                            </div>
+                            <div class="right-element">
+                                <label>Disable frame counter validation</label>
+                                <div class="toggle_button">
+                                    <input type="checkbox" id="frame-counter-validation_disabled-check">
+                                    <label for="frame-counter-validation_disabled-check" class="toggle_button-label"></Label></label>
+                                </div>
                             </div>
                         </div>
                     </div>
