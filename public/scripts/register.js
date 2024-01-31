@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
             event.preventDefault();
             
             // Check if user-name follows the specified pattern
-            const usernamePattern = /^[A-Z][a-zA-Z_]{2,}$/; // Regex pattern
+            const usernamePattern = /^[a-zA-Z0-9_]{3,}$/; // Regex pattern
             if (!usernamePattern.test(input_un.value)) {
                 alert('Invalid username format. Please use only letters, numbers, or underscores (_) for the username.\nThe username should start with an uppercase letter and be at least 3 characters long.');
                 return; // Stop further execution
