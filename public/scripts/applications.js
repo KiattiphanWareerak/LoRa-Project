@@ -110,19 +110,17 @@ document.addEventListener('DOMContentLoaded', () => {
             displayApplicationsList(messageFromServer.message.data);
             return;
         } 
-        if ( messageFromServer.request === 'addApp' && messageFromServer.message.status === 'success' ) {
+        else if ( messageFromServer.request === 'addApp' && messageFromServer.message.status === 'success' ) {
             alert('Add application has been completed.');
             sendApplicationsListRequest();
             return;
-        } else {
-            alert('Add application failed.');
         }
-        if ( messageFromServer.request === 'delApp' && messageFromServer.message.status === 'success' ) {
+        else if ( messageFromServer.request === 'delApp' && messageFromServer.message.status === 'success' ) {
             alert('Delete application has been completed.');
             sendApplicationsListRequest();
             return;
         } else {
-            alert('Delete application failed.');
+            alert("Error");
         }
     });    
 });
