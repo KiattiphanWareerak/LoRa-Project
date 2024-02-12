@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------// 
-//------------------------------EVENTS---------------------------------// 
+//----------------------------EVENTS ZONE------------------------------// 
 //---------------------------------------------------------------------//
 document.addEventListener('DOMContentLoaded', () => {
-
+    //---------------------------GENERAL ZONE--------------------------//
     const addDeviceButton = document.getElementById('addDeviceButton');
     addDeviceButton.addEventListener("click", (event) => {
         event.preventDefault();
@@ -12,7 +12,10 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log(generate64BitRandom());
     })
 
-    // Display devices
+    //---------------------------SENDER ZONE---------------------------//
+    const socket = new WebSocket('ws://localhost:3001');
+
+    // Display devices list
     const sendDevicesListRequest = () => {
         const message = { request: 'dispDev', message: { 
             status: undefined, 
@@ -21,18 +24,33 @@ document.addEventListener('DOMContentLoaded', () => {
         socket.send(JSON.stringify(message));
     };
 
-    const socket = new WebSocket('ws://localhost:3001');
-
     socket.addEventListener('open', () => {
-        // Display devices event
+        // refresh 
         const currentPath = window.location.pathname;
 
         if (currentPath.includes('devices.html')) {
             sendDevicesListRequest();
         }
 
-        // Application configs button
-        const appConfigButton = document.getElementById("appConfigConfirm");
+        // Application configuration button (GET)
+        const appConfigButton = document.getElementById("appConfigButton");
+
+        const getAppConfig = () => {
+            const req = { request: 'getApp', message: { 
+                status: undefined, 
+                data: undefined 
+            }};
+
+            socket.send(JSON.stringify(req));
+        };
+
+        appConfigButton.addEventListener('click', (event) => {
+            event.preventDefault();
+            getAppConfig();
+        })
+
+        // Application configuration confirm button (POST)
+        const appConfigConfirmButton = document.getElementById("appConfigConfirm");
 
         const appConfigConfirm = () => {
             let appNameInput = document.getElementById('appNameInput');
@@ -61,13 +79,13 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
 
-        appConfigButton.addEventListener('click', (event) => {
+        appConfigConfirmButton.addEventListener('click', (event) => {
             event.preventDefault();
             appConfigConfirm();
         })
 
 
-        // Add device button
+        // Add device confirm button
         const addDevNextButton = document.getElementById("addDevNext");
         const addDevConfirmButton = document.getElementById("addDevConfirm");
         let messageToAddDev;
@@ -110,25 +128,32 @@ document.addEventListener('DOMContentLoaded', () => {
             addDevConfirm();
         })
 
-        // Delete device button
+        // Delete device confirm button
         const delDevButton = document.getElementById('delDevConfirm');
 
         const delDevConfirm = () => {
+            let checkedCount = 0;
             let devIDs = [];
             for (let i = 0; i < document.querySelectorAll("input[type='checkbox']").length; i++) {
                 if (document.querySelectorAll("input[type='checkbox']")[i].checked) {
                     const checkedCheckbox = document.querySelectorAll("input[type='checkbox']")[i];
 
                     const devIDCell = checkedCheckbox.closest("tr").querySelector("td:nth-child(4)");
-              
+
                     if (devIDCell) {
                       const devID = devIDCell.textContent;
                       devIDs.push(devID);
-                    } else {
-                      console.error("appID cell not found");
-                    }
+                    } 
+
+                    checkedCount++;
                 }
             }
+
+            if (checkedCount === 0) {
+                alert("Please select a device to delete.");
+                return;
+            } 
+
             let messageToDelDev = devIDs.map((devID) => ({ dev_id: devID }));
 
             const req = { request: 'delDev', message: {
@@ -146,78 +171,74 @@ document.addEventListener('DOMContentLoaded', () => {
         })
     });
 
+    //-------------------------RECEIVER ZONE-------------------------//
     socket.addEventListener('message', (event) => {
-        try {
-            const messageFromServer = JSON.parse(event.data);
-            console.log('Message from server:', messageFromServer);
+        const messageFromServer = JSON.parse(event.data);
+        console.log('Message from server:', messageFromServer);
 
-            if (messageFromServer.request === 'enterAppId' || messageFromServer.request === 'dispDev' ) {
-                if (messageFromServer.message.status === 'success') {
-                    displayDevicesList(messageFromServer.message.data.devs_list, 
-                        messageFromServer.message.data.app_config);
-                } else {
-                    alert('Request: ' + messageFromServer.request + ', Status: ' + messageFromServer.message.status);
-                }
-            } else if (messageFromServer.request === 'addDev') {
-                if (messageFromServer.message.status === 'success') {
-                    alert('Add device has been completed.');
-                    sendDevicesListRequest();
-                } else {
-                    alert('Request: ' + messageFromServer.request + ', Status: ' + messageFromServer.message.status);
-                }
-            } else if ( messageFromServer.request === 'delDev' ) {
-                if (messageFromServer.message.status === 'success') {
-                    alert('Delete application has been completed.');
-                    sendDevicesListRequest();
-                } else {
-                    alert('Request: ' + messageFromServer.request + ', Status: ' + messageFromServer.message.status);
-                }
-            } else if ( messageFromServer.request === 'appConfig' ) {
-                if (messageFromServer.message.status === 'success') {
-                    alert('Config application has been completed.');
-                    sendDevicesListRequest();
-                } else {
-                    alert('Request: ' + messageFromServer.request + ', Status: ' + messageFromServer.message.status);
-                }
-            } 
-            else {
-                console.log('Error: ', messageFromServer);
+        if (messageFromServer.request === 'enterAppId' || messageFromServer.request === 'dispDev' ) {
+            if (messageFromServer.message.status === 'success') {
+                displatHeaderAndMiddleTitle(messageFromServer.message.data.app_name);
+                displayDevicesList(messageFromServer.message.data.devs_list);
+            } else {
+                alert('Devices list failed.');
             }
-        } catch (error) {
-            console.error('Error parsing JSON:', error);
+        } else if ( messageFromServer.request === 'appConfig' ) {
+            if (messageFromServer.message.status === 'success') {
+                alert('Application has been updated.');
+                
+                sendDevicesListRequest();
+            } else {
+                alert('Update application has been failed.');
+            }
+        } else if (messageFromServer.request === 'addDev') {
+            if (messageFromServer.message.status === 'success') {
+                alert('Add device has been completed.');
+
+                sendDevicesListRequest();
+            } else {
+                alert('Add device has been failed.');
+            }
+        } else if ( messageFromServer.request === 'delDev' ) {
+            if (messageFromServer.message.status === 'success') {
+                alert('Delete application has been completed.');
+
+                sendDevicesListRequest();
+            } else {
+                alert('Delete application has been failed.');
+            }
+        } else if ( messageFromServer.request === 'getApp' ) {
+            if (messageFromServer.message.status === 'success') {
+                displatApplicationConfiguration(messageFromServer.message.data.app_config);
+            } else {
+                alert('Get application has been failed.');
+            }
+        }
+        else {
+            console.log('Error 505.');
         }
     });    
 });
 //---------------------------------------------------------------------// 
-//-----------------------------FUNCTIONS-------------------------------// 
+//---------------------------DISPLAYS ZONE-----------------------------// 
 //---------------------------------------------------------------------// 
-function displayDevicesList(items, appConfig) {
-    let tbody = document.getElementById('data-table');
-
-    tbody.innerHTML = '';
-
+function displatApplicationConfiguration(items) {
     // Application Configuration Modal
     let appNameInput = document.getElementById('appNameInput');
     let descriptionInput = document.getElementById('descriptionInput');
             
-    appNameInput.value = appConfig.application.name;
-    descriptionInput.value = appConfig.application.description;
+    appNameInput.value = items.application.name;
+    descriptionInput.value = items.application.description;
+}
+//---------------------------------------------------------------------//
+function displayDevicesList(items) {
+    // Devices List
+    let tbody = document.getElementById('data-table');
 
-    // Header and Middle title
-    let newH1Element = document.createElement('h1');
-    let newH4Element = document.createElement('h4');
-    newH1Element.textContent = appConfig.application.name;
-    newH4Element.innerHTML = `<a href="applications.html" >Applications</a>
-     > <a>${appConfig.application.name}</a></h4>`;
-    let headerTitleDiv = document.querySelector('.header--title');
-    let locatedDiv = document.querySelector('.located');
-    headerTitleDiv.innerHTML = '';
-    locatedDiv.innerHTML = '';
-    headerTitleDiv.appendChild(newH1Element);
-    locatedDiv.appendChild(newH4Element);
+    tbody.innerHTML = '';
 
     let count = 0;
-    items.forEach(function(item, index) {
+    items.resultList.forEach(function(item, index) {
         var row = document.createElement('tr');
         
         // Checkbox column
@@ -238,14 +259,15 @@ function displayDevicesList(items, appConfig) {
         var devNameCell = document.createElement('td');
         var devNameLink = document.createElement('a');
         devNameLink.href = 'javascript:void(0)';
-        devNameLink.setAttribute('dev-id', item.dev_id);
+        // Add click event listener to DevNameLink
+        devNameLink.setAttribute('dev-id', item.devEui);
         devNameLink.addEventListener('click', function(event) {
             event.preventDefault();
             const socket = new WebSocket('ws://localhost:3001');
 
             socket.addEventListener('open', () => {
                 let devId = this.getAttribute('dev-id');
-                let devName = item.dev_name;
+                let devName = item.name;
                 
                 const req = { request: 'enterDevId', 
                     message: { status: undefined,
@@ -256,18 +278,18 @@ function displayDevicesList(items, appConfig) {
                 window.location.href = 'devicesConfiguration.html';
             });
         });
-        devNameLink.textContent = item.dev_name;
+        devNameLink.textContent = item.name;
         devNameCell.appendChild(devNameLink);
         row.appendChild(devNameCell);
         
         // Deivce ID column
         var devIdCell = document.createElement('td');
-        devIdCell.textContent = item.dev_id;
+        devIdCell.textContent = item.devEui;
         row.appendChild(devIdCell);
         
         // Last Seen column
         var lastSeenCell = document.createElement('td');
-        lastSeenCell.textContent = formatLastSeen(item.dev_lastSeen);
+        lastSeenCell.textContent = formatLastSeen(item.lastSeenAt);
         row.appendChild(lastSeenCell);
         
         // Append the row to the tbody
@@ -275,15 +297,32 @@ function displayDevicesList(items, appConfig) {
     });
 }
 //---------------------------------------------------------------------//
-function formatLastSeen(items) {
-if (!items) {
-  return 'never';
+function displatHeaderAndMiddleTitle(items) {
+    // Header and Middle title
+    let newH1Element = document.createElement('h1');
+    let newH4Element = document.createElement('h4');
+    newH1Element.textContent = items;
+    newH4Element.innerHTML = `<a href="applications.html" >Applications</a>
+     > <a>${items}</a></h4>`;
+    let headerTitleDiv = document.querySelector('.header--title');
+    let locatedDiv = document.querySelector('.located');
+    headerTitleDiv.innerHTML = '';
+    locatedDiv.innerHTML = '';
+    headerTitleDiv.appendChild(newH1Element);
+    locatedDiv.appendChild(newH4Element);
 }
-  
-var lastSeenDate = new Date(items);
-var formattedDate = lastSeenDate.toLocaleTimeString('en-US', { hour12: false }) + ' ' +
-                    lastSeenDate.toLocaleDateString('en-US');
-return formattedDate;
+//---------------------------------------------------------------------// 
+//---------------------------FUNCTIONS ZONE----------------------------// 
+//---------------------------------------------------------------------// 
+function formatLastSeen(lastSeen) {
+    if (!lastSeen) {
+    return 'never';
+    }
+    
+    var lastSeenDate = new Date(lastSeen.seconds * 1000); 
+    var formattedDate = lastSeenDate.toLocaleTimeString('en-US', { hour12: false }) + ' ' +
+                        lastSeenDate.toLocaleDateString('en-US');
+    return formattedDate;
 }
 //---------------------------------------------------------------------//
 const generate128BitRandom = () => {

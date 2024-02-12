@@ -1,31 +1,38 @@
-// eventStreaming.js
 const grpc = require("@grpc/grpc-js");
-const internal_pb = require("@thethingsnetwork/api/v4/internal");
+const internal_grpc = require("@chirpstack/chirpstack-api/api/internal_grpc_pb");
+const internal_pb = require("@chirpstack/chirpstack-api/api/internal_pb");
 
-function streamDeviceEvents(devEui, callbackFunc) {
-  const internalService = new grpc.Client({
-    target: "https://api.thethingsnetwork.org/v4/internal",
-  });
+// This must point to the ChirpStack API interface.
+const serverChirpStack = "202.28.95.234:8080";
 
-  const metadata = new Metadata();
-  metadata.set("authorization", "Bearer " + globalApiToken);
+// Create the client for the Service.
+const internalService = new internal_grpc.InternalServiceClient(
+  serverChirpStack,
+  grpc.credentials.createInsecure(),
+);
 
-  const createReq = new internal_pb.StreamDeviceEventsRequest();
-  createReq.setDevEui(devEui);
+const netWorkApiToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjaGlycHN0YWNrIiwiaXNzIjoiY2hpcnBzdGFjayIsInN1YiI6Ijc3M2Y5OGQwLTk5YTMtNDVjMS1hY2JhLThhOTQzYzdiODFiZiIsInR5cCI6ImtleSJ9.FiCRWLwVlG9mm5_KqUm52afDzMZRJ5qc4jQJz4waxZI";
+try {
+  // Create the Metadata object.
+  const metadata = new grpc.Metadata();
+  metadata.set("authorization", "Bearer " + netWorkApiToken);
 
-  let stream;
   return new Promise((resolve, reject) => {
-    stream = internalService.streamDeviceEvents(createReq, metadata, (err, resp) => {
-      if (err) {
-        reject(err);
+    // Create a request to create application.
+    const createReq = new internal_pb.StreamDeviceEventsRequest();
+    createReq.
+    createReq.setDevEui("24c5d9e6325820f4");
+
+    internalService.streamDeviceEvents(createReq, metadata, (err, resp) => {
+      if (err !== null) {
+        console.log(err.details);
         return;
       }
-      callbackFunc(resp);
-    });
-    resolve(stream);
-  });
-}
+      console.log('Stream device events has been compleled.');
 
-module.exports = {
-  streamDeviceEvents,
-};
+      console.log(resp);
+    });
+  });
+} catch (error) {
+  console.error(error);
+}

@@ -1,7 +1,8 @@
 //---------------------------------------------------------------------// 
-//------------------------------EVENTS---------------------------------// 
-//---------------------------------------------------------------------// 
+//----------------------------EVENTS ZONE------------------------------// 
+//---------------------------------------------------------------------//
 document.addEventListener('DOMContentLoaded', () => {
+    //---------------------------SENDER ZONE---------------------------//
     const socket = new WebSocket('ws://localhost:3001');
 
     const sendApplicationsListRequest = () => {
@@ -101,53 +102,46 @@ document.addEventListener('DOMContentLoaded', () => {
             deleteForm();
         })
     });
-
+    //-------------------------RECEIVER ZONE-------------------------//
     socket.addEventListener('message', (event) => {
         const messageFromServer = JSON.parse(event.data);
         console.log('Message from server:', messageFromServer);
 
-        if ( messageFromServer.request === 'dispApp' && messageFromServer.message.status === 'success' ) {
-            displayApplicationsList(messageFromServer.message.data);
-            return;
-        } 
-        if ( messageFromServer.request === 'addApp' && messageFromServer.message.status === 'success' ) {
-            alert('Add application has been completed.');
-            sendApplicationsListRequest();
-            return;
+        if ( messageFromServer.request === 'dispApp' ) {
+            if ( messageFromServer.message.status === 'success' ) {
+                displatHeaderAndMiddleTitle();
+                displayApplicationsList(messageFromServer.message.data);
+            } else {
+                alert("Application List failed.");
+            }
+        } else if ( messageFromServer.request === 'addApp' ) {
+            if ( messageFromServer.message.status === 'success' ) {
+                alert('Add application has been completed.');
+                sendApplicationsListRequest();
+            } else {
+                alert('Add application failed.');
+            }
+        } else if ( messageFromServer.request === 'delApp' ) {
+            if ( messageFromServer.message.status === 'success' ) {
+                alert('Delete application has been completed.');
+                sendApplicationsListRequest();
+            } else {
+                alert('Delete application failed.');
+            }
         } else {
-            alert('Add application failed.');
-        }
-        if ( messageFromServer.request === 'delApp' && messageFromServer.message.status === 'success' ) {
-            alert('Delete application has been completed.');
-            sendApplicationsListRequest();
-            return;
-        } else {
-            alert('Delete application failed.');
+            alert("Error 505.");
         }
     });    
 });
 //---------------------------------------------------------------------// 
-//-----------------------------FUNCTIONS-------------------------------// 
+//---------------------------DISPLAYS ZONE-----------------------------// 
 //---------------------------------------------------------------------// 
 function displayApplicationsList(items) {
     let tbody = document.getElementById('data-table');
 
     tbody.innerHTML = '';
-
-    // Header and Middle title
-    let newH1Element = document.createElement('h1');
-    let newH4Element = document.createElement('h4');
-    newH1Element.textContent = 'Applications';
-    newH4Element.innerHTML = `<a href="applications.html" >Applications</a> `;
-    let headerTitleDiv = document.querySelector('.header--title');
-    let locatedDiv = document.querySelector('.located');
-    headerTitleDiv.innerHTML = '';
-    locatedDiv.innerHTML = '';
-    headerTitleDiv.appendChild(newH1Element);
-    locatedDiv.appendChild(newH4Element);
     
     let count = 0;
-    // Loop through the items and append rows to the tbody
     items.app_list.resultList.forEach(function(item, index) {
         var row = document.createElement('tr');
 
@@ -207,3 +201,17 @@ function displayApplicationsList(items) {
     });
 }
 //---------------------------------------------------------------------//
+function displatHeaderAndMiddleTitle() {
+    // Header and Middle title
+    let newH1Element = document.createElement('h1');
+    let newH4Element = document.createElement('h4');
+    newH1Element.textContent = 'Applications';
+    newH4Element.innerHTML = `<a href="applications.html" >Applications</a> `;
+    let headerTitleDiv = document.querySelector('.header--title');
+    let locatedDiv = document.querySelector('.located');
+    headerTitleDiv.innerHTML = '';
+    locatedDiv.innerHTML = '';
+    headerTitleDiv.appendChild(newH1Element);
+    locatedDiv.appendChild(newH4Element);
+}
+//---------------------------------------------------------------------// 

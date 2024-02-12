@@ -1,7 +1,8 @@
 //---------------------------------------------------------------------// 
-//------------------------------EVENTS---------------------------------// 
+//----------------------------EVENTS ZONE------------------------------// 
 //---------------------------------------------------------------------//
 document.addEventListener('DOMContentLoaded', () => {
+    //---------------------------SENDER ZONE---------------------------//
     const socket = new WebSocket('ws://localhost:3001');
 
     const registerForm = document.getElementById('registration-form');
@@ -19,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Check if user-name follows the specified pattern
             const usernamePattern = /^[a-zA-Z0-9_]{3,}$/; // Regex pattern
             if (!usernamePattern.test(input_un.value)) {
-                alert('Invalid username format. Please use only letters, numbers, or underscores (_) for the username.\nThe username should start with an uppercase letter and be at least 3 characters long.');
+                alert('Invalid username format. Please use only letters, numbers, underscores (_) and be at least 3 characters long.');
                 return; // Stop further execution
             } 
 
@@ -40,24 +41,28 @@ document.addEventListener('DOMContentLoaded', () => {
             socket.send(JSON.stringify(messageToServer));
         });
     });
-
+    //-------------------------RECEIVER ZONE-------------------------//
     socket.addEventListener('message', (event) => {
         const messageFromServer = JSON.parse(event.data);
         console.log('Message from server:', messageFromServer);
 
-        if (messageFromServer.message.status === 'failed') {
-            alert("Registration failed.");
-            input_un.value = '';
-            input_em.value = '';
-            input_pw.value = '';
-            input_pw_cf.value = '';
+        if (messageFromServer.request === 'register') {
+            if (messageFromServer.message.status === 'failed') {
+                alert("Registration failed.");
+                input_un.value = '';
+                input_em.value = '';
+                input_pw.value = '';
+                input_pw_cf.value = '';
+            } else {
+                alert("Registration Successful!");
+                input_un.value = '';
+                input_em.value = '';
+                input_pw.value = '';
+                input_pw_cf.value = '';
+                window.location.href = 'index.html';
+            }
         } else {
-            alert("Registration Successful!");
-            input_un.value = '';
-            input_em.value = '';
-            input_pw.value = '';
-            input_pw_cf.value = '';
-            window.location.href = 'index.html';
+            alert("Error 505.");
         }
     });
 });
