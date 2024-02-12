@@ -107,6 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const messageFromServer = JSON.parse(event.data);
         console.log('Message from server:', messageFromServer);
 
+<<<<<<< HEAD
         if ( messageFromServer.request === 'dispApp' ) {
             if ( messageFromServer.message.status === 'success' ) {
                 displatHeaderAndMiddleTitle();
@@ -130,6 +131,23 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } else {
             alert("Error 505.");
+=======
+        if ( messageFromServer.request === 'dispApp' && messageFromServer.message.status === 'success' ) {
+            displayApplicationsList(messageFromServer.message.data);
+            return;
+        } 
+        else if ( messageFromServer.request === 'addApp' && messageFromServer.message.status === 'success' ) {
+            alert('Add application has been completed.');
+            sendApplicationsListRequest();
+            return;
+        }
+        else if ( messageFromServer.request === 'delApp' && messageFromServer.message.status === 'success' ) {
+            alert('Delete application has been completed.');
+            sendApplicationsListRequest();
+            return;
+        } else {
+            alert("Error");
+>>>>>>> 56358410dab45be955c7fcfc4a0dcbf714bbc189
         }
     });    
 });
