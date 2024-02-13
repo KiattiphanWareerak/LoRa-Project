@@ -27,9 +27,9 @@
 
         if (messageFromServer.request === 'enterDevId' || messageFromServer.request === 'dispDashDev') {
             if (messageFromServer.message.status === 'success') {
+                displayHeaderAndMiddleTitle(messageFromServer.message.data.dev_dash, messageFromServer.message.data.app_name);
                 displayConfigurationsDevice(messageFromServer.message.data.dev_dash);
                 displayDashboardDevice(messageFromServer.message.data.dev_dash, messageFromServer.message.data.dev_linlMetrics);
-                displayHeaderAndMiddleTitle(messageFromServer.message.data.dev_dash, messageFromServer.message.data.app_name);
                 displayQueuesDevice(messageFromServer.message.data.dev_dash);
             } else {
                 alert('Get Device has been failed.');

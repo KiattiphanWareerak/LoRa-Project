@@ -122,6 +122,16 @@ async function myApp(values) {
 
                     resolve({ request: 'dispDevProfiles', message: { status: 'failed', data: undefined }});
                 }
+            } else if ( values.request === 'dispMainDash' ) {
+                const respFromMainDash = await chirpStackServices.getMainDashboard(globalTenantId, netWorkApiToken);
+
+                if (respFromMainDash.request === 'dispMainDash' && respFromMainDash.message.status === 'success') {
+                    resolve({ request: 'dispMainDash', message: { status: 'success', data: respFromMainDash.message.data }});
+                } else {
+                    console.log(respFromMainDash);
+
+                    resolve({ request: 'dispMainDash', message: { status: 'failed', data: undefined }});
+                }
             } else if (values.request === 'enterAppId') {
                 const respFromEnterAppId = await chirpStackServices.enterApplicationRequest(values.message.data, globalUserToken);
 
@@ -151,8 +161,7 @@ async function myApp(values) {
 
                     resolve({ request: 'enterDevId', message: { status: 'failed', data: undefined }});
                 }
-            } 
-            else if (values.request === 'getApp') {
+            } else if (values.request === 'getApp') {
                 const respFromGetApp = await chirpStackServices.getApplicationRequest(globalAppId, globalUserToken);
             
                 if ( respFromGetApp.request === 'getApp' && respFromGetApp.message.status === 'success') {
@@ -163,8 +172,7 @@ async function myApp(values) {
 
                     resolve({ request: 'getApp', message: { status: 'failed', data: undefined }});
                 }
-            }
-            else if ( values.request === 'login' ) {
+            } else if ( values.request === 'login' ) {
                 const respFromLoginUser = await chirpStackServices.loginUserRequest(values.message.data, netWorkApiToken);
 
                 if ( respFromLoginUser.request === 'loginUser' && respFromLoginUser.message.status === 'success' ) {
@@ -195,8 +203,7 @@ async function myApp(values) {
 
                     resolve({ request: 'login', message: { status: 'failed', data: undefined }});
                 }
-            }
-            else if ( values.request === 'register' ) {
+            } else if ( values.request === 'register' ) {
                 const respFromCreateUser = await chirpStackServices.createUser(values.message.data, netWorkApiToken);
 
                 if ( respFromCreateUser.request === 'createUser' && respFromCreateUser.message.status === 'success' ) {

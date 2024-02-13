@@ -744,6 +744,73 @@ async function getDeviceProfile(values, apiToken) {
   }
 }
 //---------------------------------------------------------------------//
+//---------------------------------------------------------------------//
+async function getDevicesSummaryRequest(tenantId, apiToken) {
+  try {
+    // Create the Metadata object.
+    const metadata = new grpc.Metadata();
+    metadata.set("authorization", "Bearer " + apiToken);
+
+    return new Promise((resolve, reject) => {
+      // Create a request to list devices
+      const createReq = new internal_pb.GetDevicesSummaryRequest();
+      createReq.setTenantId(tenantId);
+
+      internalService.getDevicesSummary(createReq, metadata, (err, resp) => {
+        if (err !== null) {
+          console.log(err.details);
+          resolve({ request: 'devsSummary', message: { 
+            status: 'failed', 
+            data: err.message }
+          });
+          return;
+        }
+        console.log('Devices summary request has been completed.');
+
+        resolve({ request: 'devsSummary', message: { 
+          status: 'success', 
+          data: resp.toObject() }
+        });
+      });
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+//---------------------------------------------------------------------//
+async function getGatewaysSummaryRequest(tenantId, apiToken) {
+  try {
+    // Create the Metadata object.
+    const metadata = new grpc.Metadata();
+    metadata.set("authorization", "Bearer " + apiToken);
+
+    return new Promise((resolve, reject) => {
+      // Create a request to list devices
+      const createReq = new internal_pb.GetGatewaysSummaryRequest();
+      createReq.setTenantId(tenantId);
+
+      internalService.getGatewaysSummary(createReq, metadata, (err, resp) => {
+        if (err !== null) {
+          console.log(err.details);
+          resolve({ request: 'gatewaysSummary', message: { 
+            status: 'failed', 
+            data: err.message }
+          });
+          return;
+        }
+        console.log('Gateway summary request has been completed.');
+
+        resolve({ request: 'gatewaysSummary', message: { 
+          status: 'success', 
+          data: resp.toObject() }
+        });
+      });
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+//---------------------------------------------------------------------//
 async function getLinkMetricsRequest(values, apiToken) { 
   try {
     // Create the Metadata object.
@@ -794,6 +861,40 @@ async function getLinkMetricsRequest(values, apiToken) {
   }
 }
 //---------------------------------------------------------------------//
+async function getMainDashboard(tenantId, apiToken) { 
+  try {
+    let data = {};
+
+    return new Promise(async (resolve, reject) => {
+      const respFromAppsList = await applicationsListRequest(tenantId, apiToken);
+      data.apps_list = respFromAppsList.message.data;
+
+      let index = 0;
+      for (const app of respFromAppsList.message.data.resultList) {
+        const respFromDevList = await devicesListRequest(app.id, apiToken);
+
+        data.apps_list.resultList[index].totalCount_devs = respFromDevList.message.data.devs_list.totalCount;
+        index++;
+      }
+
+      const respFromGatewayList = await gatewayListRequest("52f14cd4-c6f1-4fbd-8f87-4025e1d49242", apiToken);
+      data.gateways_list = respFromGatewayList.message.data;
+
+      const respFromGetewaysSummary = await getGatewaysSummaryRequest("52f14cd4-c6f1-4fbd-8f87-4025e1d49242", apiToken);
+      const respFromDevicesSummary = await getDevicesSummaryRequest(tenantId, apiToken);
+      data.geteways_summary = respFromGetewaysSummary.message.data;
+      data.devs_summary = respFromDevicesSummary.message.data;
+      
+      resolve({ request: 'dispMainDash', message: { 
+        status: 'success', 
+        data: data}
+      });
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+//---------------------------------------------------------------------//
 async function getQueueItems(values, apiToken) { 
   try {
     // Create the Metadata object.
@@ -814,6 +915,40 @@ async function getQueueItems(values, apiToken) {
         console.log('Get Queue Items has been completed.');
 
         resolve(resp.toObject());
+      });
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+//---------------------------------------------------------------------//
+async function gatewayListRequest(tenantId, apiToken) {
+  try {
+    // Create the Metadata object.
+    const metadata = new grpc.Metadata();
+    metadata.set("authorization", "Bearer " + apiToken);
+
+    return new Promise((resolve, reject) => {
+      // Create a request to list devices
+      const createReq = new gateway_pb.ListGatewaysRequest();
+      createReq.setLimit(99);
+      createReq.setTenantId(tenantId);
+
+      gatewayService.list(createReq, metadata, (err, resp) => {
+        if (err !== null) {
+          console.log(err.details);
+          resolve({ request: 'gatewayList', message: { 
+            status: 'failed', 
+            data: err.message }
+          });
+          return;
+        }
+        console.log('Gateway list request has been completed.');
+
+        resolve({ request: 'gatewayList', message: { 
+          status: 'success', 
+          data: resp.toObject() }
+        });
       });
     });
   } catch (error) {
@@ -918,6 +1053,7 @@ module.exports = {
   enterApplicationRequest,
   enterDeviceRequest,
   getApplicationRequest,
+  getMainDashboard,
   loginUserRequest,
   profileUserRequest,
 };
