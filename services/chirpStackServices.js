@@ -588,7 +588,7 @@ async function enterDeviceRequest(values, apiToken, tenantId, appName) {
       const respGetDeviceProfile = await getDeviceProfile(tenantId, apiToken);
       const respGetQueueItems = await getQueueItems(values.dev_id, apiToken);
 
-      data.dev_linlMetrics = respGetLinkMetric;
+      data.dev_linkMetrics = respGetLinkMetric;
       data.dev_config = respGetDevConfig;
       data.dev_key = respGetDevKey;
       data.dev_activation = respGetActivation;
