@@ -28,7 +28,7 @@
         if (messageFromServer.request === 'enterDevId' || messageFromServer.request === 'dispDashDev') {
             if (messageFromServer.message.status === 'success') {
                 displayConfigurationsDevice(messageFromServer.message.data.dev_dash);
-                displayDashboardDevice(messageFromServer.message.data.dev_dash);
+                displayDashboardDevice(messageFromServer.message.data.dev_dash, messageFromServer.message.data.dev_linlMetrics);
                 displayHeaderAndMiddleTitle(messageFromServer.message.data.dev_dash, messageFromServer.message.data.app_name);
                 displayQueuesDevice(messageFromServer.message.data.dev_dash);
             } else {
@@ -51,9 +51,74 @@ function displayConfigurationsDevice(items) {
 }
 //---------------------------------------------------------------------//
 function displayDashboardDevice(items) {
-    // Dashboard tab
+    // Check if dev_linlMetrics is defined
+    if (items.dev_linlMetrics) {
+        const received_Data = items.dev_linlMetrics.rxPackets;
+        const RSSI_Data = items.dev_linlMetrics.gwRssi;
+        const SNR_Data = items.dev_linlMetrics.gwSnr;
+        const receivedPerfrequency_Data = items.dev_linlMetrics.rxPacketsPerFreq;
+        const receivedPerDR_Data = items.dev_linlMetrics.rxPacketsPerDr;
+        const Errors_Data = items.dev_linlMetrics.errors;
 
+        // Now you can proceed with your chart display logic
+        // This ensures that the code inside this block won't run if dev_linlMetrics is undefined
+
+        // Call the displayChartData function with the appropriate data
+        displayChartData(received_Data, 'receivedChart', 'Received Data', 'rx_count');
+        displayChartData(RSSI_Data, 'rssiChart', 'RSSI', 'rssi_strength');
+        displayChartData(SNR_Data, 'snrChart', 'SNR', 'snr_strength');
+        displayChartData(receivedPerfrequency_Data, 'receivedPerFreqChart', 'Received per Frequency', 'rx_count_per_freq');
+        displayChartData(receivedPerDR_Data, 'receivedPerDRChart', 'Received per Data Rate', 'rx_count_per_dr');
+        displayChartData(Errors_Data, 'errorsChart', 'Errors', 'error_count');
+    } else {
+        console.error("dev_linlMetrics is undefined. Cannot display dashboard data.");
+        // Optionally, you can handle this case by displaying an error message or taking other actions.
+    }
 }
+
+
+function displayChartData(data, chartId, chartLabel, datasetLabel) {
+    // Extract timestamps and data from the received data
+    const timestamps = data.timestampsList.map(timestamp => timestamp.seconds);
+    const dataList = data.datasetsList[0].dataList;
+
+    // Calculate the maximum value in the data list
+    const maxDataValue = Math.max(...dataList);
+
+    // Create a context for the canvas
+    const ctx = document.getElementById(chartId).getContext('2d');
+
+    // Create a line chart using Chart.js
+    const chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: timestamps,
+            datasets: [{
+                label: datasetLabel,
+                data: dataList,
+                fill: false,
+                borderColor: 'rgba(75, 192, 192, 1)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    type: 'linear',
+                    position: 'left',
+                    max: maxDataValue * 1.1, // Set the maximum value to 10% higher than the maximum data value
+                    beginAtZero: true // Start the scale at zero
+                },
+                x: {
+                    type: 'linear',
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+}
+
+
 //---------------------------------------------------------------------//
 function displayHeaderAndMiddleTitle(items, appName) {
     // Header and Middle title
