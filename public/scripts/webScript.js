@@ -15,59 +15,6 @@ document.addEventListener('DOMContentLoaded', function () {
         // If no stored active tab index, default to the "Dashboard" tab
         document.querySelector('.tab_button.active').click();
     }
-
-    const data = {
-        name: 'Received',
-        timestampsList: [
-          { seconds: 1693501200, nanos: 0 },
-          { seconds: 1696093200, nanos: 0 },
-          { seconds: 1698771600, nanos: 0 },
-          { seconds: 1701363600, nanos: 0 },
-          { seconds: 1704042000, nanos: 0 }
-        ],
-        datasetsList: [{ label: 'rx_count', dataList: [1, 1821, 0, 0, 0] }],
-        kind: 1
-      };
-      
-      // Extract timestamps and data from the received data
-      const timestamps = data.timestampsList.map(timestamp => timestamp.seconds);
-      const dataList = data.datasetsList[0].dataList;
-      
-      // Calculate the maximum value in the data list
-      const maxDataValue = Math.max(...dataList);
-      
-      // Create a context for the canvas
-      const ctx = document.getElementById('receivedChart').getContext('2d');
-      
-      // Create a line chart using Chart.js
-      const receivedGraph = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: timestamps,
-          datasets: [{
-            label: data.datasetsList[0].label,
-            data: dataList,
-            fill: false,
-            borderColor: 'rgba(75, 192, 192, 1)',
-            tension: 0.1
-          }]
-        },
-        options: {
-            scales: {
-              y: {
-                type: 'linear',
-                position: 'left',
-                max: Math.max(...dataList) * 1.1, // Set the maximum value to 10% higher than the maximum data value
-                beginAtZero: true // Start the scale at zero
-              },
-              x: {
-                type: 'linear',
-                position: 'bottom'
-              }
-            }
-          }
-          
-      });      
 });
 
 function opentab(evt, tabName) {

@@ -110,10 +110,22 @@
                                 <canvas id="rssiChart"></canvas>
                             </div>
                 
-                            <div class="graph-data" id="SNR">SNR</div>
-                            <div class="graph-data" id="Recieved/frequency">Recieved/frequency</div>
-                            <div class="graph-data" id="Recieved/DR">Recieved/DR</div>
-                            <div class="graph-data" id="Errors">Errors</div>
+                            <div class="graph-data" id="SNR">
+                                SNR
+                                <canvas id="snrChart"></canvas>
+                            </div>
+                            <div class="graph-data" id="Recieved/frequency">
+                                Recieved/frequency
+                                <canvas id="receivedPerFreqChart"></canvas>
+                            </div>
+                            <div class="graph-data" id="Recieved/DR">
+                                Recieved/DR
+                                <canvas id="receivedPerDRChart"></canvas>
+                            </div>
+                            <div class="graph-data" id="Errors">
+                                Errors
+                                <canvas id="errorsChart"></canvas>
+                            </div>
                         </div>
                     </div>
                     <div id="Configuration" class="tab_content">
@@ -205,6 +217,6 @@
     </div>
 </body>
 <!-- Scripts -->
-<script src="scripts/webScript.js"></script>
 <script src="scripts/devicesConfiguration.js"></script>
+<script src="scripts/webScript.js"></script>
 </html>
