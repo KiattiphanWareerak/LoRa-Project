@@ -11,27 +11,40 @@ const internalService = new internal_grpc.InternalServiceClient(
   grpc.credentials.createInsecure(),
 );
 
+const devEui = "24c5d9e6325820f4";
 const netWorkApiToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjaGlycHN0YWNrIiwiaXNzIjoiY2hpcnBzdGFjayIsInN1YiI6Ijc3M2Y5OGQwLTk5YTMtNDVjMS1hY2JhLThhOTQzYzdiODFiZiIsInR5cCI6ImtleSJ9.FiCRWLwVlG9mm5_KqUm52afDzMZRJ5qc4jQJz4waxZI";
+
+let eventCount = 0;
 try {
   // Create the Metadata object.
   const metadata = new grpc.Metadata();
   metadata.set("authorization", "Bearer " + netWorkApiToken);
 
-  return new Promise((resolve, reject) => {
-    // Create a request to create application.
-    const createReq = new internal_pb.StreamDeviceEventsRequest();
-    createReq.
-    createReq.setDevEui("24c5d9e6325820f4");
+  const streamDeviceEventsRequest = new internal_pb.StreamDeviceEventsRequest();
+  streamDeviceEventsRequest.setDevEui(devEui);
 
-    internalService.streamDeviceEvents(createReq, metadata, (err, resp) => {
-      if (err !== null) {
-        console.log(err.details);
-        return;
+  console.log("Streaming device events for:", devEui);
+
+  const stream = internalService.streamDeviceEvents(streamDeviceEventsRequest, metadata);
+
+  stream.on("data", (response) => {
+      console.log("Received device event:", response);
+      // Process the device event (e.g., store in database, send notification)
+
+      eventCount++;
+
+      // Stop the stream after receiving 10 events
+      if (eventCount === 10) {
+          stream.cancel();
       }
-      console.log('Stream device events has been compleled.');
+  });
 
-      console.log(resp);
-    });
+  stream.on("error", (error) => {
+      console.error("Error streaming device events:", error.details);
+  });
+
+  stream.on("end", () => {
+      console.log("Device event stream ended.");
   });
 } catch (error) {
   console.error(error);

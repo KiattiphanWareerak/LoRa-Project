@@ -27,7 +27,10 @@
 
         if (messageFromServer.request === 'enterDevId' || messageFromServer.request === 'dispDashDev') {
             if (messageFromServer.message.status === 'success') {
-                displayDashboardDevice(messageFromServer.message.data.dev_dash, messageFromServer.message.data.app_name);
+                displayConfigurationsDevice(messageFromServer.message.data.dev_dash);
+                displayDashboardDevice(messageFromServer.message.data.dev_dash);
+                displayHeaderAndMiddleTitle(messageFromServer.message.data.dev_dash, messageFromServer.message.data.app_name);
+                displayQueuesDevice(messageFromServer.message.data.dev_dash);
             } else {
                 alert('Get Device has been failed.');
             }
@@ -39,27 +42,20 @@
 });
 //---------------------------------------------------------------------// 
 //---------------------------DISPLAYS ZONE-----------------------------// 
-//---------------------------------------------------------------------// 
-function displayDashboardDevice(values, appName) {
-    // tbody.innerHTML = '';
-
-    displatHeaderAndMiddleTitle(values, appName);
-
-    // Dashboard tab
-
-    // Configuration tab
-    let dasd = document.getElementById("Description");
-    dasd.textContent = values.dev_config.device.description;
-
-    // Queue tab
-
-    // Events tab
-
-    // LoRaWAN frame tab
+//---------------------------------------------------------------------//
+function displayConfigurationsDevice(items) {
+    // Configurations tab
+    let deviceName = document.getElementById("device_Name");
+    deviceName.value = items.dev_config.device.name;
 
 }
 //---------------------------------------------------------------------//
-function displatHeaderAndMiddleTitle(items, appName) {
+function displayDashboardDevice(items) {
+    // Dashboard tab
+
+}
+//---------------------------------------------------------------------//
+function displayHeaderAndMiddleTitle(items, appName) {
     // Header and Middle title
     let newH1Element = document.createElement('h1');
     let newH4Element = document.createElement('h4');
@@ -74,4 +70,9 @@ function displatHeaderAndMiddleTitle(items, appName) {
     headerTitleDiv.appendChild(newH1Element);
     locatedDiv.appendChild(newH4Element);
 }
-//---------------------------------------------------------------------// 
+//---------------------------------------------------------------------//
+function displayQueuesDevice(items) {
+    // Queues tab
+
+}
+//---------------------------------------------------------------------//
