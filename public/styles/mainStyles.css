@@ -620,6 +620,7 @@ tfoot td {
 }
 
 .graph-data {
+    display: block;
     width: calc(50% - 20px); /* Adjust as needed */
     margin: 10px;
     padding: 20px;

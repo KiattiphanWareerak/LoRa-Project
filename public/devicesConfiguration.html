@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Device Configuration</title>
+    <!-- Include Chart.js library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <!-- External stylesheets -->
     <link rel="stylesheet" href="styles/mainStyles.css" />
@@ -99,8 +101,15 @@
                 <div class="content_box">
                     <div id="Dashboard" class="tab_content">
                         <div class="graph-display">
-                            <div class="graph-data" id="Recieved">Recieved</div>
-                            <div class="graph-data" id="RSSI">RSSI</div>
+                            <div class="graph-data" id="Recieved">
+                                Recieved
+                                <canvas id="receivedChart"></canvas>
+                            </div>
+                            <div class="graph-data" id="RSSI">
+                                RSSI
+                                <canvas id="rssiChart"></canvas>
+                            </div>
+                
                             <div class="graph-data" id="SNR">SNR</div>
                             <div class="graph-data" id="Recieved/frequency">Recieved/frequency</div>
                             <div class="graph-data" id="Recieved/DR">Recieved/DR</div>
