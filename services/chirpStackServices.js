@@ -744,7 +744,6 @@ async function getDeviceProfile(values, apiToken) {
   }
 }
 //---------------------------------------------------------------------//
-//---------------------------------------------------------------------//
 async function getDevicesSummaryRequest(tenantId, apiToken) {
   try {
     // Create the Metadata object.
