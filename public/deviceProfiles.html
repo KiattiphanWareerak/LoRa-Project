@@ -34,18 +34,11 @@
                     <span>Application</span>
                 </a>
             </li>
-            <!-- Account Setting link (active) -->
+            <!-- Tutorial link -->
             <li>
-                <a href="settingPage.html">
-                    <i class="fas fa-user"></i>
-                    <span>Account Setting</span>
-                </a>
-            </li>
-            <!-- FAQ link -->
-            <li>
-                <a href="faqsPage.html">
+                <a href="tutorialPage.html">
                     <i class="fas fa-question-circle"></i>
-                    <span>FAQ</span>
+                    <span>Tutorial</span>
                 </a>
             </li>
             <!-- Logout link -->
@@ -79,17 +72,12 @@
                 <!-- Add more breadcrumb items if needed -->
             </div>
             <!-- Buttons for application management -->
-            <div class="button-group">
-                <button class="button-add" id="addDeviceButton" onclick="openModal('deviceProfile_add')">Add Device-Profile</button>
-                <button class="button-del" onclick="openModal('deviceProfile_del')">Delete Device-Profile</button>
-            </div>
         </div>
         <div class="profile-name">
             <div class="profile-table">
                 <table>
                     <thead>
                         <tr>
-                            <th><input type="checkbox" id="select-all" name="selectAll"></th>
                             <th>Name</th>
                             <th>Region</th>
                             <th>MAC Version</th>
@@ -101,7 +89,6 @@
                     </thead>
                     <tbody id="data-table">
                         <tr>
-                            <td><input type="checkbox" name="app1" /></td>
                             <td><a href="devices.html">device-profile-1</a></td>
                             <td>AS923</td>
                             <td>LoRaWAN 1.0.2</td>
@@ -112,48 +99,6 @@
                         </tr>
                     </tbody>
                 </table>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal container -->
-    <div class="modal_container">
-        <!-- Add Device Profile Modal -->
-        <div class="form" id="deviceProfile_add">
-            <span class="close" onclick="closeModal('deviceProfile_add')">&times;</span>
-            <div class="form_headder">
-                <h4>Add device-profile</h4>
-            </div>
-            <!-- Form inputs -->
-            <div>
-                <label for="deviceProfile_NameInput">Profile Name:</label>
-                <input type="text" id="deviceProfile_NameInput" required>
-            </div>
-            <div>
-                <label for="Description">Description:</label>
-                <textarea name="description" id="deviceProfile_descriptionInput" cols="30" rows="5"></textarea>
-            </div>
-            <!-- Submit button -->
-            <div>
-                <button class="modal_button" id="addAppConfirm">Submit</button>
-            </div>
-        </div>
-
-        <!-- Delete Application Modal -->
-        <div class="form" id="deviceProfile_del">
-            <!-- Close button -->
-            <span class="close" onclick="closeModal('deviceProfile_del')">&times;</span>
-            <div class="form_headder">
-                <h4>Delete device-profile</h4>
-            </div>
-            <!-- Form inputs -->
-            <div>
-                <label for="appName">Application Name:</label>
-                <input type="text" class="appName" required>
-            </div>
-            <!-- Confirm button -->
-            <div>
-                <button class="modal_button" id="delAppConfirm">Confirm</button>
             </div>
         </div>
     </div>
