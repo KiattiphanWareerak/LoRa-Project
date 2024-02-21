@@ -5,28 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     //---------------------------SENDER ZONE---------------------------//
     const socket = new WebSocket('ws://localhost:3001');
 
-    const sendApplicationsListRequest = () => {
-        const req = { request: 'dispApp', message: { 
-            status: undefined, 
-            data:  undefined 
-        }};
-        socket.send(JSON.stringify(req));
-    };
-
     socket.addEventListener('open', () => {
-        // Display applictions
-        const currentPath = window.location.pathname;
-        const menuApplications = document.getElementById("menu-applications");
-
-        menuApplications.addEventListener('click', (event) => {
-            event.preventDefault();
-            sendApplicationsListRequest();
-        });
-        
-        if (currentPath.includes('applications.html')) {
-            sendApplicationsListRequest();
-        }
-
         // Add application button
         const addAppButton = document.getElementById("addAppConfirm");
 
@@ -107,14 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const messageFromServer = JSON.parse(event.data);
         console.log('Message from server:', messageFromServer);
 
-        if ( messageFromServer.request === 'dispApp' ) {
-            if ( messageFromServer.message.status === 'success' ) {
-                displatHeaderAndMiddleTitle();
-                displayApplicationsList(messageFromServer.message.data);
-            } else {
-                alert("Application List failed.");
-            }
-        } else if ( messageFromServer.request === 'addApp' ) {
+        if ( messageFromServer.request === 'addApp' ) {
             if ( messageFromServer.message.status === 'success' ) {
                 alert('Add application has been completed.');
                 sendApplicationsListRequest();
@@ -133,85 +105,4 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });    
 });
-//---------------------------------------------------------------------// 
-//---------------------------DISPLAYS ZONE-----------------------------// 
-//---------------------------------------------------------------------// 
-function displayApplicationsList(items) {
-    let tbody = document.getElementById('data-table');
-
-    tbody.innerHTML = '';
-    
-    let count = 0;
-    items.app_list.resultList.forEach(function(item, index) {
-        var row = document.createElement('tr');
-
-        // Checkbox column
-        var checkboxCell = document.createElement('td');
-        var checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.name = 'app' + (index + 1);
-        checkboxCell.appendChild(checkbox);
-        row.appendChild(checkboxCell);
-
-        // Number column
-        var numberCell = document.createElement('td');
-        count += 1;
-        numberCell.textContent = count;
-        row.appendChild(numberCell);
-
-        // Application name column with a link
-        var appNameCell = document.createElement('td');
-        var appNameLink = document.createElement('a');
-        appNameLink.href = 'javascript:void(0)';
-        // Add click event listener to appNameLink
-        appNameLink.setAttribute('app-id', item.id);
-        appNameLink.addEventListener('click', function(event) {
-            event.preventDefault();
-            const socket = new WebSocket('ws://localhost:3001');
-
-            socket.addEventListener('open', () => {
-                let appID = this.getAttribute('app-id');
-                let appName = item.name;
-
-                const req = { request: 'enterAppId', message: { 
-                    status: undefined, 
-                    data: { app_id: appID, app_name: appName 
-                }}};
-                socket.send(JSON.stringify(req));
-
-                window.location.href = 'devices.html';
-            });
-        });
-        appNameLink.textContent = item.name;
-        appNameCell.appendChild(appNameLink);
-        row.appendChild(appNameCell);
-
-        // Application ID column
-        var appIdCell = document.createElement('td');
-        appIdCell.textContent = item.id;
-        row.appendChild(appIdCell);
-
-        // Description column
-        var registeredDeviceCell = document.createElement('td');
-        registeredDeviceCell.textContent = item.description;
-        row.appendChild(registeredDeviceCell);
-
-        // Append the row to the tbody
-        tbody.appendChild(row);
-    });
-}
-//---------------------------------------------------------------------//
-function displatHeaderAndMiddleTitle() {
-    // Header and Middle title
-    let newH1Element = document.createElement('h1');
-    let newH4Element = document.createElement('h4');
-    newH1Element.textContent = 'Applications';
-    newH4Element.innerHTML = `<a href="applications.html" >Applications</a> `;
-    let headerTitleDiv = document.querySelector('.header--title');
-    let locatedDiv = document.querySelector('.located');
-    headerTitleDiv.innerHTML = '';
-    locatedDiv.innerHTML = '';
-    headerTitleDiv.appendChild(newH1Element);
-    locatedDiv.appendChild(newH4Element);
-}
 //---------------------------------------------------------------------// 

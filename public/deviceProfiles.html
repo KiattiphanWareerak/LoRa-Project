@@ -7,50 +7,52 @@
     <!-- External stylesheets -->
     <link rel="stylesheet" href="styles/mainStyles.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <script src="scripts/common.js"></script>
 </head>
 <body>
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="logo"></div>
         <ul class="side_menu">
-            <!-- Dashboard link -->
-            <li>
-                <a href="dashboard.html">
+            <!-- Dashboard link (active) -->
+            <li id="menu-mainDashboard" >
+                <a>
                     <i class="fa-solid fa-chart-pie"></i>
                     <span>Dashboard</span>
                 </a>
             </li>
             <!-- Device Profiles link -->
             <li class="active" id="menu-deviceProfiles">
-                <a href="deviceProfiles.html">
+                <a>
                     <i class="fa-solid fa-chart-pie"></i>
                     <span>Device Profiles</span>
                 </a>
             </li>
             <!-- Application link -->
-            <li>
-                <a href="applications.html">
+            <li id="menu-applications">
+                <a>
                     <i class="fa-solid fa-microchip"></i>
                     <span>Application</span>
                 </a>
             </li>
-            <!-- Account Setting link (active) -->
-            <li>
-                <a href="settingPage.html">
+            <!-- Setting link -->
+            <li id="menu-setting">
+                <a>
                     <i class="fas fa-user"></i>
                     <span>Account Setting</span>
                 </a>
             </li>
-            <!-- FAQ link -->
-            <li>
-                <a href="faqsPage.html">
+            <!-- FAQs link -->
+            <li id="menu-faqs">
+                <a>
                     <i class="fas fa-question-circle"></i>
                     <span>FAQ</span>
                 </a>
             </li>
             <!-- Logout link -->
-            <li class="logout">
-                <a href="index.html">
+            <li class="logout" id="menu-logout">
+                <a>
                     <i class="fas fa-sign-out-alt"></i>
                     <span>Logout</span>
                 </a>
@@ -100,7 +102,7 @@
                         </tr>
                     </thead>
                     <tbody id="data-table">
-                        <tr>
+                        <!-- <tr>
                             <td><input type="checkbox" name="app1" /></td>
                             <td><a href="devices.html">device-profile-1</a></td>
                             <td>AS923</td>
@@ -109,7 +111,7 @@
                             <td><i class="fa-solid fa-check check_icon"></i></td>
                             <td><i class="fa-solid fa-check check_icon"></i></td>
                             <td><i class="fa-solid fa-xmark xmark_icon"></i></td>
-                        </tr>
+                        </tr> -->
                     </tbody>
                 </table>
             </div>
@@ -160,5 +162,4 @@
 </body>
 <!-- Scripts -->
 <script src="scripts/webScript.js"></script>
-<script src="scripts/deviceProfiles.js"></script>
 </html>

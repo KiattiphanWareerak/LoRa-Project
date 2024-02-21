@@ -2,7 +2,6 @@
 //----------------------------EVENTS ZONE------------------------------// 
 //---------------------------------------------------------------------//
 document.addEventListener('DOMContentLoaded', () => {
-    //---------------------------GENERAL ZONE--------------------------//
     const addDeviceButton = document.getElementById('addDeviceButton');
     addDeviceButton.addEventListener("click", (event) => {
         event.preventDefault();

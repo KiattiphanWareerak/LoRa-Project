@@ -14,6 +14,9 @@ const internalService = new internal_grpc.InternalServiceClient(
 const devEui = "24c5d9e6325820f4";
 const netWorkApiToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjaGlycHN0YWNrIiwiaXNzIjoiY2hpcnBzdGFjayIsInN1YiI6Ijc3M2Y5OGQwLTk5YTMtNDVjMS1hY2JhLThhOTQzYzdiODFiZiIsInR5cCI6ImtleSJ9.FiCRWLwVlG9mm5_KqUm52afDzMZRJ5qc4jQJz4waxZI";
 
+let dataEvents = {
+  dev_events: [],
+};
 let eventCount = 0;
 try {
   // Create the Metadata object.
@@ -28,9 +31,10 @@ try {
   const stream = internalService.streamDeviceEvents(streamDeviceEventsRequest, metadata);
 
   stream.on("data", (response) => {
-      console.log("Received device event:", response);
+      // console.log("Received device event:", response);
       // Process the device event (e.g., store in database, send notification)
 
+      dataEvents.dev_events.push(response);
       eventCount++;
 
       // Stop the stream after receiving 10 events
@@ -45,6 +49,7 @@ try {
 
   stream.on("end", () => {
       console.log("Device event stream ended.");
+      console.log(dataEvents.dev_events);
   });
 } catch (error) {
   console.error(error);

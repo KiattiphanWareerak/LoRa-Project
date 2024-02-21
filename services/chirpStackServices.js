@@ -422,6 +422,8 @@ async function deviceConfigurationsRequest(values, apiToken, tenantId, appName) 
       const respGetActivation = await getDeviceActivation(values.dev_id, apiToken);
       const respGetDeviceProfile = await getDeviceProfile(tenantId, apiToken);
       const respGetQueueItems = await getQueueItems(values.dev_id, apiToken);
+      const respGetEvents = await getDeviceEventsRequest(values.dev_id, apiToken);
+      const respGetFrames = await getDeviceFramesRequest(values.dev_id, apiToken);
 
       data.dev_linlMetrics = respGetLinkMetric;
       data.dev_config = respGetDevConfig;
@@ -429,6 +431,8 @@ async function deviceConfigurationsRequest(values, apiToken, tenantId, appName) 
       data.dev_activation = respGetActivation;
       data.dev_profiles = respGetDeviceProfile;
       data.dev_queueItems = respGetQueueItems;
+      data.dev_events = respGetEvents;
+      data.dev_frames = respGetFrames;
       
       resolve({ request: 'dispDashDev', message: { 
         status: 'success', 
@@ -587,6 +591,8 @@ async function enterDeviceRequest(values, apiToken, tenantId, appName) {
       const respGetActivation = await getDeviceActivation(values.dev_id, apiToken);
       const respGetDeviceProfile = await getDeviceProfile(tenantId, apiToken);
       const respGetQueueItems = await getQueueItems(values.dev_id, apiToken);
+      const respGetEvents = await getDeviceEventsRequest(values.dev_id, apiToken);
+      const respGetFrames = await getDeviceFramesRequest(values.dev_id, apiToken);
 
       data.dev_linkMetrics = respGetLinkMetric;
       data.dev_config = respGetDevConfig;
@@ -594,6 +600,8 @@ async function enterDeviceRequest(values, apiToken, tenantId, appName) {
       data.dev_activation = respGetActivation;
       data.dev_profiles = respGetDeviceProfile;
       data.dev_queueItems = respGetQueueItems;
+      data.dev_events = respGetEvents;
+      data.dev_frames = respGetFrames;
       
       resolve({ request: 'enterDevId', message: { 
         status: 'success', 
@@ -770,6 +778,117 @@ async function getDevicesSummaryRequest(tenantId, apiToken) {
           status: 'success', 
           data: resp.toObject() }
         });
+      });
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+//---------------------------------------------------------------------//
+async function getDeviceEventsRequest(values, apiToken) { 
+  try {
+    // Create the Metadata object.
+    const metadata = new grpc.Metadata();
+    metadata.set("authorization", "Bearer " + apiToken);
+
+    let dataEvents = {
+      dev_events: [],
+    };
+
+    let eventCount = 0;
+    return new Promise((resolve, reject) => {
+      const createReq = new internal_pb.StreamDeviceEventsRequest();
+      createReq.setDevEui(values);
+    
+      console.log("Streaming device events for:", values);
+    
+      const stream = internalService.streamDeviceEvents(createReq, metadata);
+    
+      stream.on("data", (response) => {
+          // console.log("Received device event:", response);
+          
+          dataEvents.dev_events.push(response);
+          eventCount++;
+    
+          // Stop the stream after receiving 10 events
+          if (eventCount === 10) {
+              stream.cancel();
+          }
+      });
+    
+      stream.on("error", (error) => {
+        console.error("Error streaming device events:", error.details);
+        
+        // resolve({ request: 'devEvents', message: { 
+        //   status: 'failed', 
+        //   data: error.details }
+        // });
+      });
+    
+      stream.on("end", () => {
+        console.log(dataEvents.dev_events);
+        console.log("Device event stream ended.");
+
+        resolve(dataEvents.dev_events);
+        // resolve({ request: 'devEvents', message: { 
+        //   status: 'success', 
+        //   data: dataEvents }
+        // });
+      });
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+//---------------------------------------------------------------------//
+async function getDeviceFramesRequest(values, apiToken) { 
+  try {
+    // Create the Metadata object.
+    const metadata = new grpc.Metadata();
+    metadata.set("authorization", "Bearer " + apiToken);
+
+    let dataFrames = {
+      dev_frames: [],
+    };
+    
+    let frameCount = 0;
+    return new Promise((resolve, reject) => {
+      const createReq = new internal_pb.StreamDeviceFramesRequest();
+      createReq.setDevEui(values);
+    
+      console.log("Streaming device frames for:", values);
+    
+      const stream = internalService.streamDeviceFrames(createReq, metadata);
+    
+      stream.on("data", (response) => {
+          // console.log("Received device frame:", response);
+
+          dataFrames.dev_frames.push(response);
+          frameCount++;
+    
+          // Stop the stream after receiving 10 events
+          if (frameCount === 10) {
+              stream.cancel();
+          }
+      });
+    
+      stream.on("error", (error) => {
+          console.error("Error streaming device frames:", error.details);
+
+          // resolve({ request: 'devFrames', message: { 
+          //   status: 'failed', 
+          //   data: error.details }
+          // });
+      });
+    
+      stream.on("end", () => {
+        console.log("Device frame stream ended.");
+
+        resolve(dataFrames.dev_frames);
+        // resolve({ request: 'devFrames', message: { 
+        //   status: 'success', 
+        //   data: dataFrames }
+        // });
       });
     });
   } catch (error) {

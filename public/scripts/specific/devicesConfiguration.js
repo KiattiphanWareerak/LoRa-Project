@@ -31,6 +31,8 @@
                 displayConfigurationsDevice(messageFromServer.message.data.dev_dash);
                 displayDashboardDevice(messageFromServer.message.data.dev_dash, messageFromServer.message.data.dev_linlMetrics);
                 displayQueuesDevice(messageFromServer.message.data.dev_dash);
+                displayDeviceEvents(messageFromServer.message.data.dev_dash);
+                displayDeviceFrames(messageFromServer.message.data.dev_dash);
             } else {
                 alert('Get Device has been failed.');
             }
@@ -138,6 +140,16 @@ function displayHeaderAndMiddleTitle(items, appName) {
 //---------------------------------------------------------------------//
 function displayQueuesDevice(items) {
     // Queues tab
+
+}
+//---------------------------------------------------------------------//
+function displayDeviceEvents(items) {
+    // Events tab
+
+}
+//---------------------------------------------------------------------//
+function displayDeviceFrames(items) {
+    // LoRaWAN Frames tab
 
 }
 //---------------------------------------------------------------------//

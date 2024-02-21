@@ -8,50 +8,52 @@
     <!-- External stylesheets -->
     <link rel="stylesheet" href="styles/mainStyles.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <script src="scripts/common.js"></script>
 </head>
 <body>
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="logo"></div>
         <ul class="side_menu">
-            <!-- Dashboard link -->
-            <li>
-                <a href="dashboard.html">
+            <!-- Dashboard link (active) -->
+            <li id="menu-mainDashboard" >
+                <a>
                     <i class="fa-solid fa-chart-pie"></i>
                     <span>Dashboard</span>
                 </a>
             </li>
             <!-- Device Profiles link -->
-            <li>
-                <a href="deviceProfiles.html">
+            <li id="menu-deviceProfiles">
+                <a>
                     <i class="fa-solid fa-chart-pie"></i>
                     <span>Device Profiles</span>
                 </a>
             </li>
-            <!-- Active Application link -->
-            <li class="active" id="menu-applications">
-                <a href="applications.html">
+            <!-- Application link -->
+            <li id="menu-applications">
+                <a>
                     <i class="fa-solid fa-microchip"></i>
                     <span>Application</span>
                 </a>
             </li>
             <!-- Setting link -->
-            <li>
-                <a href="settingPage.html">
+            <li id="menu-setting">
+                <a>
                     <i class="fas fa-user"></i>
                     <span>Account Setting</span>
                 </a>
             </li>
-            <!-- FAQ link -->
-            <li>
-                <a href="faqsPage.html">
+            <!-- FAQs link -->
+            <li id="menu-faqs">
+                <a>
                     <i class="fas fa-question-circle"></i>
                     <span>FAQ</span>
                 </a>
             </li>
             <!-- Logout link -->
-            <li class="logout">
-                <a href="index.html">
+            <li class="logout" id="menu-logout">
+                <a>
                     <i class="fas fa-sign-out-alt"></i>
                     <span>Logout</span>
                 </a>
@@ -199,7 +201,7 @@
     </div>
 
     <!-- Scripts -->
+    <script src="scripts/specific/devices.js"></script>
     <script src="scripts/webScript.js"></script>
-    <script src="scripts/devices.js"></script>
 </body>
 </html>

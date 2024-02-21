@@ -26,10 +26,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (currentPath.includes('deviceProfiles.html')) {
             sendDeviceProfilesRequest();
         }
-
-        // Add device profile button
-
-        // Delete application button
     });
     //-------------------------RECEIVER ZONE-------------------------//
     socket.addEventListener('message', (event) => {
@@ -75,7 +71,7 @@ function displayDeivceProfilesList(items) {
         // เพิ่มชื่ออุปกรณ์
         const nameCell = document.createElement("td");
         const nameLink = document.createElement("a");
-        nameLink.href = "devices.html";
+        // nameLink.href = "devices.html";
         nameLink.textContent = device.name;
         nameCell.appendChild(nameLink);
         row.appendChild(nameCell);
