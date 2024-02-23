@@ -142,6 +142,65 @@ async function addDeviceRequest(values, apiToken, appId) {
   }
 }
 //---------------------------------------------------------------------//
+async function addDeviceProfilesRequest(values, apiToken) { 
+  try {
+    // Create the Metadata object.
+    const metadata = new grpc.Metadata();
+    metadata.set("authorization", "Bearer " + apiToken);
+
+    let devProfs = deviceProfiles(values);
+
+    return new Promise((resolve, reject) => {
+      for ( const devProf of devProfs) {
+        // Create a new device profile.
+        const newDevProfs = new device_profile_pb.DeviceProfile();
+        newDevProfs.setTenantId(devProf.id);
+        newDevProfs.setName(devProf.name);
+        newDevProfs.setRegion(common_common_pb.Region.AS923);
+        newDevProfs.setRegionConfigId('AS923');
+        newDevProfs.setMacVersion(devProf.macVersion);
+        newDevProfs.setRegParamsRevision(common_common_pb.RegParamsRevision.A);
+        newDevProfs.setAdrAlgorithmId('default');
+        newDevProfs.setFlushQueueOnActivate(true);
+        newDevProfs.setUplinkInterval(3600);
+        newDevProfs.setAllowRoaming(false);
+        newDevProfs.setDeviceStatusReqInterval(1);
+        newDevProfs.setSupportsOtaa(true);
+        newDevProfs.setSupportsClassB(false);
+        newDevProfs.setSupportsClassC(true);
+        newDevProfs.setClassCTimeout(5);
+        // newDevProfs.setPayloadCodecScript();
+        newDevProfs.setIsRelay(false);
+        newDevProfs.setIsRelayEd(false);
+        newDevProfs.setAutoDetectMeasurements(true);
+
+        // Create a request to add a new device.
+        const createReq = new device_profile_pb.CreateDeviceProfileRequest();
+        createReq.setDeviceProfile(newDevProfs);
+
+        deviceProfileService.create(createReq, metadata, (err, resp) => {
+          if (err !== null) {
+          console.log(err.details);
+          resolve({ request: 'addDevProfs', message: { 
+            status: 'failed', 
+            data: err.message }
+          });
+          return;
+        }
+        console.log('New device profile has been created: ', devProf.name);
+        });
+      }
+
+      resolve({ request: 'addDevProfs', message: { 
+        status: 'success', 
+        data: {}
+      }});
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+//---------------------------------------------------------------------//
 async function applicationConfigurationsRequest(values, apiToken, tenantId, appId) {
   try {
     return new Promise((resolve, reject) => {
@@ -826,7 +885,6 @@ async function getDeviceEventsRequest(values, apiToken) {
       });
     
       stream.on("end", () => {
-        console.log(dataEvents.dev_events);
         console.log("Device event stream ended.");
 
         resolve(dataEvents.dev_events);
@@ -1157,6 +1215,7 @@ async function functions(values) {
 module.exports = {
   addApplicationRequest,
   addDeviceRequest,
+  addDeviceProfilesRequest,
   applicationConfigurationsRequest,
   applicationsListRequest,
   createDeviceKeyRequest,
@@ -1175,4 +1234,18 @@ module.exports = {
   loginUserRequest,
   profileUserRequest,
 };
+//---------------------------------------------------------------------//
+//----------------------------COMMON ZONE------------------------------//
+//---------------------------------------------------------------------//
+function deviceProfiles(tenantId) {
+  let devProfsArr = [{ name: "LoRaWAN 1.0.0 Profile", id: tenantId, macVersion: common_common_pb.MacVersion.LORAWAN_1_0_0 }, 
+    { name: "LoRaWAN 1.0.1 Profile", id: tenantId, macVersion: common_common_pb.MacVersion.LORAWAN_1_0_1 },
+    { name: "LoRaWAN 1.0.2 Profile", id: tenantId, macVersion: common_common_pb.MacVersion.LORAWAN_1_0_2 },
+    { name: "LoRaWAN 1.0.3 Profile", id: tenantId, macVersion: common_common_pb.MacVersion.LORAWAN_1_0_3 },
+    { name: "LoRaWAN 1.0.4 Profile", id: tenantId, macVersion: common_common_pb.MacVersion.LORAWAN_1_0_4 },
+    { name: "LoRaWAN 1.1.0 Profile", id: tenantId, macVersion: common_common_pb.MacVersion.LORAWAN_1_1_0 }
+  ];
+
+  return devProfsArr;
+}
 //---------------------------------------------------------------------//

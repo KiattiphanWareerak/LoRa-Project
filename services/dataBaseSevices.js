@@ -1,57 +1,72 @@
+//---------------------------------------------------------------------// 
+//--------------------------Database Services--------------------------//
 //---------------------------------------------------------------------//
-async function applicationListMatchingRequest(globalUserToken, respFromChirpStack) {
+const { Client } = require("pg");
+//---------------------------------------------------------------------//
+const client = new Client({
+  database: 'my_web_db',
+  user: 'webapp',
+  password: '1q2w3e4r@30',
+  host: '202.28.95.234',
+  port: 5432,
+});
+//---------------------------------------------------------------------//
+//-------------------------------FUNCTIONS-----------------------------//
+//---------------------------------------------------------------------//
+async function getGetewayFromDB() { 
   try {
-    return new Promise((resolve, reject) => {
-      let dataFromDatabase = {
-        resultList: {
-          '3dd0a4e2-e7d1-4560-a6a4-734f8c254432': true,
-          '3dd0a4e2-e7d1-4560-a6a4-734f8c254321': true,
-          '3dd0a4e2-e7d1-4560-a6a4-734f8c222cdb': true,
-          'a4c5f426-97bb-4713-b89b-b67f49dfae29': true,
-          '6e6e1f9d-4f84-47e4-be17-43b94ccff086': true,
-          '831b4b4a-c337-40da-8b70-8e50067e6b30': true
-        }
-      };
+    return new Promise(async (resolve, reject) => {
+      const query = "SELECT * FROM gateway_list";
+  
+      await client.connect();
 
-      let matchedApplications = [];
-      respFromChirpStack.resultList.forEach(application => {
-        if (dataFromDatabase.resultList[application.id]) {
-          matchedApplications.push(application);
-        }
-      });
+      const results = await client.query(query);
+  
+      await client.end();
+  
+      console.log(results);
 
-      let matchedData = {
-        totalCount: matchedApplications.length,
-        resultList: matchedApplications
-      };
-
-      const resp = { request: 'dispApp', message: { 
+      resolve({ request: 'getGw', message: { 
         status: 'success', 
-        data: { app_list: matchedData } 
-      }};
-      console.log(resp);
-
-      resolve(resp);
+        data: results.rows }
+      });
     });
   } catch (error) {
-    console.log(error);
+    resolve({ request: 'getGw', message: { 
+      status: 'failed', 
+      data: error }
+    });
   }
 }
 //---------------------------------------------------------------------// 
-async function login(values) {
-  const message = { request: 'login', message: { 
-    status: 'success', 
-    data: { user_token: "83b547ed-667e-4fdf-b2e7-548b53af1afe", 
-            api_token: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjaGlycHN0YWNrIiwiaXNzIjoiY2hpcnBzdGFjayIsInN1YiI6Ijc3M2Y5OGQwLTk5YTMtNDVjMS1hY2JhLThhOTQzYzdiODFiZiIsInR5cCI6ImtleSJ9.FiCRWLwVlG9mm5_KqUm52afDzMZRJ5qc4jQJz4waxZI",
-            tenant_id: "52f14cd4-c6f1-4fbd-8f87-4025e1d49242"
-          } 
-  }};
+async function getNetworkApiTokenFromDB() { 
+  try {
+    return new Promise(async (resolve, reject) => {
+      const query = "SELECT * FROM network_api_token";
+  
+      await client.connect();
 
-  return message;
+      const results = await client.query(query);
+  
+      await client.end();
+  
+      console.log(results);
+
+      resolve({ request: 'getNwApiToken', message: { 
+        status: 'success', 
+        data: results.rows }
+      });
+    });
+  } catch (error) {
+    resolve({ request: 'getNwApiToken', message: {
+      status: 'failed', 
+      data: error }
+    });
+  }
 }
 //---------------------------------------------------------------------// 
 module.exports = {
-  applicationListMatchingRequest,
-  login
+  getGetewayFromDB,
+  getNetworkApiTokenFromDB
 };
 //---------------------------------------------------------------------//

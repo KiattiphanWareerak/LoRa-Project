@@ -89,14 +89,16 @@ document.addEventListener('DOMContentLoaded', () => {
         if ( messageFromServer.request === 'addApp' ) {
             if ( messageFromServer.message.status === 'success' ) {
                 alert('Add application has been completed.');
-                sendApplicationsListRequest();
+
+                window.location.href = 'applications.html';
             } else {
                 alert('Add application failed.');
             }
         } else if ( messageFromServer.request === 'delApp' ) {
             if ( messageFromServer.message.status === 'success' ) {
                 alert('Delete application has been completed.');
-                sendApplicationsListRequest();
+                
+                window.location.href = 'applications.html';
             } else {
                 alert('Delete application failed.');
             }
@@ -105,4 +107,4 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });    
 });
-//---------------------------------------------------------------------// 
+//---------------------------------------------------------------------//

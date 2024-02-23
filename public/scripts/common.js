@@ -1,5 +1,6 @@
 //---------------------------------------------------------------------//
 //----------------------------EVENTS ZONE------------------------------//
+let req;
 //---------------------------------------------------------------------//
 document.addEventListener('DOMContentLoaded', () => {
     const activeMenuItem = document.querySelector('.side_menu li.active');
@@ -8,23 +9,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
       switch (menuId) {
         case 'menu-mainDashboard':
-            menuDashboard();
-            break;
+          req = { request: 'dispMainDash', message: { 
+            status: undefined, 
+            data:  undefined 
+          }};
+
+          senderAndReciver(req);
+          break;
         case 'menu-deviceProfiles':
-            menuDeviceProfiles();
-            break;
+          req = { request: 'dispDevProfiles', message: { 
+            status: undefined, 
+            data:  undefined 
+          }};
+            
+          senderAndReciver(req);
+          break;
         case 'menu-applications':
-            menuApplications();
-            break;
-        case 'menu-setting':
-            menuSetting();
-            break;
-        case 'menu-faqs':
-            menuFaqs();
-            break;
-        case 'menu-logout':
-            menuLogout();
-            break;
+          req = { request: 'dispApp', message: { 
+            status: undefined, 
+            data:  undefined 
+          }};
+          
+          senderAndReciver(req);
+          break;
+        case 'menu-tutorial':
+          // nothing
+
+          break;
       }
     }
 
@@ -42,14 +53,16 @@ document.addEventListener('DOMContentLoaded', () => {
           case 'menu-applications':
             window.location.href = "applications.html";
             break;
-          case 'menu-setting':
-            window.location.href = "settingPage.html";
-            break;
-          case 'menu-faqs':
-            window.location.href = "faqsPage.html";
+          case 'menu-tutorial':
+            window.location.href = "tutorialPage.html";
             break;
           case 'menu-logout':
-            window.location.href = "index.html";
+            req = { request: 'logout', message: { 
+              status: undefined, 
+              data:  undefined 
+            }};
+            
+            senderAndReciver(req);
             break;
         }
       });
@@ -58,73 +71,38 @@ document.addEventListener('DOMContentLoaded', () => {
 //---------------------------------------------------------------------//
 //---------------------------WEB SOCKET ZONE---------------------------//
 //---------------------------------------------------------------------//
-function menuDashboard() {
-    const socket = new WebSocket('ws://localhost:3001');
-    //-SENDER-//
-    socket.addEventListener('open', () => {
-        const req = { request: 'dispMainDash', message: { 
-            status: undefined, 
-            data:  undefined 
-        }};
+function senderAndReciver(req) {
+  const socket = new WebSocket('ws://localhost:3001');
+  //-SENDER-//
+  socket.addEventListener('open', () => {
+    console.log('WebSocket connection established with WebServer');
 
-        socket.send(JSON.stringify(req));
-    });
-    //-RECEIVER-//
-    socket.addEventListener('message', (event) => {
-        const messageFromServer = JSON.parse(event.data);
-        console.log('Message from server:', messageFromServer);
+    socket.send(JSON.stringify(req));
+  });
+  //-RECEIVER-//
+  socket.addEventListener('message', (event) => {
+      const messageFromServer = JSON.parse(event.data);
+      console.log('Message from server:', messageFromServer);
 
-        display_mainContent_dashboard(messageFromServer.message.data);
-    });
-}
-function menuDeviceProfiles() {
-    const socket = new WebSocket('ws://localhost:3001');
-    //-SENDER-//
-    socket.addEventListener('open', () => {
-        const req = { request: 'dispDevProfiles', message: { 
-            status: undefined, 
-            data:  undefined 
-        }};
-
-        socket.send(JSON.stringify(req));
-    });
-    //-RECEIVER-//
-    socket.addEventListener('message', (event) => {
-        const messageFromServer = JSON.parse(event.data);
-        console.log('Message from server:', messageFromServer);
-
-        display_HeaderAndMiddleTitle_deviceProfiles();
-        display_mainContent_deviceProfiles(messageFromServer.message.data);
-    });
-}
-function menuApplications() {
-    const socket = new WebSocket('ws://localhost:3001');
-    //-SENDER-//
-    socket.addEventListener('open', () => {
-        const req = { request: 'dispApp', message: { 
-            status: undefined, 
-            data:  undefined 
-        }};
-
-        socket.send(JSON.stringify(req));
-    });
-    //-RECEIVER-//
-    socket.addEventListener('message', (event) => {
-        const messageFromServer = JSON.parse(event.data);
-        console.log('Message from server:', messageFromServer);
-
-        display_HeaderAndMiddleTitle_applications();
-        display_mainContent_applications(messageFromServer.message.data);
-    });
-}
-function menuSetting() {
-
-}
-function menuFaqs() {
-
-}
-function menuLogout() {
-
+      if ( messageFromServer.message.status === 'success' ) {
+        if ( messageFromServer.request === 'dispMainDash' ) {
+          display_mainContent_dashboard(messageFromServer.message.data);
+        } 
+        else if ( messageFromServer.request === 'dispDevProfiles' ) {
+          display_HeaderAndMiddleTitle_deviceProfiles();
+          display_mainContent_deviceProfiles(messageFromServer.message.data);
+        } 
+        else if ( messageFromServer.request === 'dispApp' ) {
+          display_HeaderAndMiddleTitle_applications();
+          display_mainContent_applications(messageFromServer.message.data);
+        } 
+        else if ( messageFromServer.request === 'logout' ) {
+          window.location.href = "index.html";
+        }
+      } else {
+        alert("Error 505.");
+      }
+  });
 }
 //---------------------------------------------------------------------//
 //---------------------------DISPLAYS ZONE-----------------------------//
@@ -161,12 +139,6 @@ function display_mainContent_deviceProfiles(gets) {
 
     for (const device of gets.dev_profiles.resultList) {
         const row = document.createElement("tr");
-      
-        // เพิ่ม checkbox
-        const checkbox = document.createElement("input");
-        checkbox.type = "checkbox";
-        checkbox.name = `app${device.id}`;
-        row.appendChild(checkbox);
       
         // เพิ่มชื่ออุปกรณ์
         const nameCell = document.createElement("td");
