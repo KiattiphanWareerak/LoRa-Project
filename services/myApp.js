@@ -1,6 +1,5 @@
 //---------------------------------------------------------------------//
 //-------------------------------FUNCTIONS-----------------------------//
-const netWorkApiToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjaGlycHN0YWNrIiwiaXNzIjoiY2hpcnBzdGFjayIsInN1YiI6Ijc3M2Y5OGQwLTk5YTMtNDVjMS1hY2JhLThhOTQzYzdiODFiZiIsInR5cCI6ImtleSJ9.FiCRWLwVlG9mm5_KqUm52afDzMZRJ5qc4jQJz4waxZI";
 // Set services
 const chirpStackServices = require('./chirpStackServices.js');
 const dataBaseServices = require('./dataBaseSevices.js');
@@ -132,12 +131,20 @@ async function myApp(values) {
                 }
             } 
             else if ( values.request === 'dispMainDash' ) {
-                const respFromMainDash = await chirpStackServices.getMainDashboard(globalTenantId, netWorkApiToken);
+                const respFromNwApiToken = await dataBaseServices.getNetworkApiTokenFromDB();
 
-                if (respFromMainDash.request === 'dispMainDash' && respFromMainDash.message.status === 'success') {
-                    resolve({ request: 'dispMainDash', message: { status: 'success', data: respFromMainDash.message.data }});
+                if ( respFromNwApiToken.request === 'getNwApiToken' && respFromNwApiToken.message.status === 'success' ) {
+                    const respFromMainDash = await chirpStackServices.getMainDashboard(globalTenantId, respFromNwApiToken.message.data[0].api_token);
+
+                    if (respFromMainDash.request === 'dispMainDash' && respFromMainDash.message.status === 'success') {
+                        resolve({ request: 'dispMainDash', message: { status: 'success', data: respFromMainDash.message.data }});
+                    } else {
+                        console.log(respFromMainDash);
+    
+                        resolve({ request: 'dispMainDash', message: { status: 'failed', data: undefined }});
+                    }
                 } else {
-                    console.log(respFromMainDash);
+                    console.log(respFromNwApiToken);
 
                     resolve({ request: 'dispMainDash', message: { status: 'failed', data: undefined }});
                 }
@@ -293,7 +300,6 @@ module.exports = {
 //----------------------------COMMON ZONE------------------------------//
 //---------------------------------------------------------------------//
 function logout() {
-    netWorkApiToken, 
     globalUserToken, globalUserId, globalTenantId, 
     globalAppId, globalAppName, globalAppDesc, 
     globalDevId, globalDevName, globalDevDesc
