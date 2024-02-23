@@ -29,7 +29,7 @@
             <!-- Device Profiles link -->
             <li id="menu-deviceProfiles">
                 <a>
-                    <i class="fa-solid fa-chart-pie"></i>
+                    <i class="fa-regular fa-address-card"></i>
                     <span>Device Profiles</span>
                 </a>
             </li>
@@ -118,21 +118,14 @@
     <div class="modal_container">
         <!-- Add Application Modal -->
         <div class="form" id="app_AddApp">
-            <!-- Close button -->
-            <i class="fa-solid fa-xmark" onclick="closeModal('app_AddApp')">&times;</i>
             <div class="form_headder">
                 <h4>Add Application</h4>
+                <i class="fa-solid fa-circle-xmark" onclick="closeModal('app_AddApp')">&times;></i>
             </div>
             <!-- Form inputs -->
             <div>
-                <label for="appName">Application Name:</label>
-                <br>
-                <input type="text" id="appNameInput" required>
-            </div>
-            <div>
-                <label for="Description">Description:</label>
-                <br>
-                <textarea name="Description" id="descriptionInput" cols="30" rows="5"></textarea>
+                <input type="text" placeholder="Application name" id="appNameInput" required>
+                <textarea name="Description" placeholder="Description" id="descriptionInput" cols="30" rows="5"></textarea>
             </div>
             <!-- Submit button -->
             <div>
@@ -142,15 +135,27 @@
 
         <!-- Delete Application Modal -->
         <div class="form" id="app_DelApp">
-            <!-- Close button -->
-            <span class="close" onclick="closeModal('app_DelApp')">&times;</span>
             <div class="form_headder">
                 <h4>Delete Application</h4>
+                <i class="fa-solid fa-circle-xmark" onclick="closeModal('app_DelApp')">&times;></i>
             </div>
-            <!-- Form inputs -->
+            <!-- display selected application-->
             <div>
-                <label for="appName">Application Name:</label>
-                <input type="text" class="appName" required>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Delete the following application?</th>
+                        </tr>
+                    </thead>
+                    <tbody id="delete-selected">
+                        <tr>
+                            <td>kw_app</td>
+                        </tr>
+                        <tr>
+                            <td>tense_app</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
             <!-- Confirm button -->
             <div>
