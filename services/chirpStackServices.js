@@ -201,6 +201,48 @@ async function addDeviceProfilesRequest(values, apiToken) {
   }
 }
 //---------------------------------------------------------------------//
+async function addGatewayRequest(values, tenantId, apiToken) {
+  try {
+    // Create the Metadata object.
+    const metadata = new grpc.Metadata();
+    metadata.set("authorization", "Bearer " + apiToken);
+
+    return new Promise((resolve, reject) => {
+      for ( const gw of values) {
+        // Create a new gateway.
+        const newGw = new gateway_pb.Gateway();
+        newGw.setTenantId(tenantId);
+        newGw.setName(gw.name);
+        newGw.setGatewayId(gw.id);
+        newGw.setStatsInterval(30);
+
+        // Create a request to add a new gateway.
+        const createReq = new gateway_pb.CreateGatewayRequest();
+        createReq.setGateway(newGw);
+
+        gatewayService.create(createReq, metadata, (err, resp) => {
+          if (err !== null) {
+          console.log(err.details);
+          resolve({ request: 'addGw', message: { 
+            status: 'failed', 
+            data: err.message }
+          });
+          return;
+        }
+        console.log('New gateway has been created: ', gw.name);
+        });
+      }
+
+      resolve({ request: 'addGw', message: { 
+        status: 'success', 
+        data: {}
+      }});
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+//---------------------------------------------------------------------//
 async function applicationConfigurationsRequest(values, apiToken, tenantId, appId) {
   try {
     return new Promise((resolve, reject) => {
@@ -409,7 +451,7 @@ async function createTenantUser(values, apiToken) {
       tenantUser.setUserId(values.user_id);
       tenantUser.setIsAdmin(false);
       tenantUser.setIsDeviceAdmin(true);
-      tenantUser.setIsGatewayAdmin(false);
+      tenantUser.setIsGatewayAdmin(true);
       tenantUser.setEmail(values.user_em);
 
       // Create a request to create a tenant user.
@@ -1216,6 +1258,7 @@ module.exports = {
   addApplicationRequest,
   addDeviceRequest,
   addDeviceProfilesRequest,
+  addGatewayRequest,
   applicationConfigurationsRequest,
   applicationsListRequest,
   createDeviceKeyRequest,
@@ -1231,6 +1274,7 @@ module.exports = {
   enterDeviceRequest,
   getApplicationRequest,
   getMainDashboard,
+  gatewayListRequest,
   loginUserRequest,
   profileUserRequest,
 };
