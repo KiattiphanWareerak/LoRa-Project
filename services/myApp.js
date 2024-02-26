@@ -362,7 +362,31 @@ async function myApp(values) {
                 logout();
 
                 resolve({ request: 'logout', message: { status: 'success', data: undefined }});
-            } 
+            }
+            else if (values.request === 'postDevConfigConfirm') {
+                const respPostDevConfig = await chirpStackServices.postDeviceConfigurationRequest(values.message.data, globalUserToken);
+        
+                if ( respPostDevConfig.request === 'postDev' && respPostDevConfig.message.status === 'success') {
+                    const respPostDevKey = await chirpStackServices.postDeviceKeyRequest(values.message.data, globalUserToken);
+
+                    if ( respPostDevKey.request === 'postDevKey' && respPostDevKey.message.status === 'success') {
+
+                        resolve({ request: 'postDevConfigConfirm', message: { status: 'success',
+                            data: { 
+                                post_devConfig: respPostDevConfig.message.data, 
+                                post_devKey: respPostDevConfig.message.data 
+                            }}});
+                    } else {
+                        console.log(respPostDevKey);
+    
+                        resolve({ request: 'postDevConfigConfirm', message: { status: 'failed', data: undefined }});
+                    }
+                } else {
+                    console.log(respPostDevConfig);
+
+                    resolve({ request: 'postDevConfigConfirm', message: { status: 'failed', data: undefined }});
+                }
+            }
             else if ( values.request === 'register' ) {
                 const respFromNwApiToken = await dataBaseServices.getNetworkApiTokenFromDB();
 

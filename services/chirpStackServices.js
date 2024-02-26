@@ -22,7 +22,6 @@ const google_protobuf_empty_pb = require("google-protobuf/google/protobuf/empty_
 const google_protobuf_timestamp_pb = require("google-protobuf/google/protobuf/timestamp_pb");
 
 // This must point to the ChirpStack API interface.
-// const serverChirpStack = "192.168.50.54:8080";
 const serverChirpStack = "202.28.95.234:8080";
 
 // Create the client for the Service.
@@ -821,6 +820,7 @@ async function getDevicesSummaryRequest(tenantId, apiToken) {
   }
 }
 //---------------------------------------------------------------------//
+//getDeviceEventsRequest("55135eeed6e60772", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjaGlycHN0YWNrIiwiaXNzIjoiY2hpcnBzdGFjayIsInN1YiI6IjgyYzA1NjUyLWU4NzMtNDA3NS04YzIwLTU1MjliNDI4NTUxMSIsInR5cCI6ImtleSJ9.CKn5Vq9UCDyYB0znfKPJ-nBmvUvc3tClUIWIY0lB0Xc");
 async function getDeviceEventsRequest(values, apiToken) { 
   try {
     // Create the Metadata object.
@@ -831,7 +831,6 @@ async function getDeviceEventsRequest(values, apiToken) {
       dev_events: [],
     };
 
-    let eventCount = 0;
     return new Promise((resolve, reject) => {
       const createReq = new internal_pb.StreamDeviceEventsRequest();
       createReq.setDevEui(values);
@@ -842,21 +841,21 @@ async function getDeviceEventsRequest(values, apiToken) {
     
       stream.on("data", (response) => {
           // console.log("Received device event:", response);
-          
+
           dataEvents.dev_events.push(response);
-          eventCount++;
-    
-          // Stop the stream after receiving 10 events
-          if (eventCount === 10) {
-              stream.cancel();
-          }
       });
     
       stream.on("error", (error) => {
         console.error("Error streaming device events:", error.details);
       });
     
+      const timeoutId = setTimeout(() => {
+        console.log("Timeout reached, stopping stream.");
+        stream.cancel();
+      }, 500);
+
       stream.on("end", () => {
+        clearTimeout(timeoutId);
         console.log("Device event stream ended.");
 
         resolve({ request: 'getDevEvents', message: { status: 'success', data: dataEvents.dev_events }});
@@ -877,7 +876,6 @@ async function getDeviceFramesRequest(values, apiToken) {
       dev_frames: [],
     };
     
-    let frameCount = 0;
     return new Promise((resolve, reject) => {
       const createReq = new internal_pb.StreamDeviceFramesRequest();
       createReq.setDevEui(values);
@@ -890,22 +888,22 @@ async function getDeviceFramesRequest(values, apiToken) {
           // console.log("Received device frame:", response);
 
           dataFrames.dev_frames.push(response);
-          frameCount++;
-    
-          // Stop the stream after receiving 10 events
-          if (frameCount === 10) {
-              stream.cancel();
-          }
       });
     
       stream.on("error", (error) => {
           console.error("Error streaming device frames:", error.details);
       });
     
+      const timeoutId = setTimeout(() => {
+        console.log("Timeout reached, stopping stream.");
+        stream.cancel();
+      }, 500);
+
       stream.on("end", () => {
+        clearTimeout(timeoutId);
         console.log("Device frame stream ended.");
+
         resolve({ request: 'getDevFrames', message: { status: 'success', data: dataFrames.dev_frames }});
-        resolve(dataFrames.dev_frames);
       });
     });
   } catch (error) {
@@ -1173,6 +1171,75 @@ async function profileUserRequest(apiToken) {
   }
 }
 //---------------------------------------------------------------------//
+async function postDeviceConfigurationRequest(values, apiToken) { 
+  try {
+    // Create the Metadata object.
+    const metadata = new grpc.Metadata();
+    metadata.set("authorization", "Bearer " + apiToken);
+
+    return new Promise((resolve, reject) => {
+      // Create a device to updated.
+      const deviceUpdate = new device_pb.Device()
+      deviceUpdate.setApplicationId(values.app_id);
+      deviceUpdate.setName(values.dev_name);
+      deviceUpdate.setDevEui(values.dev_id);
+      deviceUpdate.setJoinEui(values.dev_joinEui);
+      deviceUpdate.setDescription(values.dev_desc);
+      deviceUpdate.setDeviceProfileId(values.dev_devProfId);
+      deviceUpdate.setIsDisabled(values.dev_isDis);
+      deviceUpdate.setSkipFcntCheck(values.dev_SkFntC);
+
+      // Create a request to update device.
+      const createReq = new device_pb.UpdateDeviceRequest();
+      createReq.setDevice(deviceUpdate);
+
+      deviceService.update(createReq, metadata, (err, resp) => {
+        if (err !== null) {
+          console.log(err.details);
+          resolve({ request: 'postDev', message: { status: 'failed', data: err.details }});
+          return;
+        }
+        console.log('Update Device has been completed.');
+
+        resolve({ request: 'postDev', message: { status: 'success', data: resp.toObject() }});
+      });
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+//---------------------------------------------------------------------//
+async function postDeviceKeyRequest(values, apiToken) { 
+  try {
+    // Create the Metadata object.
+    const metadata = new grpc.Metadata();
+    metadata.set("authorization", "Bearer " + apiToken);
+
+    return new Promise((resolve, reject) => {
+      const deviceKeyUpdate = new device_pb.DeviceKeys();
+      deviceKeyUpdate.setDevEui(values.dev_id);
+      deviceKeyUpdate.setAppKey(values.dev_key);
+      deviceKeyUpdate.setNwkKey(values.dev_key);
+      // Create a request to update device key.
+      const createReq = new device_pb.UpdateDeviceKeysRequest();
+      createReq.setDeviceKeys(deviceKeyUpdate);
+
+      deviceService.updateKeys(createReq, metadata, (err, resp) => {
+        if (err !== null) {
+          console.log(err.details);
+          resolve({ request: 'postDevKey', message: { status: 'failed', data: err.details }});
+          return;
+        }
+        console.log('Update Device Key has been completed.');
+
+        resolve({ request: 'postDevKey', message: { status: 'success', data: resp.toObject() }});
+      });
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+//---------------------------------------------------------------------//
 module.exports = {
   addApplicationRequest,
   addDeviceRequest,
@@ -1199,6 +1266,8 @@ module.exports = {
   getQueueItemsRequest,
   loginUserRequest,
   profileUserRequest,
+  postDeviceConfigurationRequest,
+  postDeviceKeyRequest
 };
 //---------------------------------------------------------------------//
 //----------------------------COMMON ZONE------------------------------//

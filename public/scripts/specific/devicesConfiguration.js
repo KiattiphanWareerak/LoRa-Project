@@ -18,40 +18,60 @@ const sendDashboardDeviceRequest = (timeAgo, aggregation) => {
             aggregation: aggregation
         }
     }};
-    sender_and_reciver_device_configurations(req);
+    sender_and_reciver_in_device(req);
 };
-const sendConfigsDeviceRequest = () => {
+const sendDeviceInfomationsRequest = () => {
     const req = { request: 'getDevInfo', message: { 
         status: undefined, 
         data: undefined 
     }};
-    sender_and_reciver_device_configurations(req);
+    sender_and_reciver_in_device(req);
 };
 const sendQueuesDeviceRequest = () => {
     const req = { request: 'getDevQueues', message: { 
         status: undefined, 
         data: undefined 
     }};
-    sender_and_reciver_device_configurations(req);
+    sender_and_reciver_in_device(req);
 };
 const sendEventsDeviceRequest = () => {
     const req = { request: 'getDevEvents', message: { 
         status: undefined, 
         data: undefined 
     }};
-    sender_and_reciver_device_configurations(req);
+    sender_and_reciver_in_device(req);
 };
 const sendFramesDeviceRequest = () => {
     const req = { request: 'getDevFrames', message: { 
         status: undefined, 
         data: undefined 
     }};
-    sender_and_reciver_device_configurations(req);
+    sender_and_reciver_in_device(req);
+};
+const sendDeviceConfigConfirmRequest = (data) => {
+    // recuit to update device
+    // data = {
+    //     app_id: String,
+    //     dev_name: String,
+    //     dev_id: String,
+    //     dev_joinEui: String,
+    //     dev_desc: String,
+    //     dev_devProfId: String,
+    //     dev_IsDis: Boolean,
+    //     dev_SkFntC: Boolean,
+    //     dev_key: String
+    // }
+
+    const req = { request: 'postDevConfigConfirm', message: { 
+        status: undefined, 
+        data: data 
+    }};
+    sender_and_reciver_in_device(req);
 };
 //---------------------------------------------------------------------//
 //---------------------------WEB SOCKET ZONE---------------------------//
 //---------------------------------------------------------------------//
-function sender_and_reciver_device_configurations(req) {
+function sender_and_reciver_in_device(req) {
     const socket = new WebSocket('ws://localhost:3001');
     //-----SENDER-----//
     socket.addEventListener('open', () => {
@@ -84,6 +104,9 @@ function sender_and_reciver_device_configurations(req) {
           }
           else if ( messageFromServer.request === 'getDevFrames' ) {
             displayDeviceFrames(messageFromServer.message.data.dev_frames);
+          }
+          else if ( messageFromServer.request === 'postDevConfigConfirm' ) {
+            sendDeviceInfomationsRequest();
           }
         } else {
           alert("Error: Request-" + messageFromServer.request + "-Status-"  + messageFromServer.message.status + 
