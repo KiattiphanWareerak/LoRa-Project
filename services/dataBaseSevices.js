@@ -5,7 +5,8 @@ const { Client } = require("pg");
 //---------------------------------------------------------------------//
 //-------------------------------FUNCTIONS-----------------------------//
 //---------------------------------------------------------------------//
-async function getGetewayFromDB() { 
+getCSTenantIdFromDB();
+async function getCSTenantIdFromDB() { 
   try {
     const client = new Client({
       database: 'my_web_db',
@@ -16,7 +17,7 @@ async function getGetewayFromDB() {
     });
 
     return new Promise(async (resolve, reject) => {
-      const query = "SELECT * FROM gateway_list";
+      const query = "SELECT * FROM chirpstack_tenant_id";
   
       await client.connect();
 
@@ -24,13 +25,13 @@ async function getGetewayFromDB() {
   
       await client.end();
 
-      resolve({ request: 'getGw', message: { 
+      resolve({ request: 'getCSTenantId', message: { 
         status: 'success', 
         data: results.rows }
       });
     });
   } catch (error) {
-    resolve({ request: 'getGw', message: { 
+    resolve({ request: 'getCSTenantId', message: { 
       status: 'failed', 
       data: error }
     });
@@ -70,7 +71,7 @@ async function getNetworkApiTokenFromDB() {
 }
 //---------------------------------------------------------------------// 
 module.exports = {
-  getGetewayFromDB,
+  getCSTenantIdFromDB,
   getNetworkApiTokenFromDB
 };
 //---------------------------------------------------------------------//

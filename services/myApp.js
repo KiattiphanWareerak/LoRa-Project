@@ -105,20 +105,6 @@ async function myApp(values) {
                     resolve({ request: 'dispDev', message: { status: 'failed', data: undefined }});
                 }
             } 
-            else if (values.request === 'dispDashDev') {
-                const data = { dev_id: globalDevId, dev_name: globalDevName };
-
-                const respFromDispDash = await chirpStackServices.deviceConfigurationsRequest(data, 
-                    globalUserToken, globalTenantId, globalAppName);
-        
-                if ( respFromDispDash.request === 'dispDashDev' && respFromDispDash.message.status === 'success') {
-                    resolve({ request: 'dispDashDev', message: { status: 'success', data: respFromDispDash.message.data }});
-                } else {
-                    console.log(respFromDispDash);
-
-                    resolve({ request: 'dispDashDev', message: { status: 'failed', data: undefined }});
-                }
-            } 
             else if ( values.request === 'dispDevProfiles' ) {
                 const respFromDevProfList = await chirpStackServices.deviceProfilesListRequest(globalTenantId, globalUserToken);
 
@@ -134,13 +120,22 @@ async function myApp(values) {
                 const respFromNwApiToken = await dataBaseServices.getNetworkApiTokenFromDB();
 
                 if ( respFromNwApiToken.request === 'getNwApiToken' && respFromNwApiToken.message.status === 'success' ) {
-                    const respFromMainDash = await chirpStackServices.getMainDashboard(globalTenantId, respFromNwApiToken.message.data[0].api_token);
+                    const respFromTnId = await dataBaseServices.getCSTenantIdFromDB();
 
-                    if (respFromMainDash.request === 'dispMainDash' && respFromMainDash.message.status === 'success') {
-                        resolve({ request: 'dispMainDash', message: { status: 'success', data: respFromMainDash.message.data }});
+                    if ( respFromTnId.request === 'getCSTenantId' && respFromTnId.message.status === 'success' ) {
+                        const respFromMainDash = await chirpStackServices.getMainDashboard(globalTenantId, respFromTnId.message.data[0].tenant_id,
+                            respFromNwApiToken.message.data[0].api_token);
+
+                        if (respFromMainDash.request === 'dispMainDash' && respFromMainDash.message.status === 'success') {
+                            resolve({ request: 'dispMainDash', message: { status: 'success', data: respFromMainDash.message.data }});
+                        } else {
+                            console.log(respFromMainDash);
+        
+                            resolve({ request: 'dispMainDash', message: { status: 'failed', data: undefined }});
+                        }
                     } else {
-                        console.log(respFromMainDash);
-    
+                        console.log(respFromTnId);
+        
                         resolve({ request: 'dispMainDash', message: { status: 'failed', data: undefined }});
                     }
                 } else {
@@ -166,16 +161,30 @@ async function myApp(values) {
                 }
             } 
             else if (values.request === 'enterDevId') {
-                const respFromEnterDevId = await chirpStackServices.enterDeviceRequest(values.message.data, 
-                    globalUserToken, globalTenantId, globalAppName);
-        
-                if ( respFromEnterDevId.request === 'enterDevId' && respFromEnterDevId.message.status === 'success') {
-                    globalDevId = values.message.data.dev_id;
-                    globalDevName = values.message.data.dev_name;
+                let data = {};
+                let data_timestamp = { timeAgo: values.message.data.timeAgo, aggregation: values.message.data.aggregation };
 
-                    resolve({ request: 'enterDevId', message: { status: 'success', data: respFromEnterDevId.message.data }});
+                const respGetLinkMetric = await chirpStackServices.getLinkMetricsRequest(values.message.data.dev_id, globalUserToken, data_timestamp);
+        
+                if ( respGetLinkMetric.request === 'getLinkMetrics' && respGetLinkMetric.message.status === 'success') {
+                    const respGetDevConfig = await chirpStackServices.getDeviceConfigurationRequest(values.message.data.dev_id, globalUserToken);
+
+                    if ( respGetDevConfig.request === 'getDevice' && respGetDevConfig.message.status === 'success') {
+                        globalDevId = values.message.data.dev_id;
+                        globalDevName = values.message.data.dev_name;
+
+                        data.dev_linkMetrics = respGetLinkMetric.message.data;
+                        data.dev_config = respGetDevConfig.message.data;
+                        data.app_name = globalAppName;
+
+                        resolve({ request: 'enterDevId', message: { status: 'success', data: data }});
+                    } else {
+                        console.log(respGetDevConfig);
+    
+                        resolve({ request: 'enterDevId', message: { status: 'failed', data: undefined }});
+                    }
                 } else {
-                    console.log(respFromEnterDevId);
+                    console.log(respGetLinkMetric);
 
                     resolve({ request: 'enterDevId', message: { status: 'failed', data: undefined }});
                 }
@@ -192,6 +201,122 @@ async function myApp(values) {
                     resolve({ request: 'getApp', message: { status: 'failed', data: undefined }});
                 }
             } 
+            else if (values.request === 'getDashDev') {
+                let data = {};
+
+                const respGetLinkMetric = await chirpStackServices.getLinkMetricsRequest(globalDevId, globalUserToken, values.message.data);
+        
+                if ( respGetLinkMetric.request === 'getLinkMetrics' && respGetLinkMetric.message.status === 'success') {
+                    const respGetDevConfig = await chirpStackServices.getDeviceConfigurationRequest(globalDevId, globalUserToken);
+
+                    if ( respGetDevConfig.request === 'getDevice' && respGetDevConfig.message.status === 'success') {
+                        data.dev_linkMetrics = respGetLinkMetric.message.data;
+                        data.dev_config = respGetDevConfig.message.data;
+                        data.app_name = globalAppName;
+
+                        resolve({ request: 'getDashDev', message: { status: 'success', data: data }});
+                    } else {
+                        console.log(respGetDevConfig);
+    
+                        resolve({ request: 'getDashDev', message: { status: 'failed', data: undefined }});
+                    }
+                } else {
+                    console.log(respGetLinkMetric);
+
+                    resolve({ request: 'getDashDev', message: { status: 'failed', data: undefined }});
+                }
+            }
+            else if (values.request === 'getDevEvents') {
+                let data = {};
+
+                const respGetDevEvents = await chirpStackServices.getDeviceEventsRequest(globalDevId, globalUserToken);
+        
+                if ( respGetDevEvents.request === 'getDevQueues' && respGetDevEvents.message.status === 'success') {
+                    data.dev_events = respGetDevEvents.message.data;
+                    data.app_name = globalAppName;
+
+                    resolve({ request: 'getDevEvents', message: { status: 'success', data: data }});
+                } else {
+                    console.log(respGetDevEvents);
+
+                    resolve({ request: 'getDevEvents', message: { status: 'failed', data: undefined }});
+                }
+            }
+            else if (values.request === 'getDevFrames') {
+                let data = {};
+
+                const respGetDevFrames = await chirpStackServices.getDeviceFramesRequest(globalDevId, globalUserToken);
+        
+                if ( respGetDevFrames.request === 'getDevFrames' && respGetDevFrames.message.status === 'success') {
+                    data.dev_frames = respGetDevFrames.message.data;
+                    data.app_name = globalAppName;
+
+                    resolve({ request: 'getDevFrames', message: { status: 'success', data: data }});
+                } else {
+                    console.log(respGetDevFrames);
+
+                    resolve({ request: 'getDevFrames', message: { status: 'failed', data: undefined }});
+                }
+            }
+            else if (values.request === 'getDevInfo') {
+                let data = {};
+
+                const respGetDevConfig = await chirpStackServices.getDeviceConfigurationRequest(globalDevId, globalUserToken);
+        
+                if ( respGetDevConfig.request === 'getDevice' && respGetDevConfig.message.status === 'success') {
+                    const respDevProfileList = await chirpStackServices.deviceProfilesListRequest(globalTenantId, globalUserToken);
+
+                    if ( respDevProfileList.request === 'dispDevProfiles' && respDevProfileList.message.status === 'success') {
+                        const respGetDevKey = await chirpStackServices.getDeviceKeyRequest(globalDevId, globalUserToken);
+
+                        if ( respGetDevKey.request === 'getDevKey' && respGetDevKey.message.status === 'success') {
+                            const respGetDevActivation = await chirpStackServices.getDeviceActivationRequest(globalDevId, globalUserToken);
+
+                            if ( respGetDevKey.request === 'getDevActivation' && respGetDevKey.message.status === 'success') {
+                                data.dev_config = respGetDevConfig.message.data;
+                                data.dev_profilesList = respDevProfileList.message.data;
+                                data.dev_key = respGetDevKey.message.data;
+                                data.dev_activation = respGetDevActivation.message.data;
+                                data.app_name = globalAppName;
+        
+                                resolve({ request: 'getDevInfo', message: { status: 'success', data: data }});
+                            } else {
+                                console.log(respGetDevActivation);
+            
+                                resolve({ request: 'getDevInfo', message: { status: 'failed', data: undefined }});
+                            }
+                        } else {
+                            console.log(respGetDevKey);
+        
+                            resolve({ request: 'getDevInfo', message: { status: 'failed', data: undefined }});
+                        }
+                    } else {
+                        console.log(respDevProfileList);
+    
+                        resolve({ request: 'getDevInfo', message: { status: 'failed', data: undefined }});
+                    }
+                } else {
+                    console.log(respGetDevConfig);
+
+                    resolve({ request: 'getDevInfo', message: { status: 'failed', data: undefined }});
+                }
+            }
+            else if (values.request === 'getDevQueues') {
+                let data = {};
+
+                const respGetDevQueue = await chirpStackServices.getQueueItemsRequest(globalDevId, globalUserToken);
+        
+                if ( respGetDevQueue.request === 'getDevQueues' && respGetDevQueue.message.status === 'success') {
+                    data.dev_queues = respGetDevQueue.message.data;
+                    data.app_name = globalAppName;
+
+                    resolve({ request: 'getDevQueues', message: { status: 'success', data: data }});
+                } else {
+                    console.log(respGetDevQueue);
+
+                    resolve({ request: 'getDevQueues', message: { status: 'failed', data: undefined }});
+                }
+            }
             else if ( values.request === 'login' ) {
                 const respFromNwApiToken = await dataBaseServices.getNetworkApiTokenFromDB();
 
