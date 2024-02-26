@@ -212,20 +212,6 @@ async function myApp(values) {
                                 globalUserToken = respFromNwApiToken.message.data[0].api_token;
                                 globalTenantId = "52f14cd4-c6f1-4fbd-8f87-4025e1d49242";
                             }
-
-                            // macthing gateway between cs and db to update gateway for user//
-                            const respFromGwDb = await dataBaseServices.getGetewayFromDB();
-                            const respFromGwCs = await chirpStackServices.gatewayListRequest(globalTenantId, globalUserToken);
-
-                            const resultMaching = await macthingGateway(respFromGwCs.message.data.resultList, respFromGwDb.message.data);
-                            console.log("Result, gateway of user not have:");
-                            console.log(resultMaching);
-                            if ( resultMaching.length !== 0 ) {
-                                console.log("Update the gateway for users:");
-                                const respFromAddGw = await chirpStackServices.addGatewayRequest(resultMaching, globalTenantId, globalUserToken);
-                                console.log(respFromAddGw);
-                            }
-                            //--------------------------------------------------------------//
                             console.log("USER ID: ", globalUserId);
                             console.log("USER TENANT ID: ", globalTenantId);
                             console.log("USER TOKEN: ", globalUserToken);
@@ -309,29 +295,6 @@ module.exports = {
 };
 //---------------------------------------------------------------------//
 //----------------------------COMMON ZONE------------------------------//
-//---------------------------------------------------------------------//
-async function macthingGateway(gfcs, gfdb) {
-    return new Promise((resolve, reject) => {
-        const gwCsMap = new Map();
-    
-        for (const gw of gfcs) {
-            gwCsMap.set(gw.gatewayId, gw.name);
-        }
-    
-        const unmatchedGateways = [];
-        for (const gw of gfdb) {
-            const gwName = gwCsMap.get(gw.id);
-            if (gwName) {
-                console.log(`Gateway matched: ${gw.id} - ${gwName}`);
-            } else {
-                console.log(`Gateway not matched: ${gw.id}`);
-                unmatchedGateways.push({ name: gw.name, id: gw.id });
-            }
-        }
-
-        resolve(unmatchedGateways);
-    });
-}
 //---------------------------------------------------------------------//
 function logout() {
     globalUserToken, globalUserId, globalTenantId, 

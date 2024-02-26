@@ -1258,7 +1258,6 @@ module.exports = {
   addApplicationRequest,
   addDeviceRequest,
   addDeviceProfilesRequest,
-  addGatewayRequest,
   applicationConfigurationsRequest,
   applicationsListRequest,
   createDeviceKeyRequest,
@@ -1274,7 +1273,6 @@ module.exports = {
   enterDeviceRequest,
   getApplicationRequest,
   getMainDashboard,
-  gatewayListRequest,
   loginUserRequest,
   profileUserRequest,
 };
