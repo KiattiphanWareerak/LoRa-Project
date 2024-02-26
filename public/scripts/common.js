@@ -3,6 +3,10 @@
 let req;
 //---------------------------------------------------------------------//
 document.addEventListener('DOMContentLoaded', () => {
+    //---------------------------//
+    //---------DASHBOARD---------//
+    //---------------------------//
+    //-----Menu active events----//
     const activeMenuItem = document.querySelector('.side_menu li.active');
     if (activeMenuItem) {
       const menuId = activeMenuItem.id;
@@ -14,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
             data:  undefined 
           }};
 
-          senderAndReciver(req);
+          sender_and_reciver_common(req);
           break;
         case 'menu-deviceProfiles':
           req = { request: 'dispDevProfiles', message: { 
@@ -22,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
             data:  undefined 
           }};
             
-          senderAndReciver(req);
+          sender_and_reciver_common(req);
           break;
         case 'menu-applications':
           req = { request: 'dispApp', message: { 
@@ -30,15 +34,14 @@ document.addEventListener('DOMContentLoaded', () => {
             data:  undefined 
           }};
           
-          senderAndReciver(req);
+          sender_and_reciver_common(req);
           break;
         case 'menu-tutorial':
           // nothing
-
           break;
       }
     }
-
+    //-----Menu click events----//
     document.querySelectorAll('.side_menu li').forEach(menuItem => {
       menuItem.addEventListener('click', () => {
         const menuId = menuItem.id;
@@ -62,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
               data:  undefined 
             }};
             
-            senderAndReciver(req);
+            sender_and_reciver_common(req);
             break;
         }
       });
@@ -71,15 +74,15 @@ document.addEventListener('DOMContentLoaded', () => {
 //---------------------------------------------------------------------//
 //---------------------------WEB SOCKET ZONE---------------------------//
 //---------------------------------------------------------------------//
-function senderAndReciver(req) {
+function sender_and_reciver_common(req) {
   const socket = new WebSocket('ws://localhost:3001');
-  //-SENDER-//
+  //-----SENDER-----//
   socket.addEventListener('open', () => {
     console.log('WebSocket connection established with WebServer');
 
     socket.send(JSON.stringify(req));
   });
-  //-RECEIVER-//
+  //-----RECEIVER-----//
   socket.addEventListener('message', (event) => {
       const messageFromServer = JSON.parse(event.data);
       console.log('Message from server:', messageFromServer);
@@ -100,13 +103,26 @@ function senderAndReciver(req) {
           window.location.href = "index.html";
         }
       } else {
-        alert("Error 505.");
+        alert("Error: Request-" + messageFromServer.request + "-Status-"  + messageFromServer.message.status + 
+        "\n-Data-" + messageFromServer.message.data);
       }
   });
 }
 //---------------------------------------------------------------------//
 //---------------------------DISPLAYS ZONE-----------------------------//
 //---------------------------------------------------------------------//
+function display_HeaderAndMiddleTitle_applications() {
+  let newH1Element = document.createElement('h1');
+  let newH4Element = document.createElement('h4');
+  newH1Element.textContent = 'Applications';
+  newH4Element.innerHTML = `<a>Applications</a> `;
+  let headerTitleDiv = document.querySelector('.header--title');
+  let locatedDiv = document.querySelector('.located');
+  headerTitleDiv.innerHTML = '';
+  locatedDiv.innerHTML = '';
+  headerTitleDiv.appendChild(newH1Element);
+  locatedDiv.appendChild(newH4Element);
+}
 function display_HeaderAndMiddleTitle_deviceProfiles() {
     let newH1Element = document.createElement('h1');
     let newH4Element = document.createElement('h4');
@@ -119,20 +135,7 @@ function display_HeaderAndMiddleTitle_deviceProfiles() {
     headerTitleDiv.appendChild(newH1Element);
     locatedDiv.appendChild(newH4Element);
 }
-function display_HeaderAndMiddleTitle_applications() {
-    let newH1Element = document.createElement('h1');
-    let newH4Element = document.createElement('h4');
-    newH1Element.textContent = 'Applications';
-    newH4Element.innerHTML = `<a>Applications</a> `;
-    let headerTitleDiv = document.querySelector('.header--title');
-    let locatedDiv = document.querySelector('.located');
-    headerTitleDiv.innerHTML = '';
-    locatedDiv.innerHTML = '';
-    headerTitleDiv.appendChild(newH1Element);
-    locatedDiv.appendChild(newH4Element);
-}
 function display_mainContent_dashboard(gets) {
-
 }
 function display_mainContent_deviceProfiles(gets) {
     const tableBody = document.getElementById("data-table");
@@ -181,66 +184,66 @@ function display_mainContent_deviceProfiles(gets) {
     }      
 }
 function display_mainContent_applications(gets) {
-    let tbody = document.getElementById('data-table');
-    
-    let count = 0;
-    gets.app_list.resultList.forEach(function(item, index) {
-        var row = document.createElement('tr');
+  let tbody = document.getElementById('data-table');
+  
+  let count = 0;
+  gets.app_list.resultList.forEach(function(item, index) {
+      var row = document.createElement('tr');
 
-        // Checkbox column
-        var checkboxCell = document.createElement('td');
-        var checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.name = 'app' + (index + 1);
-        checkboxCell.appendChild(checkbox);
-        row.appendChild(checkboxCell);
+      // Checkbox column
+      var checkboxCell = document.createElement('td');
+      var checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.name = 'app' + (index + 1);
+      checkboxCell.appendChild(checkbox);
+      row.appendChild(checkboxCell);
 
-        // Number column
-        var numberCell = document.createElement('td');
-        count += 1;
-        numberCell.textContent = count;
-        row.appendChild(numberCell);
+      // Number column
+      var numberCell = document.createElement('td');
+      count += 1;
+      numberCell.textContent = count;
+      row.appendChild(numberCell);
 
-        // Application name column with a link
-        var appNameCell = document.createElement('td');
-        var appNameLink = document.createElement('a');
-        appNameLink.href = 'javascript:void(0)';
-        // Add click event listener to appNameLink
-        appNameLink.setAttribute('app-id', item.id);
-        appNameLink.addEventListener('click', function(event) {
-            event.preventDefault();
-            const socket = new WebSocket('ws://localhost:3001');
+      // Application name column with a link
+      var appNameCell = document.createElement('td');
+      var appNameLink = document.createElement('a');
+      appNameLink.href = 'javascript:void(0)';
+      // Add click event listener to appNameLink
+      appNameLink.setAttribute('app-id', item.id);
+      appNameLink.addEventListener('click', function(event) {
+          event.preventDefault();
+          const socket = new WebSocket('ws://localhost:3001');
 
-            socket.addEventListener('open', () => {
-                let appID = this.getAttribute('app-id');
-                let appName = item.name;
+          socket.addEventListener('open', () => {
+              let appID = this.getAttribute('app-id');
+              let appName = item.name;
 
-                const req = { request: 'enterAppId', message: { 
-                    status: undefined, 
-                    data: { app_id: appID, app_name: appName 
-                }}};
-                socket.send(JSON.stringify(req));
+              const req = { request: 'enterAppId', message: { 
+                  status: undefined, 
+                  data: { app_id: appID, app_name: appName 
+              }}};
+              socket.send(JSON.stringify(req));
 
-                window.location.href = 'devices.html';
-            });
-        });
-        appNameLink.textContent = item.name;
-        appNameCell.appendChild(appNameLink);
-        row.appendChild(appNameCell);
+              window.location.href = 'devices.html';
+          });
+      });
+      appNameLink.textContent = item.name;
+      appNameCell.appendChild(appNameLink);
+      row.appendChild(appNameCell);
 
-        // Application ID column
-        var appIdCell = document.createElement('td');
-        appIdCell.textContent = item.id;
-        row.appendChild(appIdCell);
+      // Application ID column
+      var appIdCell = document.createElement('td');
+      appIdCell.textContent = item.id;
+      row.appendChild(appIdCell);
 
-        // Description column
-        var registeredDeviceCell = document.createElement('td');
-        registeredDeviceCell.textContent = item.description;
-        row.appendChild(registeredDeviceCell);
+      // Description column
+      var registeredDeviceCell = document.createElement('td');
+      registeredDeviceCell.textContent = item.description;
+      row.appendChild(registeredDeviceCell);
 
-        // Append the row to the tbody
-        tbody.appendChild(row);
-    });
+      // Append the row to the tbody
+      tbody.appendChild(row);
+  });
 }
 //---------------------------------------------------------------------//
 //----------------------------COMMON ZONE------------------------------//
@@ -315,4 +318,4 @@ function getRevisionName(revision) {
         return "Unknown";
     }
 }
-//---------------------------------------------------------------------// 
+//---------------------------------------------------------------------//

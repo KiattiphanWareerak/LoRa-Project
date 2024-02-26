@@ -27,9 +27,9 @@
 
         if (messageFromServer.request === 'enterDevId' || messageFromServer.request === 'dispDashDev') {
             if (messageFromServer.message.status === 'success') {
-                displayHeaderAndMiddleTitle(messageFromServer.message.data.dev_dash, messageFromServer.message.data.app_name);
+                display_headerAndMiddleTitle_device_configurations(messageFromServer.message.data.dev_dash, messageFromServer.message.data.app_name);
                 displayConfigurationsDevice(messageFromServer.message.data.dev_dash);
-                displayDashboardDevice(messageFromServer.message.data.dev_dash, messageFromServer.message.data.dev_linlMetrics);
+                displayDashboardDevice(messageFromServer.message.data.dev_dash, messageFromServer.message.data.dev_linkMetrics);
                 displayQueuesDevice(messageFromServer.message.data.dev_dash);
                 displayDeviceEvents(messageFromServer.message.data.dev_dash);
                 displayDeviceFrames(messageFromServer.message.data.dev_dash);
@@ -45,13 +45,21 @@
 //---------------------------------------------------------------------// 
 //---------------------------DISPLAYS ZONE-----------------------------// 
 //---------------------------------------------------------------------//
-function displayConfigurationsDevice(items) {
-    // Configurations tab
-    let deviceName = document.getElementById("device_Name");
-    deviceName.value = items.dev_config.device.name;
-
+function display_headerAndMiddleTitle_device_configurations(items, appName) {
+    // Header and Middle title
+    let newH1Element = document.createElement('h1');
+    let newH4Element = document.createElement('h4');
+    newH1Element.textContent = items.dev_config.device.name;
+    newH4Element.innerHTML = `</h4><a href="applications.html" >Applications</a>
+     > <a href="devices.html" id="appLink">${appName}</a> > <a>${items.dev_config.device.name}</a></h4>`;
+    
+    let headerTitleDiv = document.querySelector('.header--title');
+    let locatedDiv = document.querySelector('.located');
+    locatedDiv.innerHTML = '';
+    
+    headerTitleDiv.appendChild(newH1Element);
+    locatedDiv.appendChild(newH4Element);
 }
-//---------------------------------------------------------------------//
 function displayDashboardDevice(items) {
     // Check if dev_linlMetrics is defined
     if (items.dev_linlMetrics) {
@@ -77,8 +85,27 @@ function displayDashboardDevice(items) {
         // Optionally, you can handle this case by displaying an error message or taking other actions.
     }
 }
+function displayConfigurationsDevice(items) {
+    // Configurations tab
+    let deviceName = document.getElementById("device_Name");
+    deviceName.value = items.dev_config.device.name;
 
+}
+function displayQueuesDevice(items) {
+    // Queues tab
 
+}
+function displayDeviceEvents(items) {
+    // Events tab
+
+}
+function displayDeviceFrames(items) {
+    // LoRaWAN Frames tab
+
+}
+//---------------------------------------------------------------------//
+//----------------------------COMMON ZONE------------------------------// 
+//---------------------------------------------------------------------// 
 function displayChartData(data, chartId, chartLabel, datasetLabel) {
     // Extract timestamps and data from the received data
     const timestamps = data.timestampsList.map(timestamp => timestamp.seconds);
@@ -121,37 +148,4 @@ function displayChartData(data, chartId, chartLabel, datasetLabel) {
         }
     });
 }
-
-
-//---------------------------------------------------------------------//
-function displayHeaderAndMiddleTitle(items, appName) {
-    // Header and Middle title
-    let newH1Element = document.createElement('h1');
-    let newH4Element = document.createElement('h4');
-    newH1Element.textContent = items.dev_config.device.name;
-    newH4Element.innerHTML = `</h4><a href="applications.html" >Applications</a>
-     > <a href="devices.html" id="appLink">${appName}</a> > <a>${items.dev_config.device.name}</a></h4>`;
-    
-    let headerTitleDiv = document.querySelector('.header--title');
-    let locatedDiv = document.querySelector('.located');
-    locatedDiv.innerHTML = '';
-    
-    headerTitleDiv.appendChild(newH1Element);
-    locatedDiv.appendChild(newH4Element);
-}
-//---------------------------------------------------------------------//
-function displayQueuesDevice(items) {
-    // Queues tab
-
-}
-//---------------------------------------------------------------------//
-function displayDeviceEvents(items) {
-    // Events tab
-
-}
-//---------------------------------------------------------------------//
-function displayDeviceFrames(items) {
-    // LoRaWAN Frames tab
-
-}
-//---------------------------------------------------------------------//
+//---------------------------------------------------------------------// 

@@ -2,7 +2,7 @@
 //----------------------------EVENTS ZONE------------------------------// 
 //---------------------------------------------------------------------//
 document.addEventListener('DOMContentLoaded', () => {
-    //---------------------------SENDER ZONE---------------------------//
+    //-----SENDER ZONE-----//
     const socket = new WebSocket('ws://localhost:3001');
 
     const loginForm = document.getElementById('login-form');
@@ -15,24 +15,23 @@ document.addEventListener('DOMContentLoaded', () => {
         loginForm.addEventListener('submit', (event) => {
             event.preventDefault();
             
-            const message = { request: 'login', message:
+            const req = { request: 'login', message:
             { status: undefined,
                 data: { 
                     user_em: input_id.value.trim(), 
                     user_pw: input_pw.value.trim(), }
             }};
 
-            socket.send(JSON.stringify(message));
+            socket.send(JSON.stringify(req));
         });
     });
-    //-------------------------RECEIVER ZONE-------------------------//
+    //----RECEIVER ZONE----//
     socket.addEventListener('message', (event) => {
         const messageFromServer = JSON.parse(event.data);
         console.log('Message from server:', messageFromServer);
 
         if (messageFromServer.request === 'login') {
             if (messageFromServer.message.status === 'success') {
-                alert("Welcome to LoRa Managment Web Application by COE2023-08!");
                 input_id.value = '';
                 input_pw.value = '';
                 window.location.href = 'dashboard.html';
@@ -46,4 +45,4 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
-//---------------------------------------------------------------------// 
+//---------------------------------------------------------------------//

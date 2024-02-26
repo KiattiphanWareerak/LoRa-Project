@@ -31,14 +31,14 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // All checks passed, proceed with sending data
-            const messageToServer = { request: 'register', message: { 
+            const req = { request: 'register', message: { 
                 status: undefined,
                 data: { user_name: input_un.value.trim(),
                     user_em: input_em.value.trim(),
                     user_pw: input_pw.value.trim() }
             }};
 
-            socket.send(JSON.stringify(messageToServer));
+            socket.send(JSON.stringify(req));
         });
     });
     //-------------------------RECEIVER ZONE-------------------------//
@@ -49,8 +49,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (messageFromServer.request === 'register') {
             if (messageFromServer.message.status === 'failed') {
                 alert("Registration failed.");
-                input_un.value = '';
-                input_em.value = '';
                 input_pw.value = '';
                 input_pw_cf.value = '';
             } else {

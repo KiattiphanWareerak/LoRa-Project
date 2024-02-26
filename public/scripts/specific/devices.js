@@ -229,7 +229,6 @@ function displatApplicationConfiguration(items) {
     appNameInput.value = items.application.name;
     descriptionInput.value = items.application.description;
 }
-//---------------------------------------------------------------------//
 function displayDevicesList(items) {
     // Devices List
     let tbody = document.getElementById('data-table');
@@ -295,7 +294,6 @@ function displayDevicesList(items) {
         tbody.appendChild(row);
     });
 }
-//---------------------------------------------------------------------//
 function displatHeaderAndMiddleTitle(items) {
     // Header and Middle title
     let newH1Element = document.createElement('h1');
@@ -311,7 +309,7 @@ function displatHeaderAndMiddleTitle(items) {
     locatedDiv.appendChild(newH4Element);
 }
 //---------------------------------------------------------------------// 
-//---------------------------FUNCTIONS ZONE----------------------------// 
+//----------------------------COMMONS ZONE-----------------------------// 
 //---------------------------------------------------------------------// 
 function formatLastSeen(lastSeen) {
     if (!lastSeen) {
