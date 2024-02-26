@@ -29,7 +29,7 @@
             if (messageFromServer.message.status === 'success') {
                 display_headerAndMiddleTitle_device_configurations(messageFromServer.message.data.dev_dash, messageFromServer.message.data.app_name);
                 displayConfigurationsDevice(messageFromServer.message.data.dev_dash);
-                displayDashboardDevice(messageFromServer.message.data.dev_dash, messageFromServer.message.data.dev_linkMetrics);
+                displayDashboardDevice(messageFromServer.message.data.dev_dash.dev_linkMetrics);
                 displayQueuesDevice(messageFromServer.message.data.dev_dash);
                 displayDeviceEvents(messageFromServer.message.data.dev_dash);
                 displayDeviceFrames(messageFromServer.message.data.dev_dash);
@@ -62,13 +62,13 @@ function display_headerAndMiddleTitle_device_configurations(items, appName) {
 }
 function displayDashboardDevice(items) {
     // Check if dev_linlMetrics is defined
-    if (items.dev_linlMetrics) {
-        const received_Data = items.dev_linlMetrics.rxPackets;
-        const RSSI_Data = items.dev_linlMetrics.gwRssi;
-        const SNR_Data = items.dev_linlMetrics.gwSnr;
-        const receivedPerfrequency_Data = items.dev_linlMetrics.rxPacketsPerFreq;
-        const receivedPerDR_Data = items.dev_linlMetrics.rxPacketsPerDr;
-        const Errors_Data = items.dev_linlMetrics.errors;
+    if (items) {
+        const received_Data = items.rxPackets;
+        const RSSI_Data = items.gwRssi;
+        const SNR_Data = items.gwSnr;
+        const receivedPerfrequency_Data = items.rxPacketsPerFreq;
+        const receivedPerDR_Data = items.rxPacketsPerDr;
+        const Errors_Data = items.errors;
 
         // Now you can proceed with your chart display logic
         // This ensures that the code inside this block won't run if dev_linlMetrics is undefined
@@ -81,7 +81,7 @@ function displayDashboardDevice(items) {
         displayChartData(receivedPerDR_Data, 'receivedPerDRChart', 'Received per Data Rate', 'rx_count_per_dr');
         displayChartData(Errors_Data, 'errorsChart', 'Errors', 'error_count');
     } else {
-        console.error("dev_linlMetrics is undefined. Cannot display dashboard data.");
+        console.error("dev_linkMetrics is undefined. Cannot display dashboard data.");
         // Optionally, you can handle this case by displaying an error message or taking other actions.
     }
 }

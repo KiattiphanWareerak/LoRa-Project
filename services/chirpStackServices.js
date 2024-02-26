@@ -113,7 +113,7 @@ async function addDeviceRequest(values, apiToken, appId) {
       newDevice.setDevEui(values.dev_id);
       newDevice.setDeviceProfileId('222ebb6d-e497-4ef2-825b-db8ec5fd1680');
       newDevice.setDescription("");
-      newDevice.setIsDisabled(true);
+      newDevice.setIsDisabled(false);
       newDevice.setSkipFcntCheck(true);
 
       // Create a request to add a new device.
@@ -512,7 +512,7 @@ async function deleteApplicationRequest(values, apiToken) {
   }
 }
 //---------------------------------------------------------------------//
-async function deviceConfigurationsRequest(values, apiToken, tenantId, appName) { 
+async function deviceConfigurationsRequest(values, apiToken, tenantId, appName) {
   try {
     let data = {};
 
@@ -523,8 +523,8 @@ async function deviceConfigurationsRequest(values, apiToken, tenantId, appName) 
       const respGetActivation = await getDeviceActivation(values.dev_id, apiToken);
       const respGetDeviceProfile = await getDeviceProfile(tenantId, apiToken);
       const respGetQueueItems = await getQueueItems(values.dev_id, apiToken);
-      const respGetEvents = await getDeviceEventsRequest(values.dev_id, apiToken);
-      const respGetFrames = await getDeviceFramesRequest(values.dev_id, apiToken);
+      // const respGetEvents = await getDeviceEventsRequest(values.dev_id, apiToken);
+      // const respGetFrames = await getDeviceFramesRequest(values.dev_id, apiToken);
 
       data.dev_linkMetrics = respGetLinkMetric;
       data.dev_config = respGetDevConfig;
@@ -532,8 +532,8 @@ async function deviceConfigurationsRequest(values, apiToken, tenantId, appName) 
       data.dev_activation = respGetActivation;
       data.dev_profiles = respGetDeviceProfile;
       data.dev_queueItems = respGetQueueItems;
-      data.dev_events = respGetEvents;
-      data.dev_frames = respGetFrames;
+      // data.dev_events = respGetEvents;
+      // data.dev_frames = respGetFrames;
       
       resolve({ request: 'dispDashDev', message: { 
         status: 'success', 
@@ -692,8 +692,8 @@ async function enterDeviceRequest(values, apiToken, tenantId, appName) {
       const respGetActivation = await getDeviceActivation(values.dev_id, apiToken);
       const respGetDeviceProfile = await getDeviceProfile(tenantId, apiToken);
       const respGetQueueItems = await getQueueItems(values.dev_id, apiToken);
-      const respGetEvents = await getDeviceEventsRequest(values.dev_id, apiToken);
-      const respGetFrames = await getDeviceFramesRequest(values.dev_id, apiToken);
+      // const respGetEvents = await getDeviceEventsRequest(values.dev_id, apiToken);
+      // const respGetFrames = await getDeviceFramesRequest(values.dev_id, apiToken);
 
       data.dev_linkMetrics = respGetLinkMetric;
       data.dev_config = respGetDevConfig;
@@ -701,8 +701,8 @@ async function enterDeviceRequest(values, apiToken, tenantId, appName) {
       data.dev_activation = respGetActivation;
       data.dev_profiles = respGetDeviceProfile;
       data.dev_queueItems = respGetQueueItems;
-      data.dev_events = respGetEvents;
-      data.dev_frames = respGetFrames;
+      // data.dev_events = respGetEvents;
+      // data.dev_frames = respGetFrames;
       
       resolve({ request: 'enterDevId', message: { 
         status: 'success', 

@@ -280,7 +280,7 @@ async function myApp(values) {
 
                     resolve({ request: 'register', message: { status: 'failed', data: undefined }});
                 }
-            } 
+            }
             else {
                 resolve({ request: 'unknow', message: { status: 'failed', data: 'Unknow request from Client.' }});
             }
