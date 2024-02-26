@@ -87,6 +87,8 @@ function displayChartData(data, chartId, chartLabel, datasetLabel) {
     // Calculate the maximum value in the data list
     const maxDataValue = Math.max(...dataList);
 
+    console.log(dataList)
+
     // Create a context for the canvas
     const ctx = document.getElementById(chartId).getContext('2d');
 
