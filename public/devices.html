@@ -184,14 +184,27 @@
 
         <!-- Delete Device Modal -->
         <div class="form" id="dev_DelDev">
-            <span class="close" onclick="closeModal('dev_DelDev')">&times;</span>
             <div class="form_headder">
                 <h4>Delete Device</h4>
+                <i class="fa-solid fa-circle-xmark" onclick="closeModal('dev_DelDev')"></i>
             </div>
-            <!-- Form inputs -->
+            <!-- display selected application-->
             <div>
-                <label for="devName">Device Name:</label>
-                <input type="text" class="devName" required>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Delete the following devices?</th>
+                        </tr>
+                    </thead>
+                    <tbody id="delete-selected">
+                        <tr>
+                            <td>max01</td>
+                        </tr>
+                        <tr>
+                            <td>asip02</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
             <!-- Confirm button -->
             <div>

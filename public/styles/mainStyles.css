@@ -12,7 +12,7 @@ body {
 }
 .display_2_elements {
     display: flex;
-    justify-content: space-between; /* Adjust as needed */
+    /* justify-content: space-between; Adjust as needed */
 }
 
 .left-element,
@@ -255,6 +255,16 @@ textarea{
 }
 
 /* * * * Button Part * * * */
+#save-config_btn {
+    color: #fff;
+    padding: 8px 22px;
+    width: 150px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    margin-top: 20px;
+    margin-left: 5px;
+    background-color: rgb(67, 194, 236);
+}
 .button-group{
     display: flex;
     text-align: right;
@@ -280,7 +290,6 @@ button:active {
 }
 .toggle_button {
     width: 100%;
-    height: 100vh;
     background-color: #fff;
     display: flex;
     align-items: baseline;
