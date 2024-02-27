@@ -96,7 +96,7 @@
                 <!-- Tab contents -->
                 <div class="content_box">
                     <div id="Dashboard" class="tab_content">
-                        <!-- <div class="graph-display">
+                        <div class="graph-display">
                             <div class="graph-data" id="Recieved">
                                 Recieved
                                 <canvas id="receivedChart"></canvas>
@@ -110,20 +110,20 @@
                                 SNR
                                 <canvas id="snrChart"></canvas>
                             </div>
-                            <div class="graph-data" id="Recieved/frequency">
+                            <!-- <div class="graph-data" id="Recieved/frequency">
                                 Recieved/frequency
                                 <canvas id="receivedPerFreqChart"></canvas>
                             </div>
                             <div class="graph-data" id="Recieved/DR">
                                 Recieved/DR
                                 <canvas id="receivedPerDRChart"></canvas>
-                            </div>
+                            </div> -->
                             <div class="graph-data" id="Errors">
                                 Errors
                                 <canvas id="errorsChart"></canvas>
                             </div>
-                        </div> -->
-                        <div class="dev_dashboard">
+                        </div>
+                        <!-- <div class="dev_dashboard">
                             <table>
                                 <thead>
                                     <tr>
@@ -151,7 +151,7 @@
                                     </tr>
                                 </tbody>
                             </table>
-                        </div>
+                        </div> -->
                     </div>
                     <div id="Configuration" class="tab_content">
                         <div class="data-content" id="device-info">
@@ -220,16 +220,107 @@
                     </div>
 
                     <div id="Queue" class="tab_content">
-                        <h3>Queue</h3>
-                        <p>Queue content goes here.</p>
+                        <div class="Enqueue">
+                            <div class="header-part">
+                                <h3>Enqueue</h3>
+                                <hr>
+                            </div>
+                            <div class="enqueue-option">
+                                <div class="Fport_element">
+                                    <label for="Fport">Fport:</label>
+                                    <input type="text" id="Fport" required>
+                                </div>
+                                <div class="Fport_element">
+                                    <label>Confirmed:</label>
+                                    <div class="toggle_button">
+                                        <input type="checkbox" id="enqueue-confirm">
+                                        <label for="enqueue-confirm" class="toggle_button-label"></label>
+                                    </div>
+                                </div>
+                                <div class="Fport_element">
+                                    <label>Is encrypted:</label>
+                                    <div class="toggle_button">
+                                        <input type="checkbox" id="enqueue-encrypt">
+                                        <label for="enqueue-encrypt" class="toggle_button-label"></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div><span>Enqueue data (JSON)</span></div>
+                            <div>
+                                <form id="jsonForm">
+                                    <textarea id="jsonInput" rows="10" cols="50"></textarea>
+                                    <button class="enqueue_btn" id="send_enqueue" onclick="enqueue_function()">Enqueue</button>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="enqueue-table_container">
+                            <div class="button-group">
+                                <button class="enqueue_btn" onclick="reload_function()">Reload</button>
+                                <button class="enqueue_btn" onclick="flush_function()">Flush queue</button>
+                            </div>
+                            <div class="enqueue_table">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <!-- <th>ID</th>
+                                            <th>Pending</th>
+                                            <th>Encrypted</th>
+                                            <th>Frame-counter</th>
+                                            <th>Confirmed</th>
+                                            <th>Fport</th>
+                                            <th>Data</th> -->
+                                        </tr>
+                                    </thead>
+                                    <tbody id="enqueue_data">
+                                        <tr>
+                                            <td>...</td>
+                                            <td>...</td>
+                                            <td>...</td>
+                                            <td>...</td>
+                                            <td>...</td>
+                                            <td>...</td>
+                                            <td>...</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                     <div id="Event" class="tab_content">
-                        <h3>Event</h3>
-                        <p>Event content goes here.</p>
+                        <div class="event_table">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="event_data">
+                                    <!-- <tr>
+                                        <td>...</td>
+                                        <td><button>something</button></td>
+                                    </tr> -->
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                     <div id="LoRaWAN_frame" class="tab_content">
-                        <h3>LoRaWAN frame</h3>
-                        <p>LoRaWAN frame content goes here.</p>
+                        <div class="frame_table">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="frame_data">
+                                    <!-- <tr>
+                                        <td>...</td>
+                                        <td><button>something</button></td>
+                                    </tr> -->
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>

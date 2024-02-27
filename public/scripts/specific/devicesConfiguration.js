@@ -199,6 +199,7 @@ function display_headerAndMiddleTitle_device_configurations(devName, appName) {
     headerTitleDiv.appendChild(newH1Element);
     locatedDiv.appendChild(newH4Element);
 }
+
 function displayDashboardDevice(dev_linkMetrics, dev_config) {
     // Check if dev_linkMetrics is defined
     if (dev_linkMetrics) {
@@ -209,13 +210,18 @@ function displayDashboardDevice(dev_linkMetrics, dev_config) {
         const receivedPerDR_Data = dev_linkMetrics.rxPacketsPerDr;
         const Errors_Data = dev_linkMetrics.errors;
 
-        // Call a function to display the table with the data
-        displayDataTable(received_Data, RSSI_Data, SNR_Data, Errors_Data);
-    } else {
-        console.error("dev_linkMetrics is undefined. Cannot display dashboard data.");
-        // Optionally, you can handle this case by displaying an error message or taking other actions.
-    }
-}
+         // Call the displayChartData function with the appropriate data
+         displayChartData(received_Data, 'receivedChart', 'Received Data', 'rx_count');
+         displayChartData(RSSI_Data, 'rssiChart', 'RSSI', 'rssi_strength');
+         displayChartData(SNR_Data, 'snrChart', 'SNR', 'snr_strength');
+        //  displayChartData(receivedPerfrequency_Data, 'receivedPerFreqChart', 'Received per Frequency', 'rx_count_per_freq');
+        //  displayChartData(receivedPerDR_Data, 'receivedPerDRChart', 'Received per Data Rate', 'rx_count_per_dr');
+         displayChartData(Errors_Data, 'errorsChart', 'Errors', 'error_count');
+     } else {
+         console.error("dev_linlMetrics is undefined. Cannot display dashboard data.");
+         // Optionally, you can handle this case by displaying an error message or taking other actions.
+     }
+ }
 
 function displayConfigurationsDevice(dev_config, dev_profiles, dev_key, dev_activation) {
     // Configurations tab
@@ -224,53 +230,202 @@ function displayConfigurationsDevice(dev_config, dev_profiles, dev_key, dev_acti
 }
 function displayQueuesDevice(dev_queueItems) {
     // Queues tab
+}
 
+function convertUTCtoThailandTime(utcTimeString) {
+    // Create a Date object from the UTC time string
+    const utcDate = new Date(utcTimeString);
+
+    // Convert UTC time to Thailand time
+    const thailandTime = new Date(utcDate.getTime() + (7 * 60 * 60 * 1000)); // Adding 7 hours for UTC+7
+
+    // Extract Thailand time components
+    const day = thailandTime.getUTCDate().toString().padStart(2, '0');
+    const month = (thailandTime.getUTCMonth() + 1).toString().padStart(2, '0'); // Month is 0-indexed
+    const year = thailandTime.getUTCFullYear().toString().slice(-2); // Get last 2 digits of the year
+    const hours = thailandTime.getUTCHours().toString().padStart(2, '0');
+    const minutes = thailandTime.getUTCMinutes().toString().padStart(2, '0');
+    const seconds = thailandTime.getUTCSeconds().toString().padStart(2, '0');
+
+    // Format the output string
+    const thailandTimeString = `${day}:${month}:${year} ${hours}:${minutes}:${seconds}`;
+
+    return thailandTimeString;
 }
 function displayDeviceEvents(dev_events) {
-    // Events tab
+    // Ensure dev_events is not empty and has at least one event
+    if (dev_events.length === 0) {
+        console.log("No device events to display.");
+        return;
+    }
 
+    // Loop through each device event
+    dev_events.forEach(data => {
+        // Accessing "join" at index 2 of the array
+        const actionValue = data.array[2];
+
+        // Accessing the JSON string containing "time"
+        const jsonString = data.array[3];
+
+        // Parsing the JSON string to extract "time"
+        const parsedJson = JSON.parse(jsonString);
+        const timeValue = parsedJson.time;
+
+        // Convert the time value to the desired format
+        const thailandTime = convertUTCtoThailandTime(timeValue);
+
+        // Create a new row element
+        const newRow = document.createElement("tr");
+
+        // Create a new cell for the time value
+        const timeCell = document.createElement("td");
+        timeCell.textContent = thailandTime;
+
+        // Create a new cell for the action value (join)
+        const actionCell = document.createElement("td");
+        // actionCell.textContent = actionValue;
+
+        // Create a button to display full dev_events
+        const button = document.createElement("button");
+        button.textContent = actionValue;
+        button.addEventListener("click", function() {
+            alert(JSON.stringify(dev_events, null, 2)); // Display dev_events as JSON in an alert
+        });
+
+        // Append the button to the action cell
+        actionCell.appendChild(button);
+
+        // Append the cells to the new row
+        newRow.appendChild(timeCell);
+        newRow.appendChild(actionCell);
+
+        // Append the new row to the table body
+        const tableBody = document.getElementById("event_data");
+        tableBody.appendChild(newRow);
+    });
 }
+
+
+
 function displayDeviceFrames(dev_frames) {
     // LoRaWAN Frames tab
+    // Ensure dev_events is not empty and has at least one event
+    if (dev_frames.length === 0) {
+        console.log("No frame to display.");
+        return;
+    }
+
+    // Loop through each device event
+dev_frames.forEach((data, index) => {
+    // Accessing "join" at index 2 of the array
+    const actionValue = data.array[2];
+
+    // Accessing the JSON string containing "time"
+    const jsonString = data.array[3];
+
+    // Parsing the JSON string to extract "time"
+    const parsedJson = JSON.parse(jsonString);
+    
+    // Check if nsTime exists in rx_info array before accessing it
+    let nsTime = parsedJson.rx_info && parsedJson.rx_info[0] && parsedJson.rx_info[0].nsTime;
+
+    // Check if nsTime exists and is not null, otherwise use nsTime of the next action
+    if (!nsTime && index < dev_frames.length - 1) {
+        const nextJsonString = dev_frames[index + 1].array[3];
+        const nextParsedJson = JSON.parse(nextJsonString);
+        nsTime = nextParsedJson.rx_info && nextParsedJson.rx_info[0] && nextParsedJson.rx_info[0].nsTime;
+    }
+
+    // Check if nsTime exists and is not null
+    if (nsTime) {
+        // Convert the time value to the desired format
+        const thailandTime = convertUTCtoThailandTime(nsTime);
+
+        // Create a new row element
+        const newRow = document.createElement("tr");
+
+        // Create a new cell for the time value
+        const timeCell = document.createElement("td");
+        timeCell.textContent = thailandTime;
+
+        // Create a new cell for the action value (join)
+        const actionCell = document.createElement("td");
+        // actionCell.textContent = actionValue;
+
+        // Create a button to display full dev_events
+        const button = document.createElement("button");
+        button.textContent = actionValue;
+        button.addEventListener("click", function() {
+            alert(JSON.stringify(dev_frames, null, 2)); // Display dev_events as JSON in an alert
+        });
+
+        // Append the button to the action cell
+        actionCell.appendChild(button);
+
+        // Append the cells to the new row
+        newRow.appendChild(timeCell);
+        newRow.appendChild(actionCell);
+
+        // Append the new row to the table body
+        const tableBody = document.getElementById("frame_data");
+        tableBody.appendChild(newRow);
+    } else {
+        console.log("nsTime is not available for action:", actionValue);
+    }
+});
 
 }
+
 //---------------------------------------------------------------------//
 //----------------------------COMMON ZONE------------------------------// 
 //---------------------------------------------------------------------// 
-function displayDataTable(receivedData, RSSIData, SNRData, ErrorsData) {
-    // Get a reference to the table body
-    const tableBody = document.getElementById('data-table');
+function displayChartData(data, chartId, chartLabel, datasetLabel) {
+    // แปลง timestamp เป็นวันที่
+    const labels = data.timestampsList.map(timestamp => {
+      const date = new Date(timestamp.seconds * 1000);
+      return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+    });
 
-    // Clear any existing rows in the table body
-    tableBody.innerHTML = '';
+    // แยกค่า rx_count
+    const rxCounts = data.datasetsList[0].dataList;
 
-    // Loop through the data arrays and populate the table rows
-    for (let i = 0; i < receivedData.length; i++) {
-        const row = document.createElement('tr');
+    const ctx = document.getElementById(chartId).getContext('2d');
 
-        // Create and append table cells for each data point
-        const timeCell = document.createElement('td');
-        timeCell.textContent = i + 1; // Assuming the index starts from 1
-        row.appendChild(timeCell);
-
-        const receivedCell = document.createElement('td');
-        receivedCell.textContent = receivedData[i];
-        row.appendChild(receivedCell);
-
-        const RSSICell = document.createElement('td');
-        RSSICell.textContent = RSSIData[i];
-        row.appendChild(RSSICell);
-
-        const SNRCell = document.createElement('td');
-        SNRCell.textContent = SNRData[i];
-        row.appendChild(SNRCell);
-
-        const errorsCell = document.createElement('td');
-        errorsCell.textContent = ErrorsData[i];
-        row.appendChild(errorsCell);
-
-        // Append the row to the table body
-        tableBody.appendChild(row);
-    }
+    const myChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: datasetLabel,
+          data: rxCounts,
+          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+          borderColor: 'rgba(75, 192, 192, 1)',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          yAxes: [{
+            scaleLabel: {
+              display: true,
+              labelString: 'Value' // Add label for y-axis
+            },
+            ticks: {
+              beginAtZero: true
+            }
+          }],
+          xAxes: [{
+            scaleLabel: {
+              display: true,
+              labelString: 'Date' // Add label for x-axis
+            },
+            type: 'time',
+            time: {
+              unit: 'day'
+            }
+          }]
+        }
+      }
+    });
 }
 //---------------------------------------------------------------------// 

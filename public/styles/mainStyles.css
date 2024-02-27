@@ -558,4 +558,68 @@ tfoot td {
     border-radius: 8px; /* Set border radius as needed */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add shadow as needed */
 }
+/* * * Enqueue Tab * * */
+.Enqueue {
+    border: 1px solid black; /* This will create a solid black border around the div */
+    padding: 10px;
+    border-radius: 10px;
+}
 
+.Enqueue span {
+    margin-left: 10px;
+    font-size: 12px;
+}
+
+.enqueue-option {
+    display: flex;
+}
+
+.enqueue-option .Fport_element {
+    margin-top: 20px;
+    margin-left: 20px;
+    margin-right: 100px;
+}
+
+.enqueue-option #Fport {
+    margin-top: 15px;
+}
+
+.Enqueue .enqueue_btn {
+    color: #fff;
+    padding: 8px 22px;
+    width: 150px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    margin-top: 20px;
+    margin-left: 5px;
+}
+
+#send_enqueue {
+    background-color:  rgb(67, 194, 236);
+}
+
+.button-group .enqueue_btn {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    background-color: #9eb0d6;
+    display: flex;
+    text-align: right;
+}
+
+.enqueue-table_container {
+    margin-top: 20px;
+    border: 1px solid black; /* This will create a solid black border around the div */
+    padding: 10px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.enqueue-table_container .button-group {
+    align-self: flex-end;
+}
+
+.enqueue-table_container .enqueue_table {
+    border: 1px solid black; /* This will create a solid black border around the div */
+    padding: 10px;
+}
