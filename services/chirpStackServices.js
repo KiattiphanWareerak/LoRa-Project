@@ -22,7 +22,6 @@ const google_protobuf_empty_pb = require("google-protobuf/google/protobuf/empty_
 const google_protobuf_timestamp_pb = require("google-protobuf/google/protobuf/timestamp_pb");
 
 // This must point to the ChirpStack API interface.
-// const serverChirpStack = "192.168.50.54:8080";
 const serverChirpStack = "202.28.95.234:8080";
 
 // Create the client for the Service.
@@ -169,7 +168,28 @@ async function addDeviceProfilesRequest(values, apiToken) {
         newDevProfs.setSupportsClassB(false);
         newDevProfs.setSupportsClassC(true);
         newDevProfs.setClassCTimeout(5);
-        // newDevProfs.setPayloadCodecScript();
+        newDevProfs.setPayloadCodecScript(`
+        function decodeUplink(input) {
+          const bytes = input.bytes;
+          const data = String.fromCharCode(...bytes);
+
+          return {
+            data: {
+              uplink_decoder: data,
+            },
+          };
+        }
+        function encodeDownlink(input) {
+          const bytes = input.bytes;
+          const data = String.fromCharCode(...bytes);
+      
+          return {
+            data: {
+              downlink_decoder: data,
+            },
+          };
+        }
+        `);
         newDevProfs.setIsRelay(false);
         newDevProfs.setIsRelayEd(false);
         newDevProfs.setAutoDetectMeasurements(true);
@@ -387,7 +407,8 @@ async function createTenant(values, apiToken) {
         status: 'success', 
         data: { tenant_id: resp.toObject().id,
           user_id: values.user_id,
-          user_em: values.user_em }
+          user_em: values.user_em,
+          user_name: values.user_name }
         }});
       });
     });
@@ -509,40 +530,6 @@ async function deleteApplicationRequest(values, apiToken) {
     });
   } catch (error) {
     console.error(error);
-  }
-}
-//---------------------------------------------------------------------//
-async function deviceConfigurationsRequest(values, apiToken, tenantId, appName) {
-  try {
-    let data = {};
-
-    return new Promise(async (resolve, reject) => {
-      const respGetLinkMetric = await getLinkMetricsRequest(values.dev_id, apiToken);
-      const respGetDevConfig = await getDeviceConfiguration(values.dev_id, apiToken);
-      const respGetDevKey = await getDeviceKey(values.dev_id, apiToken);
-      const respGetActivation = await getDeviceActivation(values.dev_id, apiToken);
-      const respGetDeviceProfile = await getDeviceProfile(tenantId, apiToken);
-      const respGetQueueItems = await getQueueItems(values.dev_id, apiToken);
-      // const respGetEvents = await getDeviceEventsRequest(values.dev_id, apiToken);
-      // const respGetFrames = await getDeviceFramesRequest(values.dev_id, apiToken);
-
-      data.dev_linkMetrics = respGetLinkMetric;
-      data.dev_config = respGetDevConfig;
-      data.dev_key = respGetDevKey;
-      data.dev_activation = respGetActivation;
-      data.dev_profiles = respGetDeviceProfile;
-      data.dev_queueItems = respGetQueueItems;
-      // data.dev_events = respGetEvents;
-      // data.dev_frames = respGetFrames;
-      
-      resolve({ request: 'dispDashDev', message: { 
-        status: 'success', 
-        data: { app_name: appName, 
-          dev_dash: data }}
-      });
-    });
-  } catch (error) {
-    console.log(error);
   }
 }
 //---------------------------------------------------------------------//
@@ -681,40 +668,6 @@ async function enterApplicationRequest(values, apiToken) {
   }
 }
 //---------------------------------------------------------------------//
-async function enterDeviceRequest(values, apiToken, tenantId, appName) { 
-  try {
-    let data = {};
-
-    return new Promise(async (resolve, reject) => {
-      const respGetLinkMetric = await getLinkMetricsRequest(values.dev_id, apiToken);
-      const respGetDevConfig = await getDeviceConfiguration(values.dev_id, apiToken);
-      const respGetDevKey = await getDeviceKey(values.dev_id, apiToken);
-      const respGetActivation = await getDeviceActivation(values.dev_id, apiToken);
-      const respGetDeviceProfile = await getDeviceProfile(tenantId, apiToken);
-      const respGetQueueItems = await getQueueItems(values.dev_id, apiToken);
-      // const respGetEvents = await getDeviceEventsRequest(values.dev_id, apiToken);
-      // const respGetFrames = await getDeviceFramesRequest(values.dev_id, apiToken);
-
-      data.dev_linkMetrics = respGetLinkMetric;
-      data.dev_config = respGetDevConfig;
-      data.dev_key = respGetDevKey;
-      data.dev_activation = respGetActivation;
-      data.dev_profiles = respGetDeviceProfile;
-      data.dev_queueItems = respGetQueueItems;
-      // data.dev_events = respGetEvents;
-      // data.dev_frames = respGetFrames;
-      
-      resolve({ request: 'enterDevId', message: { 
-        status: 'success', 
-        data: { app_name: appName, 
-          dev_dash: data }}
-      });
-    });
-  } catch (error) {
-    console.log(error);
-  }
-}
-//---------------------------------------------------------------------//
 async function getApplicationRequest(appId, apiToken) { 
   try {
     // Create the Metadata object.
@@ -748,7 +701,7 @@ async function getApplicationRequest(appId, apiToken) {
   }
 }
 //---------------------------------------------------------------------//
-async function getDeviceActivation(values, apiToken) { 
+async function getDeviceActivationRequest(values, apiToken) { 
   try {
     // Create the Metadata object.
     const metadata = new grpc.Metadata();
@@ -761,12 +714,13 @@ async function getDeviceActivation(values, apiToken) {
 
       deviceService.getActivation(createReq, metadata, (err, resp) => {
         if (err !== null) {
-          console.log(err);
+          console.log(err.details);
+          resolve({ request: 'getDevActivation', message: { status: 'failed', data: err.details }});
           return;
         }
         console.log('Get Activation has been completed.');
 
-        resolve(resp.toObject());
+        resolve({ request: 'getDevActivation', message: { status: 'success', data: resp.toObject() }});
       });
     });
   } catch (error) {
@@ -774,7 +728,7 @@ async function getDeviceActivation(values, apiToken) {
   }
 }
 //---------------------------------------------------------------------//
-async function getDeviceConfiguration(values, apiToken) { 
+async function getDeviceConfigurationRequest(values, apiToken) { 
   try {
     // Create the Metadata object.
     const metadata = new grpc.Metadata();
@@ -787,12 +741,13 @@ async function getDeviceConfiguration(values, apiToken) {
 
       deviceService.get(createReq, metadata, (err, resp) => {
         if (err !== null) {
-          console.log(err);
+          console.log(err.details);
+          resolve({ request: 'getDevice', message: { status: 'failed', data: data.details }});
           return;
         }
         console.log('Get Device has been completed.');
 
-        resolve(resp.toObject());
+        resolve({ request: 'getDevice', message: { status: 'success', data: resp.toObject() }});
       });
     });
   } catch (error) {
@@ -800,7 +755,7 @@ async function getDeviceConfiguration(values, apiToken) {
   }
 }
 //---------------------------------------------------------------------//
-async function getDeviceKey(values, apiToken) { 
+async function getDeviceKeyRequest(values, apiToken) { 
   try {
     // Create the Metadata object.
     const metadata = new grpc.Metadata();
@@ -813,12 +768,13 @@ async function getDeviceKey(values, apiToken) {
 
       deviceService.getKeys(createReq, metadata, (err, resp) => {
         if (err !== null) {
-          console.log(err);
+          console.log(err.details);
+          resolve({ request: 'getDevKey', message: { status: 'failed', data: err.details }});
           return;
         }
         console.log('Get Device Key has been completed.');
 
-        resolve(resp.toObject());
+        resolve({ request: 'getDevKey', message: { status: 'success', data: resp.toObject() }});
       });
     });
   } catch (error) {
@@ -896,7 +852,6 @@ async function getDeviceEventsRequest(values, apiToken) {
       dev_events: [],
     };
 
-    let eventCount = 0;
     return new Promise((resolve, reject) => {
       const createReq = new internal_pb.StreamDeviceEventsRequest();
       createReq.setDevEui(values);
@@ -907,33 +862,24 @@ async function getDeviceEventsRequest(values, apiToken) {
     
       stream.on("data", (response) => {
           // console.log("Received device event:", response);
-          
+
           dataEvents.dev_events.push(response);
-          eventCount++;
-    
-          // Stop the stream after receiving 10 events
-          if (eventCount === 10) {
-              stream.cancel();
-          }
       });
     
       stream.on("error", (error) => {
         console.error("Error streaming device events:", error.details);
-        
-        // resolve({ request: 'devEvents', message: { 
-        //   status: 'failed', 
-        //   data: error.details }
-        // });
       });
     
+      const timeoutId = setTimeout(() => {
+        console.log("Timeout reached, stopping stream.");
+        stream.cancel();
+      }, 500);
+
       stream.on("end", () => {
+        clearTimeout(timeoutId);
         console.log("Device event stream ended.");
 
-        resolve(dataEvents.dev_events);
-        // resolve({ request: 'devEvents', message: { 
-        //   status: 'success', 
-        //   data: dataEvents }
-        // });
+        resolve({ request: 'getDevEvents', message: { status: 'success', data: dataEvents.dev_events }});
       });
     });
   } catch (error) {
@@ -951,7 +897,6 @@ async function getDeviceFramesRequest(values, apiToken) {
       dev_frames: [],
     };
     
-    let frameCount = 0;
     return new Promise((resolve, reject) => {
       const createReq = new internal_pb.StreamDeviceFramesRequest();
       createReq.setDevEui(values);
@@ -964,31 +909,22 @@ async function getDeviceFramesRequest(values, apiToken) {
           // console.log("Received device frame:", response);
 
           dataFrames.dev_frames.push(response);
-          frameCount++;
-    
-          // Stop the stream after receiving 10 events
-          if (frameCount === 10) {
-              stream.cancel();
-          }
       });
     
       stream.on("error", (error) => {
           console.error("Error streaming device frames:", error.details);
-
-          // resolve({ request: 'devFrames', message: { 
-          //   status: 'failed', 
-          //   data: error.details }
-          // });
       });
     
+      const timeoutId = setTimeout(() => {
+        console.log("Timeout reached, stopping stream.");
+        stream.cancel();
+      }, 500);
+
       stream.on("end", () => {
+        clearTimeout(timeoutId);
         console.log("Device frame stream ended.");
 
-        resolve(dataFrames.dev_frames);
-        // resolve({ request: 'devFrames', message: { 
-        //   status: 'success', 
-        //   data: dataFrames }
-        // });
+        resolve({ request: 'getDevFrames', message: { status: 'success', data: dataFrames.dev_frames }});
       });
     });
   } catch (error) {
@@ -1029,7 +965,7 @@ async function getGatewaysSummaryRequest(tenantId, apiToken) {
   }
 }
 //---------------------------------------------------------------------//
-async function getLinkMetricsRequest(values, apiToken) { 
+async function getLinkMetricsRequest(values, apiToken, time) { 
   try {
     // Create the Metadata object.
     const metadata = new grpc.Metadata();
@@ -1059,19 +995,35 @@ async function getLinkMetricsRequest(values, apiToken) {
     return new Promise((resolve, reject) => {
       // Create a request to get event.
       const createReq = new device_pb.GetDeviceLinkMetricsRequest();
+
       createReq.setDevEui(values);
-      createReq.setStart(oneYearAgoTimestamp);
+
+      if ( time.timeAgo === "1y" ) {
+        createReq.setStart(oneYearAgoTimestamp);
+      } else if ( time.timeAgo === "1m" ) {
+        createReq.setStart(oneMonthAgoTimestamp);
+      } else if ( time.timeAgo === "1d" ) {
+        createReq.setStart(twentyFourHoursAgoTimestamp);
+      }
       createReq.setEnd(currentTimestamp);
-      createReq.setAggregation(common_common_pb.Aggregation.DAY);
+
+      if ( time.aggregation === "DAY" ) {
+        createReq.setAggregation(common_common_pb.Aggregation.DAY);
+      } else if ( time.aggregation === "HOUR" ) {
+        createReq.setAggregation(common_common_pb.Aggregation.HOUR);
+      } else if ( time.aggregation === "MONTH" ) {
+        createReq.setAggregation(common_common_pb.Aggregation.MONTH);
+      }
 
       deviceService.getLinkMetrics(createReq, metadata, (err, resp) => {
         if (err !== null) {
-          console.log(err);
+          console.log(err.details);
+          resolve({ request: 'getLinkMetrics', message: { status: 'failed', data: err.details }});
           return;
         }
-        console.log('Get Event has been completed.');
+        console.log('Get Link Metrics has been completed.');
         
-        resolve(resp.toObject());
+        resolve({ request: 'getLinkMetrics', message: { status: 'success', data: resp.toObject() }});
       });
     });
   } catch (error) {
@@ -1079,7 +1031,7 @@ async function getLinkMetricsRequest(values, apiToken) {
   }
 }
 //---------------------------------------------------------------------//
-async function getMainDashboard(tenantId, apiToken) { 
+async function getMainDashboard(tenantId, csTenantId, apiToken) { 
   try {
     let data = {};
 
@@ -1095,10 +1047,9 @@ async function getMainDashboard(tenantId, apiToken) {
         index++;
       }
 
-      const respFromGatewayList = await gatewayListRequest("52f14cd4-c6f1-4fbd-8f87-4025e1d49242", apiToken);
+      const respFromGatewayList = await gatewayListRequest(csTenantId, apiToken);
       data.gateways_list = respFromGatewayList.message.data;
-
-      const respFromGetewaysSummary = await getGatewaysSummaryRequest("52f14cd4-c6f1-4fbd-8f87-4025e1d49242", apiToken);
+      const respFromGetewaysSummary = await getGatewaysSummaryRequest(csTenantId, apiToken);
       const respFromDevicesSummary = await getDevicesSummaryRequest(tenantId, apiToken);
       data.geteways_summary = respFromGetewaysSummary.message.data;
       data.devs_summary = respFromDevicesSummary.message.data;
@@ -1113,7 +1064,7 @@ async function getMainDashboard(tenantId, apiToken) {
   }
 }
 //---------------------------------------------------------------------//
-async function getQueueItems(values, apiToken) { 
+async function getQueueItemsRequest(values, apiToken) { 
   try {
     // Create the Metadata object.
     const metadata = new grpc.Metadata();
@@ -1127,12 +1078,113 @@ async function getQueueItems(values, apiToken) {
 
       deviceService.getQueue(createReq, metadata, (err, resp) => {
         if (err !== null) {
-          console.log(err);
+          console.log(err.details);
+          resolve({ request: 'getDevQueues', message: { status: 'failed', data: err.details }});
           return;
         }
         console.log('Get Queue Items has been completed.');
 
-        resolve(resp.toObject());
+        resolve({ request: 'getDevQueues', message: { status: 'success', data: resp.toObject() }});
+      });
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+//---------------------------------------------------------------------//
+async function getUserInTenantRequest(tenantId, apiToken) {
+  try {
+    // Create the Metadata object.
+    const metadata = new grpc.Metadata();
+    metadata.set("authorization", "Bearer " + apiToken);
+
+    return new Promise((resolve, reject) => {
+      // Create a request to list devices
+      const createReq = new tenant_pb.ListTenantUsersRequest();
+      createReq.setTenantId(tenantId);
+      createReq.setLimit(999);
+
+      tenantService.listUsers(createReq, metadata, (err, resp) => {
+        if (err !== null) {
+          console.log(err.details);
+          resolve({ request: 'getUserInTn', message: { 
+            status: 'failed', 
+            data: err.message }
+          });
+          return;
+        }
+        console.log('Get user in tenant request has been completed.');
+
+        resolve({ request: 'getUserInTn', message: {
+          status: 'success', 
+          data: resp.toObject().resultList }
+        });
+      });
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+//---------------------------------------------------------------------//
+async function getUsersListRequest(apiToken) {
+  try {
+    // Create the Metadata object.
+    const metadata = new grpc.Metadata();
+    metadata.set("authorization", "Bearer " + apiToken);
+
+    return new Promise((resolve, reject) => {
+      // Create a request to list devices
+      const createReq = new user_pb.ListUsersRequest();
+      createReq.setLimit(999);
+
+      userService.list(createReq, metadata, (err, resp) => {
+        if (err !== null) {
+          console.log(err.details);
+          resolve({ request: 'getUsersList', message: { 
+            status: 'failed', 
+            data: err.message }
+          });
+          return;
+        }
+        console.log('Users list request has been completed.');
+
+        resolve({ request: 'getUsersList', message: { 
+          status: 'success', 
+          data: resp.toObject().resultList }
+        });
+      });
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+//---------------------------------------------------------------------//
+async function getTenantsListRequest(apiToken) {
+  try {
+    // Create the Metadata object.
+    const metadata = new grpc.Metadata();
+    metadata.set("authorization", "Bearer " + apiToken);
+
+    return new Promise((resolve, reject) => {
+      // Create a request to list devices
+      const createReq = new tenant_pb.ListTenantsRequest();
+      createReq.setLimit(999);
+
+      tenantService.list(createReq, metadata, (err, resp) => {
+        if (err !== null) {
+          console.log(err.details);
+          resolve({ request: 'getTenantsList', message: { 
+            status: 'failed', 
+            data: err.message }
+          });
+          return;
+        }
+        console.log('Tenants list request has been completed.');
+
+        resolve({ request: 'getTenantsList', message: { 
+          status: 'success', 
+          data: resp.toObject().resultList }
+        });
       });
     });
   } catch (error) {
@@ -1208,7 +1260,76 @@ async function loginUserRequest(values, apiToken) {
   }
 }
 //---------------------------------------------------------------------//
-async function profileUserRequest(apiToken) { 
+async function postDeviceConfigurationRequest(values, apiToken) { 
+  try {
+    // Create the Metadata object.
+    const metadata = new grpc.Metadata();
+    metadata.set("authorization", "Bearer " + apiToken);
+
+    return new Promise((resolve, reject) => {
+      // Create a device to updated.
+      const deviceUpdate = new device_pb.Device()
+      deviceUpdate.setApplicationId(values.app_id);
+      deviceUpdate.setName(values.dev_name);
+      deviceUpdate.setDevEui(values.dev_id);
+      deviceUpdate.setJoinEui(values.dev_joinEui);
+      deviceUpdate.setDescription(values.dev_desc);
+      deviceUpdate.setDeviceProfileId(values.dev_devProfId);
+      deviceUpdate.setIsDisabled(values.dev_isDis);
+      deviceUpdate.setSkipFcntCheck(values.dev_SkFntC);
+
+      // Create a request to update device.
+      const createReq = new device_pb.UpdateDeviceRequest();
+      createReq.setDevice(deviceUpdate);
+
+      deviceService.update(createReq, metadata, (err, resp) => {
+        if (err !== null) {
+          console.log(err.details);
+          resolve({ request: 'postDev', message: { status: 'failed', data: err.details }});
+          return;
+        }
+        console.log('Update Device has been completed.');
+
+        resolve({ request: 'postDev', message: { status: 'success', data: resp.toObject() }});
+      });
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+//---------------------------------------------------------------------//
+async function postDeviceKeyRequest(values, apiToken) { 
+  try {
+    // Create the Metadata object.
+    const metadata = new grpc.Metadata();
+    metadata.set("authorization", "Bearer " + apiToken);
+
+    return new Promise((resolve, reject) => {
+      const deviceKeyUpdate = new device_pb.DeviceKeys();
+      deviceKeyUpdate.setDevEui(values.dev_id);
+      deviceKeyUpdate.setAppKey(values.dev_key);
+      deviceKeyUpdate.setNwkKey(values.dev_key);
+      // Create a request to update device key.
+      const createReq = new device_pb.UpdateDeviceKeysRequest();
+      createReq.setDeviceKeys(deviceKeyUpdate);
+
+      deviceService.updateKeys(createReq, metadata, (err, resp) => {
+        if (err !== null) {
+          console.log(err.details);
+          resolve({ request: 'postDevKey', message: { status: 'failed', data: err.details }});
+          return;
+        }
+        console.log('Update Device Key has been completed.');
+
+        resolve({ request: 'postDevKey', message: { status: 'success', data: resp.toObject() }});
+      });
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+//---------------------------------------------------------------------//
+async function profileUserRequest(apiToken) {
   try {
     // Create the Metadata object.
     const metadata = new grpc.Metadata();
@@ -1240,20 +1361,6 @@ async function profileUserRequest(apiToken) {
   }
 }
 //---------------------------------------------------------------------//
-async function functions(values) { 
-  try {
-    // Create the Metadata object.
-    const metadata = new grpc.Metadata();
-    metadata.set("authorization", "Bearer " + apiToken);
-
-    return new Promise((resolve, reject) => {
-
-    });
-  } catch (error) {
-    console.log(error);
-  }
-}
-//---------------------------------------------------------------------//
 module.exports = {
   addApplicationRequest,
   addDeviceRequest,
@@ -1265,16 +1372,26 @@ module.exports = {
   createUser,
   createTenantUser,
   deleteApplicationRequest,
-  deviceConfigurationsRequest,
   deleteDeviceRequest,
   devicesListRequest,
   deviceProfilesListRequest,
   enterApplicationRequest,
-  enterDeviceRequest,
   getApplicationRequest,
+  getDeviceActivationRequest,
+  getDeviceEventsRequest,
+  getDeviceFramesRequest,
+  getDeviceKeyRequest,
+  getLinkMetricsRequest,
+  getDeviceConfigurationRequest,
   getMainDashboard,
+  getQueueItemsRequest,
+  getUserInTenantRequest,
+  getTenantsListRequest,
+  getUsersListRequest,
   loginUserRequest,
   profileUserRequest,
+  postDeviceConfigurationRequest,
+  postDeviceKeyRequest
 };
 //---------------------------------------------------------------------//
 //----------------------------COMMON ZONE------------------------------//

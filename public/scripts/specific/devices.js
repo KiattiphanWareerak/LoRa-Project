@@ -266,10 +266,12 @@ function displayDevicesList(items) {
             socket.addEventListener('open', () => {
                 let devId = this.getAttribute('dev-id');
                 let devName = item.name;
-                
+
                 const req = { request: 'enterDevId', 
                     message: { status: undefined,
-                        data: { dev_id: devId, dev_name: devName }
+                        data: { dev_id: devId, dev_name: devName,
+                            timeAgo: "1m", 
+                            aggregation: "DAY" }
                     }};
                 socket.send(JSON.stringify(req));
 
