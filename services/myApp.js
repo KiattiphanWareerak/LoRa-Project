@@ -376,24 +376,24 @@ async function myApp(values) {
                     if ( respFromTenantList.request === 'getTenantsList' && respFromTenantList.message.status === 'success' ) {
                         const resultCheckUserName = await checkUserName(values.message.data.user_un, respFromTenantList.message.data);
 
+                        console.log(respFromTenantList.message.data);
                         if ( resultCheckUserName.request === 'checkUserName' && resultCheckUserName.message.status === 'failed' ) {
                             const respFromUserInTenant = await chirpStackServices.getUserInTenantRequest(resultCheckUserName.message.data.tenant_id, respFromNwApiToken.message.data[0].api_token);
 
                             if ( respFromUserInTenant.request === 'getUserInTn' && respFromUserInTenant.message.status === 'success' ) {
-
                                 data.user_em = respFromUserInTenant.message.data[0].email;
                             } else {
-                                console.log();
+                                console.log(respFromUserInTenant);
 
                                 resolve({ request: 'loginByUname', message: { status: 'failed', data: undefined }});
                             }
                         } else {
-                            console.log();
+                            console.log(resultCheckUserName);
 
                             resolve({ request: 'loginByUname', message: { status: 'failed', data: undefined }});
                         }
                     } else {
-                        console.log();
+                        console.log(respFromTenantList);
 
                         resolve({ request: 'loginByUname', message: { status: 'failed', data: undefined }});
                     }
@@ -580,6 +580,12 @@ async function checkUserEmail(em, emList) {
 async function checkUserName(username, nameList) {
     try {
         return new Promise((resolve, reject) => {
+            if ( username === 'admin' ) {
+                const adminExist = nameList.find(user => user.name === 'ChirpStack');
+                
+                resolve({ request: 'checkUserName', message: { status: 'failed', data: { tenant_id: adminExist.id }}});
+            }
+
             const userExists = nameList.find(user => user.name === username);
 
             if (userExists) {
