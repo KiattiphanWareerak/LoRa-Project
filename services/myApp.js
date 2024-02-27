@@ -117,14 +117,14 @@ async function myApp(values) {
                 }
             } 
             else if ( values.request === 'dispMainDash' ) {
-                const respFromNwApiToken = await dataBaseServices.getNetworkApiTokenFromDB();
-
-                if ( respFromNwApiToken.request === 'getNwApiToken' && respFromNwApiToken.message.status === 'success' ) {
+                const respFromApiToken = await dataBaseServices.getApiTokenFromDB();
+                
+                if ( respFromApiToken.request === 'getApiToken' && respFromApiToken.message.status === 'success' ) {
                     const respFromTnId = await dataBaseServices.getCSTenantIdFromDB();
 
                     if ( respFromTnId.request === 'getCSTenantId' && respFromTnId.message.status === 'success' ) {
                         const respFromMainDash = await chirpStackServices.getMainDashboard(globalTenantId, respFromTnId.message.data[0].tenant_id,
-                            respFromNwApiToken.message.data[0].api_token);
+                            respFromApiToken.message.data[0].cs_token);
 
                         if (respFromMainDash.request === 'dispMainDash' && respFromMainDash.message.status === 'success') {
                             resolve({ request: 'dispMainDash', message: { status: 'success', data: respFromMainDash.message.data }});
@@ -139,7 +139,7 @@ async function myApp(values) {
                         resolve({ request: 'dispMainDash', message: { status: 'failed', data: undefined }});
                     }
                 } else {
-                    console.log(respFromNwApiToken);
+                    console.log(respFromApiToken);
 
                     resolve({ request: 'dispMainDash', message: { status: 'failed', data: undefined }});
                 }
@@ -321,10 +321,10 @@ async function myApp(values) {
                 }
             }
             else if ( values.request === 'loginByEmail' ) {
-                const respFromNwApiToken = await dataBaseServices.getNetworkApiTokenFromDB();
+                const respFromApiToken = await dataBaseServices.getApiTokenFromDB();
 
-                if ( respFromNwApiToken.request === 'getNwApiToken' && respFromNwApiToken.message.status === 'success' ) {
-                    const respFromLoginUser = await chirpStackServices.loginUserRequest(values.message.data, respFromNwApiToken.message.data[0].api_token);
+                if ( respFromApiToken.request === 'getApiToken' && respFromApiToken.message.status === 'success' ) {
+                    const respFromLoginUser = await chirpStackServices.loginUserRequest(values.message.data, respFromApiToken.message.data[0].cs_token);
 
                     if ( respFromLoginUser.request === 'loginUser' && respFromLoginUser.message.status === 'success' ) {
                         globalUserToken = respFromLoginUser.message.data.jwt;
@@ -337,8 +337,8 @@ async function myApp(values) {
                             if (respFromProfileUser.message.data.user_profile.tenantsList.length > 0) {
                                 globalTenantId = respFromProfileUser.message.data.user_profile.tenantsList[0].tenantId;
                             } else {
-                                globalUserToken = respFromNwApiToken.message.data[0].api_token;
-                                globalTenantId = "52f14cd4-c6f1-4fbd-8f87-4025e1d49242";
+                                globalUserToken = respFromApiToken.message.data[0].cs_token;
+                                globalTenantId = await dataBaseServices.getCSTenantIdFromDB();
                             }
                             console.log("USER ID: ", globalUserId);
                             console.log("USER TENANT ID: ", globalTenantId);
@@ -356,7 +356,7 @@ async function myApp(values) {
                         resolve({ request: 'loginByEmail', message: { status: 'failed', data: undefined }});
                     }
                 } else {
-                    console.log(respFromNwApiToken);
+                    console.log(respFromApiToken);
 
                     resolve({ request: 'loginByEmail', message: { status: 'failed', data: undefined }});
                 }
@@ -366,22 +366,22 @@ async function myApp(values) {
                     user_em: undefined, 
                     user_pw: values.message.data.user_pw
                 }
-                const respFromNwApiToken = await dataBaseServices.getNetworkApiTokenFromDB();
+                const respFromApiToken = await dataBaseServices.getApiTokenFromDB();
 
-                if ( respFromNwApiToken.request === 'getNwApiToken' && respFromNwApiToken.message.status === 'failed') {
-                    console.log(respFromNwApiToken);
+                if ( respFromApiToken.request === 'getApiToken' && respFromApiToken.message.status === 'failed') {
+                    console.log(respFromApiToken);
 
                     resolve({ request: 'register', message: { status: 'failed', data: undefined }});
                 }
-                else if ( respFromNwApiToken.request === 'getNwApiToken' && respFromNwApiToken.message.status === 'success' ) {
-                    const respFromTenantList = await chirpStackServices.getTenantsListRequest(respFromNwApiToken.message.data[0].api_token);
+                else if ( respFromApiToken.request === 'getApiToken' && respFromApiToken.message.status === 'success' ) {
+                    const respFromTenantList = await chirpStackServices.getTenantsListRequest(respFromApiToken.message.data[0].cs_token);
 
                     if ( respFromTenantList.request === 'getTenantsList' && respFromTenantList.message.status === 'success' ) {
                         const resultCheckUserName = await checkUserName(values.message.data.user_un, respFromTenantList.message.data);
 
                         console.log(respFromTenantList.message.data);
                         if ( resultCheckUserName.request === 'checkUserName' && resultCheckUserName.message.status === 'failed' ) {
-                            const respFromUserInTenant = await chirpStackServices.getUserInTenantRequest(resultCheckUserName.message.data.tenant_id, respFromNwApiToken.message.data[0].api_token);
+                            const respFromUserInTenant = await chirpStackServices.getUserInTenantRequest(resultCheckUserName.message.data.tenant_id, respFromApiToken.message.data[0].cs_token);
 
                             if ( respFromUserInTenant.request === 'getUserInTn' && respFromUserInTenant.message.status === 'success' ) {
                                 data.user_em = respFromUserInTenant.message.data[0].email;
@@ -402,7 +402,7 @@ async function myApp(values) {
                     }
                 }
 
-                const respFromLoginUser = await chirpStackServices.loginUserRequest(data, respFromNwApiToken.message.data[0].api_token);
+                const respFromLoginUser = await chirpStackServices.loginUserRequest(data, respFromApiToken.message.data[0].cs_token);
 
                 if ( respFromLoginUser.request === 'loginUser' && respFromLoginUser.message.status === 'success' ) {
                     globalUserToken = respFromLoginUser.message.data.jwt;
@@ -415,7 +415,7 @@ async function myApp(values) {
                         if (respFromProfileUser.message.data.user_profile.tenantsList.length > 0) {
                             globalTenantId = respFromProfileUser.message.data.user_profile.tenantsList[0].tenantId;
                         } else {
-                            globalUserToken = respFromNwApiToken.message.data[0].api_token;
+                            globalUserToken = respFromApiToken.message.data[0].cs_token;
                             globalTenantId = "52f14cd4-c6f1-4fbd-8f87-4025e1d49242";
                         }
                         console.log("USER ID: ", globalUserId);
@@ -464,88 +464,150 @@ async function myApp(values) {
                 }
             }
             else if ( values.request === 'register' ) {
-                const respFromNwApiToken = await dataBaseServices.getNetworkApiTokenFromDB();
+                const respFromApiToken = await dataBaseServices.getApiTokenFromDB();
 
-                if ( respFromNwApiToken.request === 'getNwApiToken' && respFromNwApiToken.message.status === 'failed') {
-                    console.log(respFromNwApiToken);
+                if ( respFromApiToken.request === 'getApiToken' && respFromApiToken.message.status === 'failed') {
+                    console.log(respFromApiToken);
 
                     resolve({ request: 'register', message: { status: 'failed', data: undefined }});
-                } 
-                else if ( respFromNwApiToken.request === 'getNwApiToken' && respFromNwApiToken.message.status === 'success' ) {
-                    const respFromTenantList = await chirpStackServices.getTenantsListRequest(respFromNwApiToken.message.data[0].api_token);
+                    return;
+                }
+                else if ( respFromApiToken.request === 'getApiToken' && respFromApiToken.message.status === 'success' ) {
+                    const respFromTenantList = await chirpStackServices.getTenantsListRequest(respFromApiToken.message.data[0].cs_token);
+                    const respFromUserList = await chirpStackServices.getUsersListRequest(respFromApiToken.message.data[0].cs_token);
 
-                    if ( respFromTenantList.request === 'getTenantsList' && respFromTenantList.message.status === 'success' ) {
-                        const respFromUserList = await chirpStackServices.getUserListRequest(respFromNwApiToken.message.data[0].api_token);
+                    if ( respFromTenantList.request === 'getTenantsList' && respFromTenantList.message.status === 'success' 
+                    && respFromUserList.request === 'getUsersList' && respFromUserList.message.status === 'success' ) {
+                        const resultCheckUserName = await checkUserName(values.message.data.user_un, respFromTenantList.message.data);
 
-                        if ( respFromUserList.request === 'getUsersList' && respFromUserList.message.status === 'success' ) {
-                            const resultCheckUserName = await checkUserName(values.message.data.user_name, respFromTenantList.message.data);
+                        if ( resultCheckUserName.request === 'checkUserName' && resultCheckUserName.message.status === 'success' ) {
+                            const resultCheckUserEmail = await checkUserEmail(values.message.data.user_em, respFromUserList.message.data);
 
-                            if ( resultCheckUserName.request === 'checkUserName' && resultCheckUserName.message.status === 'success' ) {
-                                const resultCheckUserEmail = await checkUserEmail(values.message.data.user_em, respFromUserList.message.data);
-
-                                if ( resultCheckUserEmail.request === 'checkUserEmail' && resultCheckUserEmail.message.status === 'success' ) {
-                                    // do nothing
-                                } else {
-                                    console.log(resultCheckUserEmail);
-
-                                    resolve({ request: 'register', message: { status: 'failed', data: { check_em: "duplicated" }}});
-                                }
+                            if ( resultCheckUserEmail.request === 'checkUserEmail' && resultCheckUserEmail.message.status === 'success' ) {
+                                // Username and email can be used to sign up.
+                                // do nothing
                             } else {
-                                console.log(resultCheckUserName);
+                                console.log(resultCheckUserEmail);
 
-                                resolve({ request: 'register', message: { status: 'failed', data: { check_name: "duplicated" }}});
+                                resolve({ request: 'register', message: { status: 'failed', data: { check_em : true }}});
+                                return;
                             }
                         } else {
-                            console.log(respFromUserList);
+                            console.log(resultCheckUserName);
 
-                            resolve({ request: 'register', message: { status: 'failed', data: undefined }});
+                            resolve({ request: 'register', message: { status: 'failed', data: { check_un : true }}});
+                            return;
                         }
                     } else {
                         console.log(respFromTenantList);
+                        console.log(respFromUserList);
 
                         resolve({ request: 'register', message: { status: 'failed', data: undefined }});
+                        return;
                     }
                 }
 
-                const respFromCreateUser = await chirpStackServices.createUser(values.message.data, respFromNwApiToken.message.data[0].api_token);
+                let tenant_id;
+                const respFromCreateUser = await chirpStackServices.createUser(values.message.data, respFromApiToken.message.data[0].cs_token);
 
                 if ( respFromCreateUser.request === 'createUser' && respFromCreateUser.message.status === 'success' ) {
-                    const respFromCreateTenant = await chirpStackServices.createTenant(respFromCreateUser.message.data, respFromNwApiToken.message.data[0].api_token);
+                    const respFromCreateTenant = await chirpStackServices.createTenant(respFromCreateUser.message.data, respFromApiToken.message.data[0].cs_token);
 
                     if ( respFromCreateTenant.request === 'createTenant' && respFromCreateTenant.message.status === 'success' ) {
-                        const respFromCreateTenantUser = await chirpStackServices.createTenantUser(respFromCreateTenant.message.data, respFromNwApiToken.message.data[0].api_token);
+                        tenant_id = respFromCreateTenant.message.data.tenant_id;
+                        const respFromCreateTenantUser = await chirpStackServices.createTenantUser(respFromCreateTenant.message.data, respFromApiToken.message.data[0].cs_token);
 
                         if ( respFromCreateTenantUser.request === 'createTenantUser' && respFromCreateTenantUser.message.status === 'success' ) {
-                            const respFromAddDevProf = await chirpStackServices.addDeviceProfilesRequest(respFromCreateTenant.message.data.tenant_id, respFromNwApiToken.message.data[0].api_token);
+                            const respFromAddDevProf = await chirpStackServices.addDeviceProfilesRequest(respFromCreateTenant.message.data.tenant_id, respFromApiToken.message.data[0].cs_token);
                             
                             if ( respFromAddDevProf.request === 'addDevProfs' && respFromAddDevProf.message.status === 'success' ) {
-                                const respFromCreateInfluxDbUser = await dataBaseServices.createInfluxDbForUser(values.message.data);
-
-                                if ( respFromCreateInfluxDbUser.request === 'createInfluxForUser' && respFromCreateInfluxDbUser.message.status === 'success' ) {
-
-                                    resolve({ request: 'register', message: { status: 'success', data: undefined }});
-                                } else {
-                                    console.log(respFromCreateInfluxDbUser);
-
-                                    resolve({ request: 'register', message: { status: 'failed', data: undefined }});
-                                }
+                                // Setup ChirpStack for user completed
+                                // do nothing
                             } else {
                                 console.log(respFromAddDevProf);
 
                                 resolve({ request: 'register', message: { status: 'failed', data: undefined }});
+                                return;
                             }
                         } else {
                             console.log(respFromCreateTenantUser);
 
                             resolve({ request: 'register', message: { status: 'failed', data: undefined }});
+                            return;
                         }
                     } else {
                         console.log(respFromCreateTenant);
 
                         resolve({ request: 'register', message: { status: 'failed', data: undefined }});
+                        return;
                     }
                 } else {
                     console.log(respFromCreateUser);
+
+                    resolve({ request: 'register', message: { status: 'failed', data: undefined }});
+                    return;
+                }
+                
+                const respFromCreateOrgInfluxDb = await dataBaseServices.createOrgInfluxDb(values.message.data, respFromApiToken.message.data[0].influx_token);
+
+                if ( respFromCreateOrgInfluxDb.request === 'postOrg' && respFromCreateOrgInfluxDb.message.status === 'success' ) {
+                    const respFromCreateBuckets = await dataBaseServices.createBucketInfluxDb(respFromCreateOrgInfluxDb.message.data, values.message.data,
+                        respFromApiToken.message.data[0].influx_token);
+                    const respFromCreateUserDb = await dataBaseServices.createUserInfluxDb(respFromCreateOrgInfluxDb.message.data, values.message.data,
+                        respFromApiToken.message.data[0].influx_token);
+
+                    if (respFromCreateBuckets.request === 'postBucket' && respFromCreateBuckets.message.status === 'success' 
+                    && respFromCreateUserDb.request === 'postCreateUser' && respFromCreateUserDb.message.status === 'success') {
+                        const respFromUpdatePw = await dataBaseServices.updatePasswordInfluxDb(respFromCreateUserDb.message.data, values.message.data,
+                            respFromApiToken.message.data[0].influx_token);
+                        const respFromAddMems = await dataBaseServices.addMemberInfluxDb(respFromCreateOrgInfluxDb.message.data, 
+                            respFromCreateUserDb.message.data, respFromApiToken.message.data[0].influx_token);
+
+                        if (respFromUpdatePw.request === 'postUpPw' && respFromUpdatePw.message.status === 'success' 
+                        && respFromAddMems.request === 'postAddMember' && respFromAddMems.message.status === 'success') {
+                            // Setup InfluxDB completed
+                            // do nothing
+                        } else {
+                            console.log(respFromUpdatePw);
+                            console.log(respFromAddMems);
+
+                            resolve({ request: 'register', message: { status: 'failed', data: undefined }});
+                            return;
+                        }
+                    } else {
+                        console.log(respFromCreateBuckets);
+                        console.log(respFromCreateUserDb);
+
+                        resolve({ request: 'register', message: { status: 'failed', data: undefined }});
+                        return;
+                    }
+                } else {
+                    console.log(respFromCreateOrgInfluxDb);
+
+                    resolve({ request: 'register', message: { status: 'failed', data: undefined }});
+                    return;
+                }
+
+                const respFromCreateApp = await chirpStackServices.addApplicationRequest({ 
+                    app_name: 'influxDB-app', app_desc: 'Integrated for InfluxDBv2' },
+                    respFromApiToken.message.data[0].cs_token,
+                    tenant_id);
+                
+                if ( respFromCreateApp.request === 'addApp' && respFromCreateApp.message.status === 'success' ) {
+                    const respFromIntgApp = await chirpStackServices.createInfluxDbIntegrationRequest(respFromCreateApp.message.data.id,
+                        values.message.user_un, respFromApiToken.message.data[0].cs_token, respFromApiToken.message.data[0].influx_token);
+
+                    if ( respFromIntgApp.request === 'intgApp' && respFromIntgApp.message.status === 'success' ) {
+                        // finished
+                        // ........
+                        resolve({ request: 'register', message: { status: 'success', data: undefined }});
+                    } else {
+                        console.log(respFromCreateOrgInfluxDb);
+
+                        resolve({ request: 'register', message: { status: 'failed', data: undefined }});
+                    }
+                } else {
+                    console.log(respFromCreateApp);
 
                     resolve({ request: 'register', message: { status: 'failed', data: undefined }});
                 }

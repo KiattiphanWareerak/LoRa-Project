@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return; // Stop further execution
             } 
 
-            const passwordPattern = /^[a-zA-Z0-9_@]{3,}$/;
+            const passwordPattern = /^[a-zA-Z0-9_@]{8,}$/;
             if (input_pw.value.length < 5) {
             alert('Password must be at least 5 characters long.');
 
@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
             }
             if (!passwordPattern.test(input_pw.value)) {
-            alert('Please enter a strong password.\n\nPassword must be at least 5 characters long and can only contain upper-case letters, lower-case letters, numbers, underscores (_), and @ symbol.');
+            alert('Please enter a strong password.\n\nPassword must be at least 8 characters long and can only contain upper-case letters, lower-case letters, numbers, underscores (_), and @ symbol.');
 
             event.preventDefault();
             return;
@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // All checks passed, proceed with sending data
             const req = { request: 'register', message: { 
                 status: undefined,
-                data: { user_name: input_un.value.trim(),
+                data: { user_un: input_un.value.trim(),
                     user_em: input_em.value.trim(),
                     user_pw: input_pw.value.trim() }
             }};
@@ -63,13 +63,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (messageFromServer.request === 'register') {
             if (messageFromServer.message.status === 'failed') {
-                if ( messageFromServer.message.data.check_name === 'duplicated' ) {
+                if ( messageFromServer.message.data.check_un === true ) {
                     alert("Username is already in use.");
                     input_un.value = '';
                     input_pw.value = '';
                     input_pw_cf.value = '';
                     return;
-                } else if ( messageFromServer.message.data.check_em === 'duplicated' ) {
+                } else if ( messageFromServer.message.data.check_em === true ) {
                     alert("Email is already in use.");
                     input_em.value = '';
                     input_pw.value = '';

@@ -9,7 +9,7 @@
 </head>
 <body>
   <!-- สร้าง canvas เพื่อแสดงกราฟ -->
-  <canvas id="receivedGraph" width="800" height="400"></canvas>
+  <canvas id="myChart" width="400" height="200"></canvas>
 
   <script>
     // นำเข้าข้อมูล
@@ -26,32 +26,36 @@
       kind: 1
     };
 
-    // Extract timestamps and data from the received data
-    const timestamps = data.timestampsList.map(timestamp => timestamp.seconds);
-    const dataList = data.datasetsList[0].dataList;
+    // แปลง timestamp เป็นวันที่
+    const labels = data.timestampsList.map(timestamp => {
+      const date = new Date(timestamp.seconds * 1000);
+      return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+    });
 
-    // Create a context for the canvas
-    const ctx = document.getElementById('receivedGraph').getContext('2d');
+    // แยกค่า rx_count
+    const rxCounts = data.datasetsList[0].dataList;
 
-    // Create a line chart using Chart.js
-    const receivedGraph = new Chart(ctx, {
+    const ctx = document.getElementById('myChart').getContext('2d');
+
+    const myChart = new Chart(ctx, {
       type: 'line',
       data: {
-        labels: timestamps,
+        labels: labels,
         datasets: [{
-          label: data.datasetsList[0].label,
-          data: dataList,
-          fill: false,
+          label: 'จำนวนข้อความที่รับ (rx_count)',
+          data: rxCounts,
+          backgroundColor: 'rgba(75, 192, 192, 0.2)',
           borderColor: 'rgba(75, 192, 192, 1)',
-          tension: 0.1
+          borderWidth: 1
         }]
       },
       options: {
         scales: {
-          x: {
-            type: 'linear',
-            position: 'bottom'
-          }
+          yAxes: [{
+            ticks: {
+              beginAtZero: true
+            }
+          }]
         }
       }
     });

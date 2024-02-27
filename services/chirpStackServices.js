@@ -90,7 +90,7 @@ async function addApplicationRequest(values, apiToken, tenantID) {
         }
         console.log('New an application has been created.');
 
-        resolve({ request: 'addApp', message: { status: 'success', data: undefined }});
+        resolve({ request: 'addApp', message: { status: 'success', data: resp.toObject() }});
       });
     });
   } catch (error) {
@@ -148,6 +148,26 @@ async function addDeviceProfilesRequest(values, apiToken) {
     metadata.set("authorization", "Bearer " + apiToken);
 
     let devProfs = deviceProfiles(values);
+    let codec = `function decodeUplink(input) {
+        const bytes = input.bytes;
+        const data = String.fromCharCode(...bytes);
+
+        return {
+          data: {
+            uplink_decoder: data,
+          },
+        };
+      };
+      function encodeDownlink(input) {
+            const bytes = input.bytes;
+            const data = String.fromCharCode(...bytes);
+        
+            return {
+              data: {
+                downlink_decoder: data,
+              },
+            };
+      };`;
 
     return new Promise((resolve, reject) => {
       for ( const devProf of devProfs) {
@@ -168,28 +188,8 @@ async function addDeviceProfilesRequest(values, apiToken) {
         newDevProfs.setSupportsClassB(false);
         newDevProfs.setSupportsClassC(true);
         newDevProfs.setClassCTimeout(5);
-        newDevProfs.setPayloadCodecScript(`
-        function decodeUplink(input) {
-          const bytes = input.bytes;
-          const data = String.fromCharCode(...bytes);
-
-          return {
-            data: {
-              uplink_decoder: data,
-            },
-          };
-        }
-        function encodeDownlink(input) {
-          const bytes = input.bytes;
-          const data = String.fromCharCode(...bytes);
-      
-          return {
-            data: {
-              downlink_decoder: data,
-            },
-          };
-        }
-        `);
+        newDevProfs.setPayloadCodecRuntime(2);
+        newDevProfs.setPayloadCodecScript(codec);
         newDevProfs.setIsRelay(false);
         newDevProfs.setIsRelayEd(false);
         newDevProfs.setAutoDetectMeasurements(true);
@@ -372,6 +372,45 @@ async function createDeviceKeyRequest(values, apiToken) {
   }
 }
 //---------------------------------------------------------------------//
+async function createInfluxDbIntegrationRequest(appId, uN, csToken, iflxToken) {
+  try {
+    // Create the Metadata object.
+    const metadata = new grpc.Metadata();
+    metadata.set("authorization", "Bearer " + csToken);
+
+    // Create a new application.
+    const influxDb = new application_pb.InfluxDbIntegration();
+    influxDb.setApplicationId(appId);
+    influxDb.setVersion(application_pb.InfluxDbVersion.INFLUXDB_2);
+    influxDb.setEndpoint('http://202.28.95.234:8086/api/v2/write');
+    influxDb.setOrganization('org-' + uN);
+    influxDb.setBucket('data_device_' + uN);
+    influxDb.setToken(iflxToken);
+    
+    return new Promise((resolve, reject) => {
+      // Create a request to create intg InfluxDB.
+      const createReq = new application_pb.CreateInfluxDbIntegrationRequest();
+      createReq.setIntegration(influxDb);
+
+      applicationService.createInfluxDbIntegration(createReq, metadata, (err, resp) => {
+        if (err !== null) {
+          console.log(err.details);
+          resolve({ request: 'intgApp', message: { 
+            status: 'failed', 
+            data: err.message }
+          });
+          return;
+        }
+        console.log('Integration fluxDb has been created.');
+
+        resolve({ request: 'intgApp', message: { status: 'success', data: undefined }});
+      });
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
+//---------------------------------------------------------------------//
 async function createTenant(values, apiToken) { 
   try {
     // Create the Metadata object.
@@ -381,7 +420,7 @@ async function createTenant(values, apiToken) {
     return new Promise((resolve, reject) => {
       // Create a tenant.
       const newTenant = new tenant_pb.Tenant();
-      newTenant.setName(values.user_name);
+      newTenant.setName(values.user_un);
       newTenant.setCanHaveGateways(true);
       newTenant.setPrivateGatewaysUp(false);
       newTenant.setPrivateGatewaysDown(false);
@@ -408,7 +447,7 @@ async function createTenant(values, apiToken) {
         data: { tenant_id: resp.toObject().id,
           user_id: values.user_id,
           user_em: values.user_em,
-          user_name: values.user_name }
+          user_un: values.user_un }
         }});
       });
     });
@@ -448,7 +487,7 @@ async function createUser(values, apiToken) {
 
         resolve({ request: 'createUser', message: { 
           status: 'success', 
-          data: { user_name: values.user_name,
+          data: { user_un: values.user_un,
                   user_id: resp.toObject().id,
                   user_em: values.user_em }
         }});
@@ -1368,6 +1407,7 @@ module.exports = {
   applicationConfigurationsRequest,
   applicationsListRequest,
   createDeviceKeyRequest,
+  createInfluxDbIntegrationRequest,
   createTenant,
   createUser,
   createTenantUser,
