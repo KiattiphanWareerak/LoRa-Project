@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="styles/mainStyles.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
+    <script src="scripts/common.js"></script>
     <script src="scripts/specific/devicesConfiguration.js"></script>
 </head>
 <body>
@@ -248,18 +249,78 @@
                             <div>
                                 <form id="jsonForm">
                                     <textarea id="jsonInput" rows="10" cols="50"></textarea>
-                                    <button id="enqueue_btn">Enqueue</button>
+                                    <button class="enqueue_btn" id="send_enqueue" onclick="enqueue_function()">Enqueue</button>
                                 </form>
+                            </div>
+                        </div>
+                        <div class="enqueue-table_container">
+                            <div class="button-group">
+                                <button class="enqueue_btn" onclick="reload_function()">Reload</button>
+                                <button class="enqueue_btn" onclick="flush_function()">Flush queue</button>
+                            </div>
+                            <div class="enqueue_table">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <!-- <th>ID</th>
+                                            <th>Pending</th>
+                                            <th>Encrypted</th>
+                                            <th>Frame-counter</th>
+                                            <th>Confirmed</th>
+                                            <th>Fport</th>
+                                            <th>Data</th> -->
+                                        </tr>
+                                    </thead>
+                                    <tbody id="enqueue_data">
+                                        <tr>
+                                            <td>...</td>
+                                            <td>...</td>
+                                            <td>...</td>
+                                            <td>...</td>
+                                            <td>...</td>
+                                            <td>...</td>
+                                            <td>...</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
                     <div id="Event" class="tab_content">
-                        <h3>Event</h3>
-                        <p>Event content goes here.</p>
+                        <div class="event_table">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="event_data">
+                                    <!-- <tr>
+                                        <td>...</td>
+                                        <td><button>something</button></td>
+                                    </tr> -->
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                     <div id="LoRaWAN_frame" class="tab_content">
-                        <h3>LoRaWAN frame</h3>
-                        <p>LoRaWAN frame content goes here.</p>
+                        <div class="frame_table">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="frame_data">
+                                    <!-- <tr>
+                                        <td>...</td>
+                                        <td><button>something</button></td>
+                                    </tr> -->
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>

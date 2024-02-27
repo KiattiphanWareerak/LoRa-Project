@@ -262,7 +262,7 @@ textarea{
     margin-right: 100px;
 }
 
-#save-config_btn, #enqueue_btn {
+#save-config_btn {
     color: #fff;
     padding: 8px 22px;
     width: 150px;
@@ -582,4 +582,44 @@ tfoot td {
 
 .enqueue-option #Fport {
     margin-top: 15px;
+}
+
+.Enqueue .enqueue_btn {
+    color: #fff;
+    padding: 8px 22px;
+    width: 150px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    margin-top: 20px;
+    margin-left: 5px;
+}
+
+#send_enqueue {
+    background-color:  rgb(67, 194, 236);
+}
+
+.button-group .enqueue_btn {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    background-color: #9eb0d6;
+    display: flex;
+    text-align: right;
+}
+
+.enqueue-table_container {
+    margin-top: 20px;
+    border: 1px solid black; /* This will create a solid black border around the div */
+    padding: 10px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.enqueue-table_container .button-group {
+    align-self: flex-end;
+}
+
+.enqueue-table_container .enqueue_table {
+    border: 1px solid black; /* This will create a solid black border around the div */
+    padding: 10px;
 }
