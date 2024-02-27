@@ -2,10 +2,15 @@
 //--------------------------Database Services--------------------------//
 //---------------------------------------------------------------------//
 const { Client } = require("pg");
-const { InfluxDB } = require('@influxdata/influxdb-client');
+const { InfluxDB, Point } = require('@influxdata/influxdb-client');
 //---------------------------------------------------------------------//
 //-------------------------------FUNCTIONS-----------------------------//
 //---------------------------------------------------------------------//
+let items = {
+  user_name: "testApi",
+  user_pw: "coe30",
+}
+// createInfluxDbForUser(items);
 async function createInfluxDbForUser(items) {
   try {
     // URL ของ InfluxDB

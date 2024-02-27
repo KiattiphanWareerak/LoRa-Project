@@ -41,10 +41,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
-
-// Modify other functions accordingly to include tab-specific logic for sending requests
-
-
 //-------------------------REQUEST FUNCTIONS---------------------------// 
 const sendDashboardDeviceRequest = (timeAgo, aggregation) => {
     // timeAgo: "1y","1m","1d"
@@ -123,23 +119,27 @@ function sender_and_reciver_in_device(req) {
   
         if ( messageFromServer.message.status === 'success' ) {
           if ( messageFromServer.request === 'enterDevId' || messageFromServer.request === 'getDashDev' ) {
-            display_headerAndMiddleTitle_device_configurations(messageFromServer.message.data.dev_config, messageFromServer.message.data.app_name);
+            display_headerAndMiddleTitle_device_configurations(messageFromServer.message.data.dev_config.device.name, messageFromServer.message.data.app_name);
             displayDashboardDevice(messageFromServer.message.data.dev_linkMetrics,
                 messageFromServer.message.data.dev_config);
           } 
           else if ( messageFromServer.request === 'getDevInfo' ) {
+            display_headerAndMiddleTitle_device_configurations(messageFromServer.message.data.dev_config.device.name, messageFromServer.message.data.app_name);
             displayConfigurationsDevice(messageFromServer.message.data.dev_config,
                 messageFromServer.message.data.dev_profilesList,
                 messageFromServer.message.data.dev_key, 
                 messageFromServer.message.data.dev_activation);
           } 
           else if ( messageFromServer.request === 'getDevQueues' ) {
+            display_headerAndMiddleTitle_device_configurations(messageFromServer.message.data.dev_name, messageFromServer.message.data.app_name);
             displayQueuesDevice(messageFromServer.message.data.dev_queueItems);
           } 
           else if ( messageFromServer.request === 'getDevEvents' ) {
+            display_headerAndMiddleTitle_device_configurations(messageFromServer.message.data.dev_name, messageFromServer.message.data.app_name);
             displayDeviceEvents(messageFromServer.message.data.dev_events);
           }
           else if ( messageFromServer.request === 'getDevFrames' ) {
+            display_headerAndMiddleTitle_device_configurations(messageFromServer.message.data.dev_name, messageFromServer.message.data.app_name);
             displayDeviceFrames(messageFromServer.message.data.dev_frames);
           }
           else if ( messageFromServer.request === 'postDevConfigConfirm' ) {
@@ -183,14 +183,13 @@ function opentab(evt, tabName) {
     const activeTabIndex = Array.from(tab_button).indexOf(evt.currentTarget);
     sessionStorage.setItem('activeTabIndex', activeTabIndex);
 }
-
-function display_headerAndMiddleTitle_device_configurations(items, appName) {
+function display_headerAndMiddleTitle_device_configurations(devName, appName) {
     // Header and Middle title
     let newH1Element = document.createElement('h1');
     let newH4Element = document.createElement('h4');
-    newH1Element.textContent = items.device.name;
+    newH1Element.textContent = devName;
     newH4Element.innerHTML = `</h4><a href="applications.html" >Applications</a>
-     > <a href="devices.html" id="appLink">${appName}</a> > <a>${items.device.name}</a></h4>`;
+     > <a href="devices.html" id="appLink">${appName}</a> > <a>${devName}</a></h4>`;
     
     let headerTitleDiv = document.querySelector('.header--title');
     let locatedDiv = document.querySelector('.located');
@@ -220,8 +219,7 @@ function displayDashboardDevice(dev_linkMetrics, dev_config) {
 
 function displayConfigurationsDevice(dev_config, dev_profiles, dev_key, dev_activation) {
     // Configurations tab
-    let deviceName = document.getElementById("device_Name");
-    deviceName.value = dev_config.device.name;
+
 
 }
 function displayQueuesDevice(dev_queueItems) {

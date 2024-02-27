@@ -231,9 +231,10 @@ async function myApp(values) {
 
                 const respGetDevEvents = await chirpStackServices.getDeviceEventsRequest(globalDevId, globalUserToken);
         
-                if ( respGetDevEvents.request === 'getDevQueues' && respGetDevEvents.message.status === 'success') {
+                if ( respGetDevEvents.request === 'getDevEvents' && respGetDevEvents.message.status === 'success') {
                     data.dev_events = respGetDevEvents.message.data;
                     data.app_name = globalAppName;
+                    data.dev_name = globalDevName;
 
                     resolve({ request: 'getDevEvents', message: { status: 'success', data: data }});
                 } else {
@@ -250,6 +251,7 @@ async function myApp(values) {
                 if ( respGetDevFrames.request === 'getDevFrames' && respGetDevFrames.message.status === 'success') {
                     data.dev_frames = respGetDevFrames.message.data;
                     data.app_name = globalAppName;
+                    data.dev_name = globalDevName;
 
                     resolve({ request: 'getDevFrames', message: { status: 'success', data: data }});
                 } else {
@@ -272,7 +274,7 @@ async function myApp(values) {
                         if ( respGetDevKey.request === 'getDevKey' && respGetDevKey.message.status === 'success') {
                             const respGetDevActivation = await chirpStackServices.getDeviceActivationRequest(globalDevId, globalUserToken);
 
-                            if ( respGetDevKey.request === 'getDevActivation' && respGetDevKey.message.status === 'success') {
+                            if ( respGetDevActivation.request === 'getDevActivation' && respGetDevActivation.message.status === 'success') {
                                 data.dev_config = respGetDevConfig.message.data;
                                 data.dev_profilesList = respDevProfileList.message.data;
                                 data.dev_key = respGetDevKey.message.data;
@@ -309,6 +311,7 @@ async function myApp(values) {
                 if ( respGetDevQueue.request === 'getDevQueues' && respGetDevQueue.message.status === 'success') {
                     data.dev_queues = respGetDevQueue.message.data;
                     data.app_name = globalAppName;
+                    data.dev_name = globalDevName;
 
                     resolve({ request: 'getDevQueues', message: { status: 'success', data: data }});
                 } else {
