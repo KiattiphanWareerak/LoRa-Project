@@ -89,7 +89,7 @@ function sender_and_reciver_common(req) {
 
       if ( messageFromServer.message.status === 'success' ) {
         if ( messageFromServer.request === 'dispMainDash' ) {
-          display_mainContent_dashboard(messageFromServer.message.data.gateways_list);
+          display_mainContent_dashboard(messageFromServer.message.data);
         } 
         else if ( messageFromServer.request === 'dispDevProfiles' ) {
           display_HeaderAndMiddleTitle_deviceProfiles();
@@ -135,53 +135,10 @@ function display_HeaderAndMiddleTitle_deviceProfiles() {
     headerTitleDiv.appendChild(newH1Element);
     locatedDiv.appendChild(newH4Element);
 }
-<<<<<<< HEAD
 function display_mainContent_dashboard(gets) {
-
-=======
-// Function to initialize the map
-function initMap(gateway_data) {
-  // Check if gateway_data is defined and contains at least one gateway
-  if (gateway_data && gateway_data.resultList && gateway_data.resultList.length > 0) {
-      // Initialize the map
-      var map = L.map('map').setView([0, 0], 13); // Default center if no gateways found
-
-      // Loop through each gateway and add markers to the map
-      gateway_data.resultList.forEach(function(gateway) {
-          const latitude = gateway.location.latitude;
-          const longitude = gateway.location.longitude;
-
-          // Add a marker for each gateway
-          var marker = L.marker([latitude, longitude]).addTo(map);
-          marker.bindPopup(`<b>${gateway.name}</b><br>${gateway.description}`).openPopup(); // Set the popup content
-      });
-
-      // If there are gateways, set the map view to the first gateway
-      const firstGateway = gateway_data.resultList[0];
-      if (firstGateway) {
-          map.setView([firstGateway.location.latitude, firstGateway.location.longitude], 13);
-      }
-      
-      // Add a tile layer
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-      }).addTo(map);
-  } else {
-      console.error("No gateway data available");
-  }
->>>>>>> 96f7616e0f383a78c679ccc641ad02a9ee15cd3e
-}
-
-function display_mainContent_dashboard(gateway_data) {
-  console.log('hi from dispDash', gateway_data)
-  const data_of_gateway = gateway_data;
   // Call the initMap function when the page has loaded
-  window.onload = function() {
-      initMap(data_of_gateway);
-  };
+  window.onload = initMap(gets.gateways_list);
 }
-
-
 function display_mainContent_deviceProfiles(gets) {
     const tableBody = document.getElementById("data-table");
 
@@ -362,5 +319,35 @@ function getRevisionName(revision) {
       default:
         return "Unknown";
     }
+}
+function initMap(gateway_data) {
+  // Check if gateway_data is defined and contains at least one gateway
+  if (gateway_data && gateway_data.resultList && gateway_data.resultList.length > 0) {
+      // Initialize the map
+      var map = L.map('map').setView([0, 0], 13); // Default center if no gateways found
+
+      // Loop through each gateway and add markers to the map
+      gateway_data.resultList.forEach(function(gateway) {
+          const latitude = gateway.location.latitude;
+          const longitude = gateway.location.longitude;
+
+          // Add a marker for each gateway
+          var marker = L.marker([latitude, longitude]).addTo(map);
+          marker.bindPopup(`<b>${gateway.name}</b><br>${gateway.description}`).openPopup(); // Set the popup content
+      });
+
+      // If there are gateways, set the map view to the first gateway
+      const firstGateway = gateway_data.resultList[0];
+      if (firstGateway) {
+          map.setView([firstGateway.location.latitude, firstGateway.location.longitude], 13);
+      }
+      
+      // Add a tile layer
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      }).addTo(map);
+  } else {
+      console.error("No gateway data available");
+  }
 }
 //---------------------------------------------------------------------//
