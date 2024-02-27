@@ -168,7 +168,28 @@ async function addDeviceProfilesRequest(values, apiToken) {
         newDevProfs.setSupportsClassB(false);
         newDevProfs.setSupportsClassC(true);
         newDevProfs.setClassCTimeout(5);
-        // newDevProfs.setPayloadCodecScript();
+        newDevProfs.setPayloadCodecScript(`
+        function decodeUplink(input) {
+          const bytes = input.bytes;
+          const data = String.fromCharCode(...bytes);
+
+          return {
+            data: {
+              uplink_decoder: data,
+            },
+          };
+        }
+        function encodeDownlink(input) {
+          const bytes = input.bytes;
+          const data = String.fromCharCode(...bytes);
+      
+          return {
+            data: {
+              downlink_decoder: data,
+            },
+          };
+        }
+        `);
         newDevProfs.setIsRelay(false);
         newDevProfs.setIsRelayEd(false);
         newDevProfs.setAutoDetectMeasurements(true);
@@ -386,7 +407,8 @@ async function createTenant(values, apiToken) {
         status: 'success', 
         data: { tenant_id: resp.toObject().id,
           user_id: values.user_id,
-          user_em: values.user_em }
+          user_em: values.user_em,
+          user_name: values.user_name }
         }});
       });
     });
@@ -820,7 +842,6 @@ async function getDevicesSummaryRequest(tenantId, apiToken) {
   }
 }
 //---------------------------------------------------------------------//
-//getDeviceEventsRequest("55135eeed6e60772", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjaGlycHN0YWNrIiwiaXNzIjoiY2hpcnBzdGFjayIsInN1YiI6IjgyYzA1NjUyLWU4NzMtNDA3NS04YzIwLTU1MjliNDI4NTUxMSIsInR5cCI6ImtleSJ9.CKn5Vq9UCDyYB0znfKPJ-nBmvUvc3tClUIWIY0lB0Xc");
 async function getDeviceEventsRequest(values, apiToken) { 
   try {
     // Create the Metadata object.
@@ -1071,6 +1092,107 @@ async function getQueueItemsRequest(values, apiToken) {
   }
 }
 //---------------------------------------------------------------------//
+//getUserInTenantRequest("6f368cfc-4245-4652-a011-cc3187d51b9c", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjaGlycHN0YWNrIiwiaXNzIjoiY2hpcnBzdGFjayIsInN1YiI6IjgyYzA1NjUyLWU4NzMtNDA3NS04YzIwLTU1MjliNDI4NTUxMSIsInR5cCI6ImtleSJ9.CKn5Vq9UCDyYB0znfKPJ-nBmvUvc3tClUIWIY0lB0Xc");
+async function getUserInTenantRequest(tenantId, apiToken) {
+  try {
+    // Create the Metadata object.
+    const metadata = new grpc.Metadata();
+    metadata.set("authorization", "Bearer " + apiToken);
+
+    return new Promise((resolve, reject) => {
+      // Create a request to list devices
+      const createReq = new tenant_pb.ListTenantUsersRequest();
+      createReq.setTenantId(tenantId);
+      createReq.setLimit(999);
+
+      tenantService.listUsers(createReq, metadata, (err, resp) => {
+        if (err !== null) {
+          console.log(err.details);
+          resolve({ request: 'getUserInTn', message: { 
+            status: 'failed', 
+            data: err.message }
+          });
+          return;
+        }
+        console.log('Get user in tenant request has been completed.');
+
+        resolve({ request: 'getUserInTn', message: {
+          status: 'success', 
+          data: resp.toObject().resultList }
+        });
+      });
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+//---------------------------------------------------------------------//
+async function getUsersListRequest(apiToken) {
+  try {
+    // Create the Metadata object.
+    const metadata = new grpc.Metadata();
+    metadata.set("authorization", "Bearer " + apiToken);
+
+    return new Promise((resolve, reject) => {
+      // Create a request to list devices
+      const createReq = new user_pb.ListUsersRequest();
+      createReq.setLimit(999);
+
+      userService.list(createReq, metadata, (err, resp) => {
+        if (err !== null) {
+          console.log(err.details);
+          resolve({ request: 'getUsersList', message: { 
+            status: 'failed', 
+            data: err.message }
+          });
+          return;
+        }
+        console.log('Users list request has been completed.');
+
+        resolve({ request: 'getUsersList', message: { 
+          status: 'success', 
+          data: resp.toObject().resultList }
+        });
+      });
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+//---------------------------------------------------------------------//
+async function getTenantsListRequest(apiToken) {
+  try {
+    // Create the Metadata object.
+    const metadata = new grpc.Metadata();
+    metadata.set("authorization", "Bearer " + apiToken);
+
+    return new Promise((resolve, reject) => {
+      // Create a request to list devices
+      const createReq = new tenant_pb.ListTenantsRequest();
+      createReq.setLimit(999);
+
+      tenantService.list(createReq, metadata, (err, resp) => {
+        if (err !== null) {
+          console.log(err.details);
+          resolve({ request: 'getTenantsList', message: { 
+            status: 'failed', 
+            data: err.message }
+          });
+          return;
+        }
+        console.log('Tenants list request has been completed.');
+
+        resolve({ request: 'getTenantsList', message: { 
+          status: 'success', 
+          data: resp.toObject().resultList }
+        });
+      });
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+//---------------------------------------------------------------------//
 async function gatewayListRequest(tenantId, apiToken) {
   try {
     // Create the Metadata object.
@@ -1131,38 +1253,6 @@ async function loginUserRequest(values, apiToken) {
         resolve({ request: 'loginUser', message: { 
           status: 'success', 
           data: { jwt: resp.toObject().jwt }}
-        });
-      });
-    });
-  } catch (error) {
-    console.log(error);
-  }
-}
-//---------------------------------------------------------------------//
-async function profileUserRequest(apiToken) { 
-  try {
-    // Create the Metadata object.
-    const metadata = new grpc.Metadata();
-    metadata.set("authorization", "Bearer " + apiToken);
-
-    return new Promise((resolve, reject) => {
-      // Create a empty.
-      const createReq = new google_protobuf_empty_pb.Empty();
-
-      internalService.profile(createReq, metadata, (err, resp) => {
-        if (err !== null) {
-          console.log(err.details);
-          resolve({ request: 'profileUser', message: { 
-            status: 'failed', 
-            data: { err: err.message }}
-          });
-          return;
-        }
-        console.log('Profile Response has been completed.');
-
-        resolve({ request: 'profileUser', message: { 
-          status: 'success', 
-          data: { user_profile: resp.toObject() }}
         });
       });
     });
@@ -1240,6 +1330,38 @@ async function postDeviceKeyRequest(values, apiToken) {
   }
 }
 //---------------------------------------------------------------------//
+async function profileUserRequest(apiToken) {
+  try {
+    // Create the Metadata object.
+    const metadata = new grpc.Metadata();
+    metadata.set("authorization", "Bearer " + apiToken);
+
+    return new Promise((resolve, reject) => {
+      // Create a empty.
+      const createReq = new google_protobuf_empty_pb.Empty();
+
+      internalService.profile(createReq, metadata, (err, resp) => {
+        if (err !== null) {
+          console.log(err.details);
+          resolve({ request: 'profileUser', message: { 
+            status: 'failed', 
+            data: { err: err.message }}
+          });
+          return;
+        }
+        console.log('Profile Response has been completed.');
+
+        resolve({ request: 'profileUser', message: { 
+          status: 'success', 
+          data: { user_profile: resp.toObject() }}
+        });
+      });
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+//---------------------------------------------------------------------//
 module.exports = {
   addApplicationRequest,
   addDeviceRequest,
@@ -1264,6 +1386,9 @@ module.exports = {
   getDeviceConfigurationRequest,
   getMainDashboard,
   getQueueItemsRequest,
+  getUserInTenantRequest,
+  getTenantsListRequest,
+  getUsersListRequest,
   loginUserRequest,
   profileUserRequest,
   postDeviceConfigurationRequest,

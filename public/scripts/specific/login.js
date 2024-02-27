@@ -9,20 +9,34 @@ document.addEventListener('DOMContentLoaded', () => {
     const input_id = document.getElementById('username');
     const input_pw = document.getElementById('password');
 
+    const emailRegex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    const isEmail = emailRegex.test(input_id.value);
+
     socket.addEventListener('open', () => {
         console.log('WebSocket connection established with WebServer');
 
         loginForm.addEventListener('submit', (event) => {
             event.preventDefault();
             
-            const req = { request: 'login', message:
-            { status: undefined,
-                data: { 
-                    user_em: input_id.value.trim(), 
-                    user_pw: input_pw.value.trim(), }
-            }};
+            if (isEmail) {
+                const req = { request: 'loginByEmail', message:
+                { status: undefined,
+                    data: { 
+                        user_em: input_id.value.trim(), 
+                        user_pw: input_pw.value.trim(), }
+                }};
 
-            socket.send(JSON.stringify(req));
+                socket.send(JSON.stringify(req));
+            } else {
+                const req = { request: 'loginByUname', message:
+                { status: undefined,
+                    data: { 
+                        user_un: input_id.value.trim(), 
+                        user_pw: input_pw.value.trim(), }
+                }};
+                
+                socket.send(JSON.stringify(req));
+            }
         });
     });
     //----RECEIVER ZONE----//
@@ -30,18 +44,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const messageFromServer = JSON.parse(event.data);
         console.log('Message from server:', messageFromServer);
 
-        if (messageFromServer.request === 'login') {
-            if (messageFromServer.message.status === 'success') {
-                input_id.value = '';
-                input_pw.value = '';
-                window.location.href = 'dashboard.html';
-            } else {
-                input_id.value = '';
-                input_pw.value = '';
-                alert("Login failed.");
-            }
+        if ( messageFromServer.request === 'loginByEmail' && messageFromServer.message.status === 'success' ) {
+            input_id.value = '';
+            input_pw.value = '';
+            window.location.href = 'dashboard.html';
+        } else if ( messageFromServer.request === 'loginByUname' && messageFromServer.message.status === 'success' ) {
+            input_id.value = '';
+            input_pw.value = '';
+            window.location.href = 'dashboard.html';
         } else {
-            alert("Error 505");
+            input_id.value = '';
+            input_pw.value = '';
+            alert("Login failed.\nThere are no users on our ChirpStack.");
         }
     });
 });

@@ -317,7 +317,7 @@ async function myApp(values) {
                     resolve({ request: 'getDevQueues', message: { status: 'failed', data: undefined }});
                 }
             }
-            else if ( values.request === 'login' ) {
+            else if ( values.request === 'loginByEmail' ) {
                 const respFromNwApiToken = await dataBaseServices.getNetworkApiTokenFromDB();
 
                 if ( respFromNwApiToken.request === 'getNwApiToken' && respFromNwApiToken.message.status === 'success' ) {
@@ -341,21 +341,94 @@ async function myApp(values) {
                             console.log("USER TENANT ID: ", globalTenantId);
                             console.log("USER TOKEN: ", globalUserToken);
 
-                            resolve({ request: 'login', message: { status: 'success', data: undefined }});
+                            resolve({ request: 'loginByEmail', message: { status: 'success', data: undefined }});
                         } else {
                             console.log(respFromProfileUser);
 
-                            resolve({ request: 'login', message: { status: 'failed', data: undefined }});
+                            resolve({ request: 'loginByEmail', message: { status: 'failed', data: undefined }});
                         }
                     } else {
                         console.log(respFromLoginUser);
 
-                        resolve({ request: 'login', message: { status: 'failed', data: undefined }});
+                        resolve({ request: 'loginByEmail', message: { status: 'failed', data: undefined }});
                     }
                 } else {
                     console.log(respFromNwApiToken);
 
-                    resolve({ request: 'login', message: { status: 'failed', data: undefined }});
+                    resolve({ request: 'loginByEmail', message: { status: 'failed', data: undefined }});
+                }
+            }
+            else if ( values.request === 'loginByUname' ) {
+                let data = {
+                    user_em: undefined, 
+                    user_pw: values.message.data.user_pw
+                }
+                const respFromNwApiToken = await dataBaseServices.getNetworkApiTokenFromDB();
+
+                if ( respFromNwApiToken.request === 'getNwApiToken' && respFromNwApiToken.message.status === 'failed') {
+                    console.log(respFromNwApiToken);
+
+                    resolve({ request: 'register', message: { status: 'failed', data: undefined }});
+                }
+                else if ( respFromNwApiToken.request === 'getNwApiToken' && respFromNwApiToken.message.status === 'success' ) {
+                    const respFromTenantList = await chirpStackServices.getTenantsListRequest(respFromNwApiToken.message.data[0].api_token);
+
+                    if ( respFromTenantList.request === 'getTenantsList' && respFromTenantList.message.status === 'success' ) {
+                        const resultCheckUserName = await checkUserName(values.message.data.user_un, respFromTenantList.message.data);
+
+                        if ( resultCheckUserName.request === 'checkUserName' && resultCheckUserName.message.status === 'failed' ) {
+                            const respFromUserInTenant = await chirpStackServices.getUserInTenantRequest(resultCheckUserName.message.data.tenant_id, respFromNwApiToken.message.data[0].api_token);
+
+                            if ( respFromUserInTenant.request === 'getUserInTn' && respFromUserInTenant.message.status === 'success' ) {
+
+                                data.user_em = respFromUserInTenant.message.data[0].email;
+                            } else {
+                                console.log();
+
+                                resolve({ request: 'loginByUname', message: { status: 'failed', data: undefined }});
+                            }
+                        } else {
+                            console.log();
+
+                            resolve({ request: 'loginByUname', message: { status: 'failed', data: undefined }});
+                        }
+                    } else {
+                        console.log();
+
+                        resolve({ request: 'loginByUname', message: { status: 'failed', data: undefined }});
+                    }
+                }
+
+                const respFromLoginUser = await chirpStackServices.loginUserRequest(data, respFromNwApiToken.message.data[0].api_token);
+
+                if ( respFromLoginUser.request === 'loginUser' && respFromLoginUser.message.status === 'success' ) {
+                    globalUserToken = respFromLoginUser.message.data.jwt;
+
+                    const respFromProfileUser = await chirpStackServices.profileUserRequest(globalUserToken);
+
+                    if ( respFromProfileUser.request === 'profileUser' && respFromProfileUser.message.status === 'success' ) {
+                        globalUserId = respFromProfileUser.message.data.user_profile.user.id;
+
+                        if (respFromProfileUser.message.data.user_profile.tenantsList.length > 0) {
+                            globalTenantId = respFromProfileUser.message.data.user_profile.tenantsList[0].tenantId;
+                        } else {
+                            globalUserToken = respFromNwApiToken.message.data[0].api_token;
+                            globalTenantId = "52f14cd4-c6f1-4fbd-8f87-4025e1d49242";
+                        }
+                        console.log("USER ID: ", globalUserId);
+                        console.log("USER TENANT ID: ", globalTenantId);
+                        console.log("USER TOKEN: ", globalUserToken);
+
+                        resolve({ request: 'loginByUname', message: { status: 'success', data: undefined }});
+                    } else {
+                        console.log(respFromProfileUser);
+
+                        resolve({ request: 'loginByUname', message: { status: 'failed', data: undefined }});
+                    }
+                } else {
+                    console.log(respFromLoginUser);
+
+                    resolve({ request: 'loginByUname', message: { status: 'failed', data: undefined }});
                 }
             } 
             else if ( values.request === 'logout' ) {
@@ -390,42 +463,86 @@ async function myApp(values) {
             else if ( values.request === 'register' ) {
                 const respFromNwApiToken = await dataBaseServices.getNetworkApiTokenFromDB();
 
-                if ( respFromNwApiToken.request === 'getNwApiToken' && respFromNwApiToken.message.status === 'success' ) {
-                    const respFromCreateUser = await chirpStackServices.createUser(values.message.data, respFromNwApiToken.message.data[0].api_token);
+                if ( respFromNwApiToken.request === 'getNwApiToken' && respFromNwApiToken.message.status === 'failed') {
+                    console.log(respFromNwApiToken);
 
-                    if ( respFromCreateUser.request === 'createUser' && respFromCreateUser.message.status === 'success' ) {
-                        const respFromCreateTenant = await chirpStackServices.createTenant(respFromCreateUser.message.data, respFromNwApiToken.message.data[0].api_token);
+                    resolve({ request: 'register', message: { status: 'failed', data: undefined }});
+                } 
+                else if ( respFromNwApiToken.request === 'getNwApiToken' && respFromNwApiToken.message.status === 'success' ) {
+                    const respFromTenantList = await chirpStackServices.getTenantsListRequest(respFromNwApiToken.message.data[0].api_token);
 
-                        if ( respFromCreateTenant.request === 'createTenant' && respFromCreateTenant.message.status === 'success' ) {
-                            const respFromCreateTenantUser = await chirpStackServices.createTenantUser(respFromCreateTenant.message.data, respFromNwApiToken.message.data[0].api_token);
+                    if ( respFromTenantList.request === 'getTenantsList' && respFromTenantList.message.status === 'success' ) {
+                        const respFromUserList = await chirpStackServices.getUserListRequest(respFromNwApiToken.message.data[0].api_token);
 
-                            if ( respFromCreateTenantUser.request === 'createTenantUser' && respFromCreateTenantUser.message.status === 'success' ) {
-                                const respFromAddDevProf = await chirpStackServices.addDeviceProfilesRequest(respFromCreateTenant.message.data.tenant_id, respFromNwApiToken.message.data[0].api_token);
-                                
-                                if ( respFromAddDevProf.request === 'addDevProfs' && respFromAddDevProf.message.status === 'success' ) {
-                                    resolve({ request: 'register', message: { status: 'success', data: undefined }});
+                        if ( respFromUserList.request === 'getUsersList' && respFromUserList.message.status === 'success' ) {
+                            const resultCheckUserName = await checkUserName(values.message.data.user_name, respFromTenantList.message.data);
+
+                            if ( resultCheckUserName.request === 'checkUserName' && resultCheckUserName.message.status === 'success' ) {
+                                const resultCheckUserEmail = await checkUserEmail(values.message.data.user_em, respFromUserList.message.data);
+
+                                if ( resultCheckUserEmail.request === 'checkUserEmail' && resultCheckUserEmail.message.status === 'success' ) {
+                                    // do nothing
                                 } else {
-                                    console.log(respFromAddDevProf);
+                                    console.log(resultCheckUserEmail);
 
-                                    resolve({ request: 'register', message: { status: 'failed', data: undefined }});
+                                    resolve({ request: 'register', message: { status: 'failed', data: { check_em: "duplicated" }}});
                                 }
                             } else {
-                                console.log(respFromCreateTenantUser);
+                                console.log(resultCheckUserName);
 
-                                resolve({ request: 'register', message: { status: 'failed', data: undefined }});
+                                resolve({ request: 'register', message: { status: 'failed', data: { check_name: "duplicated" }}});
                             }
                         } else {
-                            console.log(respFromCreateTenant);
+                            console.log(respFromUserList);
 
                             resolve({ request: 'register', message: { status: 'failed', data: undefined }});
                         }
                     } else {
-                        console.log(respFromCreateUser);
+                        console.log(respFromTenantList);
+
+                        resolve({ request: 'register', message: { status: 'failed', data: undefined }});
+                    }
+                }
+
+                const respFromCreateUser = await chirpStackServices.createUser(values.message.data, respFromNwApiToken.message.data[0].api_token);
+
+                if ( respFromCreateUser.request === 'createUser' && respFromCreateUser.message.status === 'success' ) {
+                    const respFromCreateTenant = await chirpStackServices.createTenant(respFromCreateUser.message.data, respFromNwApiToken.message.data[0].api_token);
+
+                    if ( respFromCreateTenant.request === 'createTenant' && respFromCreateTenant.message.status === 'success' ) {
+                        const respFromCreateTenantUser = await chirpStackServices.createTenantUser(respFromCreateTenant.message.data, respFromNwApiToken.message.data[0].api_token);
+
+                        if ( respFromCreateTenantUser.request === 'createTenantUser' && respFromCreateTenantUser.message.status === 'success' ) {
+                            const respFromAddDevProf = await chirpStackServices.addDeviceProfilesRequest(respFromCreateTenant.message.data.tenant_id, respFromNwApiToken.message.data[0].api_token);
+                            
+                            if ( respFromAddDevProf.request === 'addDevProfs' && respFromAddDevProf.message.status === 'success' ) {
+                                const respFromCreateInfluxDbUser = await dataBaseServices.createInfluxDbForUser(values.message.data);
+
+                                if ( respFromCreateInfluxDbUser.request === 'createInfluxForUser' && respFromCreateInfluxDbUser.message.status === 'success' ) {
+
+                                    resolve({ request: 'register', message: { status: 'success', data: undefined }});
+                                } else {
+                                    console.log(respFromCreateInfluxDbUser);
+
+                                    resolve({ request: 'register', message: { status: 'failed', data: undefined }});
+                                }
+                            } else {
+                                console.log(respFromAddDevProf);
+
+                                resolve({ request: 'register', message: { status: 'failed', data: undefined }});
+                            }
+                        } else {
+                            console.log(respFromCreateTenantUser);
+
+                            resolve({ request: 'register', message: { status: 'failed', data: undefined }});
+                        }
+                    } else {
+                        console.log(respFromCreateTenant);
 
                         resolve({ request: 'register', message: { status: 'failed', data: undefined }});
                     }
                 } else {
-                    console.log(respFromNwApiToken);
+                    console.log(respFromCreateUser);
 
                     resolve({ request: 'register', message: { status: 'failed', data: undefined }});
                 }
@@ -445,6 +562,36 @@ module.exports = {
 //---------------------------------------------------------------------//
 //----------------------------COMMON ZONE------------------------------//
 //---------------------------------------------------------------------//
+async function checkUserEmail(em, emList) {
+    try {
+        return new Promise((resolve, reject) => {
+            const emailExists = emList.find(emails => emails.email === em);
+
+            if (emailExists) {
+                resolve({ request: 'checkUserEmail', message: { status: 'failed', data: undefined }});
+            } else {
+                resolve({ request: 'checkUserEmail', message: { status: 'success', data: undefined }});
+            }
+        });
+    } catch (error) {
+        console.log(error);
+    }
+}
+async function checkUserName(username, nameList) {
+    try {
+        return new Promise((resolve, reject) => {
+            const userExists = nameList.find(user => user.name === username);
+
+            if (userExists) {
+                resolve({ request: 'checkUserName', message: { status: 'failed', data: { tenant_id: userExists.id }}});
+            } else {
+                resolve({ request: 'checkUserName', message: { status: 'success', data: undefined }});
+            }
+        });
+    } catch (error) {
+        console.log(error);
+    }
+}
 function logout() {
     globalUserToken, globalUserId, globalTenantId, 
     globalAppId, globalAppName, globalAppDesc, 

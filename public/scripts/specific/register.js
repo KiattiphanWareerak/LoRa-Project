@@ -17,17 +17,32 @@ document.addEventListener('DOMContentLoaded', () => {
         registerForm.addEventListener('submit', (event) => {
             event.preventDefault();
             
-            // Check if user-name follows the specified pattern
-            const usernamePattern = /^[a-zA-Z0-9_]{3,}$/; // Regex pattern
+            const usernamePattern = /^[a-zA-Z0-9_]{3,}$/;
             if (!usernamePattern.test(input_un.value)) {
-                alert('Invalid username format. Please use only letters, numbers, underscores (_) and be at least 3 characters long.');
+                alert('Please enter a valid username.\n\nUsername must be at least 3 characters long and can only contain upper-case letters, lower-case letters, numbers, and underscores (_).');
+
+                event.preventDefault();
                 return; // Stop further execution
             } 
 
-            // Check if password and confirm password match
+            const passwordPattern = /^[a-zA-Z0-9_@]{3,}$/;
+            if (input_pw.value.length < 5) {
+            alert('Password must be at least 5 characters long.');
+
+            event.preventDefault();
+            return;
+            }
+            if (!passwordPattern.test(input_pw.value)) {
+            alert('Please enter a strong password.\n\nPassword must be at least 5 characters long and can only contain upper-case letters, lower-case letters, numbers, underscores (_), and @ symbol.');
+
+            event.preventDefault();
+            return;
+            }
             if (input_pw.value !== input_pw_cf.value) {
-                alert("Passwords don't match");
-                return; // Stop further execution
+            alert('Passwords do not match.');
+
+            event.preventDefault();
+            return;
             }
 
             // All checks passed, proceed with sending data
@@ -48,6 +63,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (messageFromServer.request === 'register') {
             if (messageFromServer.message.status === 'failed') {
+                if ( messageFromServer.message.data.check_name === 'duplicated' ) {
+                    alert("Username is already in use.");
+                    input_un.value = '';
+                    input_pw.value = '';
+                    input_pw_cf.value = '';
+                    return;
+                } else if ( messageFromServer.message.data.check_em === 'duplicated' ) {
+                    alert("Email is already in use.");
+                    input_em.value = '';
+                    input_pw.value = '';
+                    input_pw_cf.value = '';
+                    return;
+                }
+
                 alert("Registration failed.");
                 input_pw.value = '';
                 input_pw_cf.value = '';
