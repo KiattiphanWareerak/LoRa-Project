@@ -209,13 +209,18 @@ function displayDashboardDevice(dev_linkMetrics, dev_config) {
         const receivedPerDR_Data = dev_linkMetrics.rxPacketsPerDr;
         const Errors_Data = dev_linkMetrics.errors;
 
-        // Call a function to display the table with the data
-        displayDataTable(received_Data, RSSI_Data, SNR_Data, Errors_Data);
-    } else {
-        console.error("dev_linkMetrics is undefined. Cannot display dashboard data.");
-        // Optionally, you can handle this case by displaying an error message or taking other actions.
-    }
-}
+         // Call the displayChartData function with the appropriate data
+         displayChartData(received_Data, 'receivedChart', 'Received Data', 'rx_count');
+         displayChartData(RSSI_Data, 'rssiChart', 'RSSI', 'rssi_strength');
+         displayChartData(SNR_Data, 'snrChart', 'SNR', 'snr_strength');
+        //  displayChartData(receivedPerfrequency_Data, 'receivedPerFreqChart', 'Received per Frequency', 'rx_count_per_freq');
+        //  displayChartData(receivedPerDR_Data, 'receivedPerDRChart', 'Received per Data Rate', 'rx_count_per_dr');
+         displayChartData(Errors_Data, 'errorsChart', 'Errors', 'error_count');
+     } else {
+         console.error("dev_linlMetrics is undefined. Cannot display dashboard data.");
+         // Optionally, you can handle this case by displaying an error message or taking other actions.
+     }
+ }
 
 function displayConfigurationsDevice(dev_config, dev_profiles, dev_key, dev_activation) {
     // Configurations tab
@@ -237,40 +242,53 @@ function displayDeviceFrames(dev_frames) {
 //---------------------------------------------------------------------//
 //----------------------------COMMON ZONE------------------------------// 
 //---------------------------------------------------------------------// 
-function displayDataTable(receivedData, RSSIData, SNRData, ErrorsData) {
-    // Get a reference to the table body
-    const tableBody = document.getElementById('data-table');
+function displayChartData(data, chartId, chartLabel, datasetLabel) {
+    // แปลง timestamp เป็นวันที่
+    const labels = data.timestampsList.map(timestamp => {
+      const date = new Date(timestamp.seconds * 1000);
+      return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+    });
 
-    // Clear any existing rows in the table body
-    tableBody.innerHTML = '';
+    // แยกค่า rx_count
+    const rxCounts = data.datasetsList[0].dataList;
 
-    // Loop through the data arrays and populate the table rows
-    for (let i = 0; i < receivedData.length; i++) {
-        const row = document.createElement('tr');
+    const ctx = document.getElementById(chartId).getContext('2d');
 
-        // Create and append table cells for each data point
-        const timeCell = document.createElement('td');
-        timeCell.textContent = i + 1; // Assuming the index starts from 1
-        row.appendChild(timeCell);
-
-        const receivedCell = document.createElement('td');
-        receivedCell.textContent = receivedData[i];
-        row.appendChild(receivedCell);
-
-        const RSSICell = document.createElement('td');
-        RSSICell.textContent = RSSIData[i];
-        row.appendChild(RSSICell);
-
-        const SNRCell = document.createElement('td');
-        SNRCell.textContent = SNRData[i];
-        row.appendChild(SNRCell);
-
-        const errorsCell = document.createElement('td');
-        errorsCell.textContent = ErrorsData[i];
-        row.appendChild(errorsCell);
-
-        // Append the row to the table body
-        tableBody.appendChild(row);
-    }
+    const myChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: datasetLabel,
+          data: rxCounts,
+          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+          borderColor: 'rgba(75, 192, 192, 1)',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          yAxes: [{
+            scaleLabel: {
+              display: true,
+              labelString: 'Value' // Add label for y-axis
+            },
+            ticks: {
+              beginAtZero: true
+            }
+          }],
+          xAxes: [{
+            scaleLabel: {
+              display: true,
+              labelString: 'Date' // Add label for x-axis
+            },
+            type: 'time',
+            time: {
+              unit: 'day'
+            }
+          }]
+        }
+      }
+    });
 }
 //---------------------------------------------------------------------// 

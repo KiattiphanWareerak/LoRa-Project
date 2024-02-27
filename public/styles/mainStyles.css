@@ -262,7 +262,7 @@ textarea{
     margin-right: 100px;
 }
 
-#save-config_btn {
+#save-config_btn, #enqueue_btn {
     color: #fff;
     padding: 8px 22px;
     width: 150px;
@@ -558,4 +558,28 @@ tfoot td {
     border-radius: 8px; /* Set border radius as needed */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add shadow as needed */
 }
+/* * * Enqueue Tab * * */
+.Enqueue {
+    border: 1px solid black; /* This will create a solid black border around the div */
+    padding: 10px;
+    border-radius: 10px;
+}
 
+.Enqueue span {
+    margin-left: 10px;
+    font-size: 12px;
+}
+
+.enqueue-option {
+    display: flex;
+}
+
+.enqueue-option .Fport_element {
+    margin-top: 20px;
+    margin-left: 20px;
+    margin-right: 100px;
+}
+
+.enqueue-option #Fport {
+    margin-top: 15px;
+}
