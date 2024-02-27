@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         loginForm.addEventListener('submit', (event) => {
             event.preventDefault();
-            
+
             if (isEmail) {
                 const req = { request: 'loginByEmail', message:
                 { status: undefined,

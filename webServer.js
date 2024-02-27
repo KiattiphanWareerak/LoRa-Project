@@ -12,7 +12,7 @@ const server = http.createServer(app);
 
 // Set the port and IP address for the server
 const PORT = 3001;
-const IP_ADDRESS = '127.0.0.1';
+const IP_ADDRESS = 'localhost';
 
 // Serve static files (HTML, CSS, JS)
 app.use(express.static(path.join(__dirname, 'public')));
@@ -29,7 +29,7 @@ wss.on('connection', (socket) => {
         console.log(parseMessage);
 
         // Forward a message to the service
-        axios.post('http://localhost:3002/service', parseMessage)
+        axios.post('http://localhost/service', parseMessage)
             .then((response) => {
                 // Send a message to the client
                 socket.send(JSON.stringify(response.data));
@@ -43,7 +43,6 @@ wss.on('connection', (socket) => {
 // Start the server
 server.listen(PORT, IP_ADDRESS, () => {
     console.log(`Web server is running at http://${IP_ADDRESS}:${PORT}/`);
-    console.log(`Web server is running at http://localhost:${PORT}/`);
 });
 //---------------------------------------------------------------------//
 //-------------------------------FUNCTIONS-----------------------------//

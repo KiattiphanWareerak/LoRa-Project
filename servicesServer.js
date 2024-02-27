@@ -14,7 +14,7 @@ const { log } = require('console');
 
 // Set the port and IP address for the server
 const PORT = 3002;
-const IP_ADDRESS = '127.0.0.1';
+const IP_ADDRESS = 'localhost';
 
 // use body-parser to fecth JSON from req.body
 app.use(bodyParser.json());
@@ -40,7 +40,6 @@ app.post('/service', async (req, res) => {
 // Start the server
 server.listen(PORT, IP_ADDRESS, () => {
     console.log(`Service is running at http://${IP_ADDRESS}:${PORT}/`);
-    console.log(`Service is running at http://localhost:${PORT}/`);
 });
 //---------------------------------------------------------------------//
 //-------------------------------FUNCTIONS-----------------------------//
