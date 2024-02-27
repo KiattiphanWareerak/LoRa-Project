@@ -2,15 +2,52 @@
 //----------------------------EVENTS ZONE------------------------------// 
 //---------------------------------------------------------------------//
 document.addEventListener('DOMContentLoaded', () => {
-    // example. dashboard request to service
-    // if present tab is dasgboard tab use sendDashboardDeviceRequest()
-    sendDashboardDeviceRequest("1y", "MONTH");
+    const activeTabIndex = sessionStorage.getItem('activeTabIndex');
 
+    const setActiveTab = (tabButton) => {
+        tabButton.classList.add('active');
+        const tabName = tabButton.getAttribute('onclick').match(/'(.*?)'/)[1];
+        document.getElementById(tabName).classList.add('active');
+        const activeLine = document.querySelector(".active_line");
+        activeLine.style.left = tabButton.offsetLeft + "px";
+        activeLine.style.width = tabButton.offsetWidth + "px";
+    };
 
+    if (activeTabIndex !== null) {
+        const activeTabButton = document.querySelectorAll('.tab_button')[activeTabIndex];
+        setActiveTab(activeTabButton);
+    } else {
+        document.querySelector('.tab_button.active').click();
+    }
+
+    // Set up event listeners for tab clicks
+    const tabButtons = document.querySelectorAll('.tab_button');
+    tabButtons.forEach(tabButton => {
+        tabButton.addEventListener('click', () => {
+            setActiveTab(tabButton);
+            // Send request specific to the active tab
+            if (tabButton.getAttribute('onclick').includes('Dashboard')) {
+                sendDashboardDeviceRequest("1y", "MONTH");
+            } else if (tabButton.getAttribute('onclick').includes('Configuration')) {
+                console.log('hi config')
+                sendDeviceInfomationsRequest()
+            } else if (tabButton.getAttribute('onclick').includes('Queue')) {
+                sendQueuesDeviceRequest();
+            } else if (tabButton.getAttribute('onclick').includes('Event')) {
+                sendEventsDeviceRequest();
+            } else if (tabButton.getAttribute('onclick').includes('LoRaWAN_frame')) {
+                sendFramesDeviceRequest();
+            }
+        });
+    });
 });
+
+// Modify other functions accordingly to include tab-specific logic for sending requests
+
+
 //-------------------------REQUEST FUNCTIONS---------------------------// 
 const sendDashboardDeviceRequest = (timeAgo, aggregation) => {
-    // timeAgp: "1y","1m","1d"
+    // timeAgo: "1y","1m","1d"
     // aggregation: "DAY", "HOUR", "MONTH"
     const req = { request: 'getDashDev', message: { 
         status: undefined, 
@@ -117,6 +154,36 @@ function sender_and_reciver_in_device(req) {
 //---------------------------------------------------------------------// 
 //---------------------------DISPLAYS ZONE-----------------------------// 
 //---------------------------------------------------------------------//
+function opentab(evt, tabName) {
+    // Declare all variables
+    var i, tab_content, tab_button, active_line;
+
+    // Get all elements with class="tab_content" and hide them
+    tab_content = document.getElementsByClassName("tab_content");
+    for (i = 0; i < tab_content.length; i++) {
+        tab_content[i].style.display = "none";
+    }
+
+    // Get all elements with class="tab_button" and remove the class "active"
+    tab_button = document.getElementsByClassName("tab_button");
+    for (i = 0; i < tab_button.length; i++) {
+        tab_button[i].className = tab_button[i].className.replace(" active", "");
+    }
+
+    // Move the line to the position of the active tab button
+    active_line = document.querySelector(".active_line");
+    active_line.style.left = evt.currentTarget.offsetLeft + "px";
+    active_line.style.width = evt.currentTarget.offsetWidth + "px";
+
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById(tabName).style.display = "block";
+    evt.currentTarget.className += " active";
+
+    // Store the active tab index in sessionStorage
+    const activeTabIndex = Array.from(tab_button).indexOf(evt.currentTarget);
+    sessionStorage.setItem('activeTabIndex', activeTabIndex);
+}
+
 function display_headerAndMiddleTitle_device_configurations(items, appName) {
     // Header and Middle title
     let newH1Element = document.createElement('h1');
@@ -143,25 +210,18 @@ function displayDashboardDevice(dev_linkMetrics, dev_config) {
         const receivedPerDR_Data = dev_linkMetrics.rxPacketsPerDr;
         const Errors_Data = dev_linkMetrics.errors;
 
-        // Now you can proceed with your chart display logic
-        // This ensures that the code inside this block won't run if dev_linkMetrics is undefined
-
-        // Call the displayChartData function with the appropriate data
-        displayChartData(received_Data, 'receivedChart', 'Received Data', 'rx_count');
-        displayChartData(RSSI_Data, 'rssiChart', 'RSSI', 'rssi_strength');
-        displayChartData(SNR_Data, 'snrChart', 'SNR', 'snr_strength');
-        displayChartData(receivedPerfrequency_Data, 'receivedPerFreqChart', 'Received per Frequency', 'rx_count_per_freq');
-        displayChartData(receivedPerDR_Data, 'receivedPerDRChart', 'Received per Data Rate', 'rx_count_per_dr');
-        displayChartData(Errors_Data, 'errorsChart', 'Errors', 'error_count');
+        // Call a function to display the table with the data
+        displayDataTable(received_Data, RSSI_Data, SNR_Data, Errors_Data);
     } else {
         console.error("dev_linkMetrics is undefined. Cannot display dashboard data.");
         // Optionally, you can handle this case by displaying an error message or taking other actions.
     }
 }
+
 function displayConfigurationsDevice(dev_config, dev_profiles, dev_key, dev_activation) {
     // Configurations tab
     let deviceName = document.getElementById("device_Name");
-    deviceName.value = items.dev_config.device.name;
+    deviceName.value = dev_config.device.name;
 
 }
 function displayQueuesDevice(dev_queueItems) {
@@ -179,44 +239,40 @@ function displayDeviceFrames(dev_frames) {
 //---------------------------------------------------------------------//
 //----------------------------COMMON ZONE------------------------------// 
 //---------------------------------------------------------------------// 
-function displayChartData(data, chartId, chartLabel, datasetLabel) {
-    // Extract timestamps and data from the received data
-    const timestamps = data.timestampsList.map(timestamp => timestamp.seconds);
-    const dataList = data.datasetsList[0].dataList;
+function displayDataTable(receivedData, RSSIData, SNRData, ErrorsData) {
+    // Get a reference to the table body
+    const tableBody = document.getElementById('data-table');
 
-    // Calculate the maximum value in the data list
-    const maxDataValue = Math.max(...dataList);
+    // Clear any existing rows in the table body
+    tableBody.innerHTML = '';
 
-    // Create a context for the canvas
-    const ctx = document.getElementById(chartId).getContext('2d');
+    // Loop through the data arrays and populate the table rows
+    for (let i = 0; i < receivedData.length; i++) {
+        const row = document.createElement('tr');
 
-    // Create a line chart using Chart.js
-    const chart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: timestamps,
-            datasets: [{
-                label: datasetLabel,
-                data: dataList,
-                fill: false,
-                borderColor: 'rgba(75, 192, 192, 1)',
-                tension: 0.1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    type: 'linear',
-                    position: 'left',
-                    max: maxDataValue * 1.1, // Set the maximum value to 10% higher than the maximum data value
-                    beginAtZero: true // Start the scale at zero
-                },
-                x: {
-                    type: 'linear',
-                    position: 'bottom'
-                }
-            }
-        }
-    });
+        // Create and append table cells for each data point
+        const timeCell = document.createElement('td');
+        timeCell.textContent = i + 1; // Assuming the index starts from 1
+        row.appendChild(timeCell);
+
+        const receivedCell = document.createElement('td');
+        receivedCell.textContent = receivedData[i];
+        row.appendChild(receivedCell);
+
+        const RSSICell = document.createElement('td');
+        RSSICell.textContent = RSSIData[i];
+        row.appendChild(RSSICell);
+
+        const SNRCell = document.createElement('td');
+        SNRCell.textContent = SNRData[i];
+        row.appendChild(SNRCell);
+
+        const errorsCell = document.createElement('td');
+        errorsCell.textContent = ErrorsData[i];
+        row.appendChild(errorsCell);
+
+        // Append the row to the table body
+        tableBody.appendChild(row);
+    }
 }
 //---------------------------------------------------------------------// 

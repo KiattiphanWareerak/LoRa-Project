@@ -96,7 +96,7 @@
                 <!-- Tab contents -->
                 <div class="content_box">
                     <div id="Dashboard" class="tab_content">
-                        <div class="graph-display">
+                        <!-- <div class="graph-display">
                             <div class="graph-data" id="Recieved">
                                 Recieved
                                 <canvas id="receivedChart"></canvas>
@@ -122,13 +122,13 @@
                                 Errors
                                 <canvas id="errorsChart"></canvas>
                             </div>
-                        </div>
-                        <!-- <div class="dev-data_table">
+                        </div> -->
+                        <div class="dev_dashboard">
                             <table>
                                 <thead>
                                     <tr>
                                         <th id="time">Time</th>
-                                        <th>Recieved</th>
+                                        <th>Received</th>
                                         <th>RSSI</th>
                                         <th>SNR</th>
                                         <th>Errors</th>
@@ -151,7 +151,7 @@
                                     </tr>
                                 </tbody>
                             </table>
-                        </div> -->
+                        </div>
                     </div>
                     <div id="Configuration" class="tab_content">
                         <div class="data-content" id="device-info">
@@ -171,12 +171,16 @@
                             <div class="display_2_elements">
                                 <div class="left-element">
                                     <label for="devEUI">Device EUI (EUI64)</label>
-                                    <div><input type="text" id="devIdInput" class="devEUI" required></div>
+                                    <div><input type="text" disabled="disabled" id="devIdInput" class="devEUI" required></div>
                                 </div>
                                 <div class="right-element">
                                     <label for="joinEUI">Join EUI (EUI64)</label>
                                     <div><input type="text" id="joinIdInput" class="joinEUI"></div>
                                 </div>
+                            </div>
+                            <div>
+                                <label for="appkey">Application Key</label>
+                                <input type="text" placeholder="Application Key" id="appkey" required>
                             </div>
                             <div>
                                 <div>Device-Profile</div>
@@ -198,14 +202,14 @@
                                     <label>Device is disabled</label>
                                     <div class="toggle_button">
                                         <input type="checkbox" id="device_disabled-check">
-                                        <label for="device_disabled-check" class="toggle_button-label"></Label>
+                                        <label for="device_disabled-check" class="toggle_button-label"></label>
                                     </div>
                                 </div>
                                 <div class="right-element">
                                     <label>Disable frame counter validation</label>
                                     <div class="toggle_button">
                                         <input type="checkbox" id="frame-counter-validation_disabled-check">
-                                        <label for="frame-counter-validation_disabled-check" class="toggle_button-label"></Label></label>
+                                        <label for="frame-counter-validation_disabled-check" class="toggle_button-label"></label>
                                     </div>
                                 </div>
                             </div>
