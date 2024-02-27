@@ -29,7 +29,7 @@ wss.on('connection', (socket) => {
         console.log(parseMessage);
 
         // Forward a message to the service
-        axios.post('http://localhost/service', parseMessage)
+        axios.post('http://localhost:3002/service', parseMessage)
             .then((response) => {
                 // Send a message to the client
                 socket.send(JSON.stringify(response.data));

@@ -10,7 +10,7 @@ let items = {
   user_name: "testApi",
   user_pw: "coe30",
 }
-createInfluxDbForUser(items);
+// createInfluxDbForUser(items);
 async function createInfluxDbForUser(items) {
   try {
     // URL ของ InfluxDB
@@ -24,7 +24,7 @@ async function createInfluxDbForUser(items) {
 
     return new Promise(async (resolve, reject) => {
       // สร้าง Organization
-      const org = await client..orgs.create('org-' + items.user_name);
+      const org = await client.orgs.create('org-' + items.user_name);
       
       // แสดงข้อมูล Organization
       console.log('Organization:', org);
