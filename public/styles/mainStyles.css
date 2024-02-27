@@ -12,7 +12,7 @@ body {
 }
 .display_2_elements {
     display: flex;
-    /* justify-content: space-between; Adjust as needed */
+    justify-content: space-between;
 }
 
 .left-element,
@@ -243,18 +243,25 @@ textarea{
 .gateway-map {
     padding-bottom: 50%;
     position: relative;
+    height: 50%;
 }
 
-.gateway-map iframe {
+/* .gateway-map iframe {
     border-radius: 12px;
     height: 50%;
     width: 100%;
     left: 0;
     top: 0;
     position: absolute;
-}
+} */
 
 /* * * * Button Part * * * */
+.save-button-container {
+    text-align: right;
+    margin-top: 10px; /* Adjust margin as needed */
+    margin-right: 100px;
+}
+
 #save-config_btn {
     color: #fff;
     padding: 8px 22px;
