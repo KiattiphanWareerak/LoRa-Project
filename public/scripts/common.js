@@ -136,6 +136,7 @@ function display_HeaderAndMiddleTitle_deviceProfiles() {
     locatedDiv.appendChild(newH4Element);
 }
 function display_mainContent_dashboard(gets) {
+
 }
 function display_mainContent_deviceProfiles(gets) {
     const tableBody = document.getElementById("data-table");
