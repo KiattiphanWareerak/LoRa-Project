@@ -4,27 +4,27 @@
 document.addEventListener('DOMContentLoaded', () => {
     //-----SENDER ZONE-----//
     const socket = new WebSocket('ws://localhost:3001');
-
+    
     const loginForm = document.getElementById('login-form');
-    const input_id = document.getElementById('username');
-    const input_pw = document.getElementById('password');
-
-    const emailRegex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    const isEmail = emailRegex.test(input_id.value);
 
     socket.addEventListener('open', () => {
         console.log('WebSocket connection established with WebServer');
 
         loginForm.addEventListener('submit', (event) => {
             event.preventDefault();
+        
+            const input_id = document.getElementById('username');
+            const input_pw = document.getElementById('password');
+
+            const emailRegex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            const isEmail = emailRegex.test(input_id.value);
 
             if (isEmail) {
-                const req = { request: 'loginByEmail', message:
-                { status: undefined,
+                const req = { request: 'loginByEmail', message: { status: undefined,
                     data: { 
                         user_em: input_id.value.trim(), 
                         user_pw: input_pw.value.trim(), }
-                }};
+                    }};
 
                 socket.send(JSON.stringify(req));
             } else {
@@ -43,6 +43,9 @@ document.addEventListener('DOMContentLoaded', () => {
     socket.addEventListener('message', (event) => {
         const messageFromServer = JSON.parse(event.data);
         console.log('Message from server:', messageFromServer);
+
+        const input_id = document.getElementById('username');
+        const input_pw = document.getElementById('password');
 
         if ( messageFromServer.request === 'loginByEmail' && messageFromServer.message.status === 'success' ) {
             input_id.value = '';
