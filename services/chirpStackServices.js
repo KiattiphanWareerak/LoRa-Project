@@ -1299,21 +1299,22 @@ async function loginUserRequest(values, apiToken) {
   }
 }
 //---------------------------------------------------------------------//
-async function postDeviceConfigurationRequest(values, apiToken) { 
+async function postDeviceConfigurationRequest(values, appId, apiToken) { 
   try {
     // Create the Metadata object.
     const metadata = new grpc.Metadata();
     metadata.set("authorization", "Bearer " + apiToken);
-
+    console.log(values);
     return new Promise((resolve, reject) => {
       // Create a device to updated.
       const deviceUpdate = new device_pb.Device()
-      deviceUpdate.setApplicationId(values.app_id);
+      deviceUpdate.setApplicationId(appId);
       deviceUpdate.setName(values.dev_name);
       deviceUpdate.setDevEui(values.dev_id);
       deviceUpdate.setJoinEui(values.dev_joinEui);
       deviceUpdate.setDescription(values.dev_desc);
       deviceUpdate.setDeviceProfileId(values.dev_devProfId);
+      console.log(values.dev_isDis);
       deviceUpdate.setIsDisabled(values.dev_isDis);
       deviceUpdate.setSkipFcntCheck(values.dev_SkFntC);
 

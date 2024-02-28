@@ -1,17 +1,71 @@
 //---------------------------------------------------------------------// 
 //----------------------------EVENTS ZONE------------------------------// 
 //---------------------------------------------------------------------//
+let sentRequests = {};
+
 document.addEventListener('DOMContentLoaded', () => {
+    // submit device configurations button
+    const saveButton = document.getElementById("save-config_btn");
+
+    saveButton.addEventListener("click", () => {
+    // ดึงค่าจาก input fields
+    const deviceName = document.getElementById("device_Name").value;
+    const deviceDescription = document.getElementById("Description").value;
+    const devId = document.getElementById("devIdInput").value;
+    const joinId = document.getElementById("joinIdInput").value;
+    const appKey = document.getElementById("appkey").value;
+
+    // ดึงค่าจาก checkboxes
+    const isDeviceDisabled = document.getElementById("device_disabled-check").checked;
+    const isFrameCounterValidationDisabled = document.getElementById("frame-counter-validation_disabled-check").checked;
+
+    // ดึง device profile ID
+    const activeElement = document.querySelector(".list_menu li.active");
+    const deviceProfileId = activeElement.getAttribute("value");
+
+    const data = {
+        app_id: undefined,
+        dev_name: deviceName,
+        dev_id: devId,
+        dev_joinEui: joinId,
+        dev_desc: deviceDescription,
+        dev_devProfId: deviceProfileId,
+        dev_IsDis: isDeviceDisabled,
+        dev_SkFntC: isFrameCounterValidationDisabled,
+        dev_key: appKey,
+    };
+
+    sendDeviceConfigConfirmRequest(data);
+    });
+    //-----------------------------------//
     const activeTabIndex = sessionStorage.getItem('activeTabIndex');
 
     const setActiveTab = (tabButton) => {
         tabButton.classList.add('active');
         const tabName = tabButton.getAttribute('onclick').match(/'(.*?)'/)[1];
+
+        if (!sentRequests[tabName]) {
+            sendSpecificRequest(tabName); // Call function sending the specific request
+            sentRequests[tabName] = true; // Mark request sent
+        }
+
         document.getElementById(tabName).classList.add('active');
         const activeLine = document.querySelector(".active_line");
         activeLine.style.left = tabButton.offsetLeft + "px";
         activeLine.style.width = tabButton.offsetWidth + "px";
+
+        sessionStorage.setItem('activeTab', tabName);
+        onPageLoad();
     };
+
+    function onPageLoad() {
+        const activeTab = sessionStorage.getItem('activeTab');
+
+        if (activeTab && !sentRequests[activeTab]) {
+            sendSpecificRequest(activeTab);
+            sentRequests[activeTab] = true;
+        }
+    }
 
     if (activeTabIndex !== null) {
         const activeTabButton = document.querySelectorAll('.tab_button')[activeTabIndex];
@@ -29,7 +83,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (tabButton.getAttribute('onclick').includes('Dashboard')) {
                 sendDashboardDeviceRequest("1y", "MONTH");
             } else if (tabButton.getAttribute('onclick').includes('Configuration')) {
-                console.log('hi config')
                 sendDeviceInfomationsRequest()
             } else if (tabButton.getAttribute('onclick').includes('Queue')) {
                 sendQueuesDeviceRequest();
@@ -143,6 +196,7 @@ function sender_and_reciver_in_device(req) {
             displayDeviceFrames(messageFromServer.message.data.dev_frames);
           }
           else if ( messageFromServer.request === 'postDevConfigConfirm' ) {
+            alert("Your device is now updated.");
             sendDeviceInfomationsRequest();
           }
         } else {
@@ -199,7 +253,6 @@ function display_headerAndMiddleTitle_device_configurations(devName, appName) {
     headerTitleDiv.appendChild(newH1Element);
     locatedDiv.appendChild(newH4Element);
 }
-
 function displayDashboardDevice(dev_linkMetrics, dev_config) {
     // Check if dev_linkMetrics is defined
     if (dev_linkMetrics) {
@@ -222,16 +275,49 @@ function displayDashboardDevice(dev_linkMetrics, dev_config) {
          // Optionally, you can handle this case by displaying an error message or taking other actions.
      }
  }
-
 function displayConfigurationsDevice(dev_config, dev_profiles, dev_key, dev_activation) {
     // Configurations tab
+    const deviceNameInput = document.getElementById("device_Name");
+    const deviceDescriptionTextarea = document.getElementById("Description");
+    const devIdInput = document.getElementById("devIdInput");
+    const joinIdInput = document.getElementById("joinIdInput");
+    const appKeyInput = document.getElementById("appkey");
+    const deviceDisabledCheckbox = document.getElementById("device_disabled-check");
+    const frameCounterValidationCheckbox = document.getElementById("frame-counter-validation_disabled-check");
 
+    // Get relevant data from dev_config
+    const deviceData = dev_config.device;
+
+    // Set values for each element
+    deviceNameInput.value = deviceData.name;
+    deviceDescriptionTextarea.value = deviceData.description;
+    devIdInput.value = deviceData.devEui;
+    joinIdInput.value = deviceData.joinEui;
+    appKeyInput.value = dev_key.deviceKeys.nwkKey; // Assuming "appKey" is in dev_key;
+
+    // Set states for checkboxes
+    deviceDisabledCheckbox.checked = deviceData.isDisabled;
+    frameCounterValidationCheckbox.checked = deviceData.skipFcntCheck; // Assuming "skipFcntCheck" corresponds to frame counter validation
+
+    // Set device profiles dropdown
+    const activeElement = document.querySelector(".list_menu li.active");
+    activeElement.setAttribute("value", deviceData.deviceProfileId);
+
+    // Handle potential errors (from feedback)
+    if (!deviceData.name) {
+        deviceNameInput.value = ""; // Set empty value if name is missing
+    }
+    if (!deviceData.description) {
+        deviceDescriptionTextarea.value = ""; // Set empty value if description is missing
+    }
+    if (!dev_key.deviceKeys.nwkKey) {
+        appKeyInput.value = ""; // Set empty value if appKey is missing
+    }
 
 }
 function displayQueuesDevice(dev_queueItems) {
     // Queues tab
 }
-
 function convertUTCtoThailandTime(utcTimeString) {
     // Create a Date object from the UTC time string
     const utcDate = new Date(utcTimeString);
@@ -304,9 +390,6 @@ function displayDeviceEvents(dev_events) {
         tableBody.appendChild(newRow);
     });
 }
-
-
-
 function displayDeviceFrames(dev_frames) {
     // LoRaWAN Frames tab
     // Ensure dev_events is not empty and has at least one event
@@ -375,7 +458,6 @@ dev_frames.forEach((data, index) => {
 });
 
 }
-
 //---------------------------------------------------------------------//
 //----------------------------COMMON ZONE------------------------------// 
 //---------------------------------------------------------------------// 
@@ -427,5 +509,18 @@ function displayChartData(data, chartId, chartLabel, datasetLabel) {
         }
       }
     });
+}
+function sendSpecificRequest(tabName) {
+    if (tabName === 'Dashboard') {
+      sendDashboardDeviceRequest("1y", "MONTH");
+    } else if (tabName === 'Configuration') {
+      sendDeviceInfomationsRequest()
+    } else if (tabName === 'Queue') {
+      sendQueuesDeviceRequest();
+    } else if (tabName === 'Event') {
+      sendEventsDeviceRequest();
+    } else if (tabName === 'LoRaWAN_frame') {
+      sendFramesDeviceRequest();
+    }
 }
 //---------------------------------------------------------------------// 

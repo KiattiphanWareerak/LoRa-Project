@@ -440,7 +440,7 @@ async function myApp(values) {
                 resolve({ request: 'logout', message: { status: 'success', data: undefined }});
             }
             else if (values.request === 'postDevConfigConfirm') {
-                const respPostDevConfig = await chirpStackServices.postDeviceConfigurationRequest(values.message.data, globalUserToken);
+                const respPostDevConfig = await chirpStackServices.postDeviceConfigurationRequest(values.message.data, globalAppId, globalUserToken);
         
                 if ( respPostDevConfig.request === 'postDev' && respPostDevConfig.message.status === 'success') {
                     const respPostDevKey = await chirpStackServices.postDeviceKeyRequest(values.message.data, globalUserToken);

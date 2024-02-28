@@ -337,7 +337,7 @@ const generate64BitRandom = () => {
   
 }
 //---------------------------------------------------------------------//
-
+9
 document.addEventListener('DOMContentLoaded', function () {
     // Check if there's a stored active tab index
     const activeTabIndex = sessionStorage.getItem('activeTabIndex');
