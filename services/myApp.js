@@ -188,7 +188,18 @@ async function myApp(values) {
 
                     resolve({ request: 'enterDevId', message: { status: 'failed', data: undefined }});
                 }
-            } 
+            }
+            else if (values.request === 'enqueueDev') {
+                const respFromEnqueue = await chirpStackServices.enqueueDeviceRequest(values.message.data, globalDevId, globalUserToken);
+        
+                if ( respFromEnqueue.request === 'enqueueDev' && respFromEnqueue.message.status === 'success') {
+                    resolve({ request: 'enqueueDev', message: { status: 'success', data: respFromEnqueue.message.data }});
+                } else {
+                    console.log(respFromEnqueue);
+
+                    resolve({ request: 'enqueueDev', message: { status: 'failed', data: undefined }});
+                }
+            }
             else if (values.request === 'getApp') {
                 const respFromGetApp = await chirpStackServices.getApplicationRequest(globalAppId, globalUserToken);
             

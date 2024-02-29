@@ -707,6 +707,40 @@ async function enterApplicationRequest(values, apiToken) {
   }
 }
 //---------------------------------------------------------------------//
+async function enqueueDeviceRequest(values, apiToken) { 
+  try {
+    // Create the Metadata object.
+    const metadata = new grpc.Metadata();
+    metadata.set("authorization", "Bearer " + apiToken);
+
+    return new Promise((resolve, reject) => {
+      // Create a queue.
+      const queue = new device_pb.DeviceQueueItem();
+      queue.setDevEui(values.dev_id);
+      queue.setConfirmed(values.eq_cnf);
+      queue.setFPort(values.eq_fport);
+      queue.setIsEncrypted(values.eq_isEncry);
+      queue.setData(values.eq_data);
+      // Create a request to enqueue.
+      const createReq = new device_pb.EnqueueDeviceQueueItemRequest();
+      createReq.setQueueItem();
+
+      deviceService.enqueue(createReq, metadata, (err, resp) => {
+        if (err !== null) {
+          console.log(err.details);
+          resolve({ request: 'enqueueDev', message: { status: 'failed', data: err.details }});
+          return;
+        }
+        console.log('enqueue has been completed. ', resp.getId());
+
+        resolve({ request: 'enqueueDev', message: { status: 'success', data: resp.toObject() }});
+      });
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+//---------------------------------------------------------------------//
 async function getApplicationRequest(appId, apiToken) { 
   try {
     // Create the Metadata object.
@@ -1417,6 +1451,7 @@ module.exports = {
   devicesListRequest,
   deviceProfilesListRequest,
   enterApplicationRequest,
+  enqueueDeviceRequest,
   getApplicationRequest,
   getDeviceActivationRequest,
   getDeviceEventsRequest,
