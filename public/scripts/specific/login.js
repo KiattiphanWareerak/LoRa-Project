@@ -3,6 +3,10 @@
 //---------------------------------------------------------------------//
 const socket = new WebSocket('ws://localhost:3001');
 
+socket.addEventListener('open', () => {
+    console.log('WebSocket connection established with WebServer');
+});
+
 socket.addEventListener('message', (event) => {
     const messageFromServer = JSON.parse(event.data);
     console.log('Message from server:', messageFromServer);
@@ -27,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     loginForm.addEventListener('submit', (event) => {
         event.preventDefault();
-
+ 
         if ( isEmail(input_id.value) ) {
             const req = { request: 'loginByEmail', message: 
             { status: undefined,
@@ -35,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     user_em: input_id.value.trim(), 
                     user_pw: input_pw.value.trim(), }
             }};
-            sendRequset(req);
+            sendRequest(req);
         } else {
             const req = { request: 'loginByUname', message:
             { status: undefined,
@@ -43,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     user_un: input_id.value.trim(), 
                     user_pw: input_pw.value.trim(), }
             }};
-            sendRequset(req);
+            sendRequest(req);
         }
     });
 });
@@ -65,15 +69,11 @@ function logIsSucc(resp) {
         alert("Login failed.");
     }
 }
-function sendRequset(data) {
-    socket.addEventListener('open', () => {
-      console.log('WebSocket connection established with WebServer');
-
-      if (socket.readyState === WebSocket.OPEN) {
-        socket.send(JSON.stringify(data));
-      } else {
-        console.log('WebSocket not ready, message not sent!');
-      }
-    });
+function sendRequest(data) {
+    if (socket.readyState === WebSocket.OPEN) {
+    socket.send(JSON.stringify(data));
+    } else {
+    console.log('WebSocket not ready, message not sent!');
+    }
 }
 //---------------------------------------------------------------------//

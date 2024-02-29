@@ -707,7 +707,7 @@ async function enterApplicationRequest(values, apiToken) {
   }
 }
 //---------------------------------------------------------------------//
-async function enqueueDeviceRequest(values, apiToken) { 
+async function enqueueDeviceRequest(values, devId, apiToken) { 
   try {
     // Create the Metadata object.
     const metadata = new grpc.Metadata();
@@ -716,7 +716,7 @@ async function enqueueDeviceRequest(values, apiToken) {
     return new Promise((resolve, reject) => {
       // Create a queue.
       const queue = new device_pb.DeviceQueueItem();
-      queue.setDevEui(values.dev_id);
+      queue.setDevEui(devId);
       queue.setConfirmed(values.eq_cnf);
       queue.setFPort(values.eq_fport);
       queue.setIsEncrypted(values.eq_isEncry);
