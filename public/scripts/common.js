@@ -1,15 +1,49 @@
 //---------------------------------------------------------------------//
-//----------------------------EVENTS ZONE------------------------------//
-let req;
+//---------------------------WEB SOCKET ZONE---------------------------//
+//---------------------------------------------------------------------//
+const socket = new WebSocket('ws://localhost:3001');
+
+socket.addEventListener('message', (event) => {
+  const messageFromServer = JSON.parse(event.data);
+  console.log('Message from server:', messageFromServer);
+
+  if ( messageFromServer.message.status === 'success' ) {
+    if ( messageFromServer.request === 'dispMainDash' ) {
+      display_mainContent_dashboard(messageFromServer.message.data);
+    } 
+    else if ( messageFromServer.request === 'dispDevProfiles' ) {
+      display_HeaderAndMiddleTitle_deviceProfiles();
+      display_mainContent_deviceProfiles(messageFromServer.message.data);
+    } 
+    else if ( messageFromServer.request === 'dispApp' ) {
+      display_HeaderAndMiddleTitle_applications();
+      display_mainContent_applications(messageFromServer.message.data);
+    } 
+    else if ( messageFromServer.request === 'logout' ) {
+      window.location.href = "index.html";
+    }
+  } else {
+    alert("Error: Request-" + messageFromServer.request + "-Status-"  + messageFromServer.message.status + 
+    "-Data-" + messageFromServer.message.data);
+  }
+});
+
+socket.addEventListener('error', (event) => {
+  console.log('WebSocket error:', event);
+});
+
+socket.addEventListener('close', (event) => {
+  console.log('WebSocket closed:', event);
+});
+//---------------------------------------------------------------------//
+//----------------------------EVENT ZONE-------------------------------//
 //---------------------------------------------------------------------//
 document.addEventListener('DOMContentLoaded', () => {
-    //---------------------------//
-    //---------DASHBOARD---------//
-    //---------------------------//
-    //-----Menu active events----//
+    //-----Menu active event-----//
     const activeMenuItem = document.querySelector('.side_menu li.active');
     if (activeMenuItem) {
-      const menuId = activeMenuItem.id;
+      let menuId = activeMenuItem.id;
+      let req;
 
       switch (menuId) {
         case 'menu-mainDashboard':
@@ -17,31 +51,28 @@ document.addEventListener('DOMContentLoaded', () => {
             status: undefined, 
             data:  undefined 
           }};
-
-          sender_and_reciver_common(req);
+          sendRequset(req);
           break;
         case 'menu-deviceProfiles':
           req = { request: 'dispDevProfiles', message: { 
             status: undefined, 
             data:  undefined 
           }};
-            
-          sender_and_reciver_common(req);
+          sendRequset(req);
           break;
         case 'menu-applications':
           req = { request: 'dispApp', message: { 
             status: undefined, 
             data:  undefined 
-          }};
-          
-          sender_and_reciver_common(req);
+          }};      
+          sendRequset(req);
           break;
         case 'menu-tutorial':
           // nothing
           break;
       }
     }
-    //-----Menu click events----//
+    //-----Menu click event----//
     document.querySelectorAll('.side_menu li').forEach(menuItem => {
       menuItem.addEventListener('click', () => {
         const menuId = menuItem.id;
@@ -60,56 +91,18 @@ document.addEventListener('DOMContentLoaded', () => {
             window.location.href = "tutorialPage.html";
             break;
           case 'menu-logout':
-            req = { request: 'logout', message: { 
+            const req = { request: 'logout', message: { 
               status: undefined, 
               data:  undefined 
             }};
-            
-            sender_and_reciver_common(req);
+            socket.send(JSON.stringify(req));
             break;
         }
       });
     });
 });
 //---------------------------------------------------------------------//
-//---------------------------WEB SOCKET ZONE---------------------------//
-//---------------------------------------------------------------------//
-function sender_and_reciver_common(req) {
-  const socket = new WebSocket('ws://localhost:3001');
-  //-----SENDER-----//
-  socket.addEventListener('open', () => {
-    console.log('WebSocket connection established with WebServer');
-
-    socket.send(JSON.stringify(req));
-  });
-  //-----RECEIVER-----//
-  socket.addEventListener('message', (event) => {
-      const messageFromServer = JSON.parse(event.data);
-      console.log('Message from server:', messageFromServer);
-
-      if ( messageFromServer.message.status === 'success' ) {
-        if ( messageFromServer.request === 'dispMainDash' ) {
-          display_mainContent_dashboard(messageFromServer.message.data);
-        } 
-        else if ( messageFromServer.request === 'dispDevProfiles' ) {
-          display_HeaderAndMiddleTitle_deviceProfiles();
-          display_mainContent_deviceProfiles(messageFromServer.message.data);
-        } 
-        else if ( messageFromServer.request === 'dispApp' ) {
-          display_HeaderAndMiddleTitle_applications();
-          display_mainContent_applications(messageFromServer.message.data);
-        } 
-        else if ( messageFromServer.request === 'logout' ) {
-          window.location.href = "index.html";
-        }
-      } else {
-        alert("Error: Request-" + messageFromServer.request + "-Status-"  + messageFromServer.message.status + 
-        "\n-Data-" + messageFromServer.message.data);
-      }
-  });
-}
-//---------------------------------------------------------------------//
-//---------------------------DISPLAYS ZONE-----------------------------//
+//---------------------------DISPLAY ZONE------------------------------//
 //---------------------------------------------------------------------//
 function display_HeaderAndMiddleTitle_applications() {
   let newH1Element = document.createElement('h1');
@@ -145,10 +138,9 @@ function display_mainContent_deviceProfiles(gets) {
     for (const device of gets.dev_profiles.resultList) {
         const row = document.createElement("tr");
       
-        // เพิ่มชื่ออุปกรณ์
+        // เพิ่มชื่อ device profile
         const nameCell = document.createElement("td");
         const nameLink = document.createElement("a");
-        // nameLink.href = "devices.html";
         nameLink.textContent = device.name;
         nameCell.appendChild(nameLink);
         row.appendChild(nameCell);
@@ -214,20 +206,17 @@ function display_mainContent_applications(gets) {
       appNameLink.setAttribute('app-id', item.id);
       appNameLink.addEventListener('click', function(event) {
           event.preventDefault();
-          const socket = new WebSocket('ws://localhost:3001');
 
-          socket.addEventListener('open', () => {
-              let appID = this.getAttribute('app-id');
-              let appName = item.name;
+          const appID = this.getAttribute('app-id');
+          const appName = item.name;
 
-              const req = { request: 'enterAppId', message: { 
-                  status: undefined, 
-                  data: { app_id: appID, app_name: appName 
-              }}};
-              socket.send(JSON.stringify(req));
+          const req = { request: 'enterAppId', message: { 
+              status: undefined, 
+              data: { app_id: appID, app_name: appName 
+          }}};
+          socket.send(JSON.stringify(req));
 
-              window.location.href = 'devices.html';
-          });
+          window.location.href = 'devices.html';
       });
       appNameLink.textContent = item.name;
       appNameCell.appendChild(appNameLink);
@@ -349,5 +338,16 @@ function initMap(gateway_data) {
   } else {
       console.error("No gateway data available");
   }
+}
+function sendRequset(data) {
+  socket.addEventListener('open', () => {
+    console.log('WebSocket connection established with WebServer');
+
+    if (socket.readyState === WebSocket.OPEN) {
+      socket.send(JSON.stringify(data));
+    } else {
+      console.log('WebSocket not ready, message not sent!');
+    }
+  });
 }
 //---------------------------------------------------------------------//
