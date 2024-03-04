@@ -2,7 +2,7 @@
 //----------------------------EVENTS ZONE------------------------------// 
 //---------------------------------------------------------------------//
 let sentRequests = {};
-
+let checkPayload = true;
 document.addEventListener('DOMContentLoaded', () => {
     // submit device configurations button
     const saveButton = document.getElementById("save-config_btn");
@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
             eq_cnf: document.getElementById("enqueue-confirm").checked,
             eq_fport: parseInt(document.getElementById("Fport").value),
             eq_isEncry: document.getElementById("enqueue-encrypt").checked,
-            eq_data: document.getElementById("jsonInput").value,
+            eq_data: JSON.parse(document.getElementById("jsonInput").value),
         };
     
         sendEnqueueDeviceConfirmRequest(data);
@@ -79,15 +79,19 @@ document.addEventListener('DOMContentLoaded', () => {
         activeLine.style.width = tabButton.offsetWidth + "px";
 
         sessionStorage.setItem('activeTab', tabName);
-        onPageLoad();
+        onPageLoad(checkPayload);
     };
 
-    function onPageLoad() {
+    function onPageLoad(checkPayload) {
         const activeTab = sessionStorage.getItem('activeTab');
 
-        if (activeTab && !sentRequests[activeTab]) {
-            sendSpecificRequest(activeTab);
-            sentRequests[activeTab] = true;
+        if (checkPayload) {
+            if (activeTab && !sentRequests[activeTab]) {
+                sendSpecificRequest(activeTab);
+                sentRequests[activeTab] = true;
+
+                checkPayload = false;
+            }
         }
     }
 
@@ -194,6 +198,13 @@ const sendEnqueueDeviceConfirmRequest = (data) => {
     }};
     sender_and_reciver_in_device(req);
 };
+const sendFlushQueueDeviceConfirmRequest = (data) => {
+    const req = { request: 'flushQueueDev', message: { 
+        status: undefined, 
+        data: undefined 
+    }};
+    sender_and_reciver_in_device(req);
+};
 //---------------------------------------------------------------------//
 //---------------------------WEB SOCKET ZONE---------------------------//
 //---------------------------------------------------------------------//
@@ -241,6 +252,10 @@ function sender_and_reciver_in_device(req) {
           }
           else if ( messageFromServer.request === 'enqueueDev' ) {
             alert("Enqueue device successfully.");
+            sendQueuesDeviceRequest();
+          }
+          else if ( messageFromServer.request === 'flushQueueDev' ) {
+            alert("Flush queue device successfully.");
             sendQueuesDeviceRequest();
           }
         } else {
@@ -566,5 +581,11 @@ function sendSpecificRequest(tabName) {
     } else if (tabName === 'LoRaWAN_frame') {
       sendFramesDeviceRequest();
     }
+}
+function flush_function() {
+    sendFlushQueueDeviceConfirmRequest();
+}
+function reload_function() {
+    sendQueuesDeviceRequest();
 }
 //---------------------------------------------------------------------// 

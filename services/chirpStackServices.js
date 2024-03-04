@@ -372,7 +372,7 @@ async function createDeviceKeyRequest(values, apiToken) {
   }
 }
 //---------------------------------------------------------------------//
-async function createInfluxDbIntegrationRequest(appId, uN, csToken, iflxToken) {
+async function createInfluxDbIntegrationRequest(appId, orgName, bucketName, csToken, iflxToken) {
   try {
     // Create the Metadata object.
     const metadata = new grpc.Metadata();
@@ -383,8 +383,8 @@ async function createInfluxDbIntegrationRequest(appId, uN, csToken, iflxToken) {
     influxDb.setApplicationId(appId);
     influxDb.setVersion(application_pb.InfluxDbVersion.INFLUXDB_2);
     influxDb.setEndpoint('http://202.28.95.234:8086/api/v2/write');
-    influxDb.setOrganization('org-' + uN);
-    influxDb.setBucket('data_device_' + uN);
+    influxDb.setOrganization(orgName);
+    influxDb.setBucket(bucketName);
     influxDb.setToken(iflxToken);
     
     return new Promise((resolve, reject) => {
@@ -723,7 +723,7 @@ async function enqueueDeviceRequest(values, devId, apiToken) {
       queue.setData(values.eq_data);
       // Create a request to enqueue.
       const createReq = new device_pb.EnqueueDeviceQueueItemRequest();
-      createReq.setQueueItem();
+      createReq.setQueueItem(queue);
 
       deviceService.enqueue(createReq, metadata, (err, resp) => {
         if (err !== null) {
@@ -734,6 +734,33 @@ async function enqueueDeviceRequest(values, devId, apiToken) {
         console.log('enqueue has been completed. ', resp.getId());
 
         resolve({ request: 'enqueueDev', message: { status: 'success', data: resp.toObject() }});
+      });
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+//---------------------------------------------------------------------//
+async function flushQueueDeviceRequest(devId, apiToken) { 
+  try {
+    // Create the Metadata object.
+    const metadata = new grpc.Metadata();
+    metadata.set("authorization", "Bearer " + apiToken);
+
+    return new Promise((resolve, reject) => {
+      // Create a request to enqueue.
+      const createReq = new device_pb.FlushDeviceQueueRequest();
+      createReq.setDevEui(devId);
+
+      deviceService.flushQueue(createReq, metadata, (err, resp) => {
+        if (err !== null) {
+          console.log(err.details);
+          resolve({ request: 'flushQueueDev', message: { status: 'failed', data: err.details }});
+          return;
+        }
+        console.log('flushQueueDev has been completed.');
+
+        resolve({ request: 'flushQueueDev', message: { status: 'success', data: undefined }});
       });
     });
   } catch (error) {
@@ -1199,6 +1226,39 @@ async function getUserInTenantRequest(tenantId, apiToken) {
   }
 }
 //---------------------------------------------------------------------//
+async function getTenantProfileRequest(tenantId, apiToken) {
+  try {
+    // Create the Metadata object.
+    const metadata = new grpc.Metadata();
+    metadata.set("authorization", "Bearer " + apiToken);
+
+    return new Promise((resolve, reject) => {
+      // Create a request to list devices
+      const createReq = new tenant_pb.GetTenantRequest();
+      createReq.setId(tenantId);
+
+      tenantService.get(createReq, metadata, (err, resp) => {
+        if (err !== null) {
+          console.log(err.details);
+          resolve({ request: 'getTnProf', message: { 
+            status: 'failed', 
+            data: err.message }
+          });
+          return;
+        }
+        console.log('Get tenant profile request has been completed.');
+
+        resolve({ request: 'getTnProf', message: {
+          status: 'success', 
+          data: resp.toObject() }
+        });
+      });
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+//---------------------------------------------------------------------//
 async function getUsersListRequest(apiToken) {
   try {
     // Create the Metadata object.
@@ -1452,6 +1512,7 @@ module.exports = {
   deviceProfilesListRequest,
   enterApplicationRequest,
   enqueueDeviceRequest,
+  flushQueueDeviceRequest,
   getApplicationRequest,
   getDeviceActivationRequest,
   getDeviceEventsRequest,
@@ -1462,6 +1523,7 @@ module.exports = {
   getMainDashboard,
   getQueueItemsRequest,
   getUserInTenantRequest,
+  getTenantProfileRequest,
   getTenantsListRequest,
   getUsersListRequest,
   loginUserRequest,

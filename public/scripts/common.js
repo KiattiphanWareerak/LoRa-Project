@@ -1,9 +1,9 @@
 //---------------------------------------------------------------------//
 //---------------------------WEB SOCKET ZONE---------------------------//
 //---------------------------------------------------------------------//
-const socket = new WebSocket('ws://localhost:3001');
+const commonSocket = new WebSocket('ws://localhost:3001');
 
-socket.addEventListener('message', (event) => {
+commonSocket.addEventListener('message', (event) => {
   const messageFromServer = JSON.parse(event.data);
   console.log('Message from server:', messageFromServer);
 
@@ -28,11 +28,11 @@ socket.addEventListener('message', (event) => {
   }
 });
 
-socket.addEventListener('error', (event) => {
+commonSocket.addEventListener('error', (event) => {
   console.log('WebSocket error:', event);
 });
 
-socket.addEventListener('close', (event) => {
+commonSocket.addEventListener('close', (event) => {
   console.log('WebSocket closed:', event);
 });
 //---------------------------------------------------------------------//
@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
               status: undefined, 
               data:  undefined 
             }};
-            socket.send(JSON.stringify(req));
+            commonSocket.send(JSON.stringify(req));
             break;
         }
       });
@@ -340,11 +340,11 @@ function initMap(gateway_data) {
   }
 }
 function sendRequset(data) {
-  socket.addEventListener('open', () => {
+  commonSocket.addEventListener('open', () => {
     console.log('WebSocket connection established with WebServer');
 
     if (socket.readyState === WebSocket.OPEN) {
-      socket.send(JSON.stringify(data));
+      commonSocket.send(JSON.stringify(data));
     } else {
       console.log('WebSocket not ready, message not sent!');
     }

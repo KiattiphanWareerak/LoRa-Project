@@ -8,11 +8,11 @@ const INFLUX_URL = 'http://202.28.95.234:8086';
 //---------------------------------------------------------------------//
 //-------------------------------FUNCTIONS-----------------------------//
 //---------------------------------------------------------------------//
-async function createOrgInfluxDb(items, INFLUX_API_TOKEN) {
+async function createOrgInfluxDb(uN, INFLUX_API_TOKEN) {
   try {
     const org = {
-      name: 'org-' + items.user_un,
-      description: 'Organization: ' + items.user_un,
+      name: generateOrgName(uN),
+      description: 'Organization: ' + uN,
     };
 
     const headers = {
@@ -25,7 +25,7 @@ async function createOrgInfluxDb(items, INFLUX_API_TOKEN) {
         .then((response) => {
           console.log('Organization created:', response.data);
           
-          resolve({ request: 'postOrg', message: { status: 'success', data: response.data }});
+          resolve({ request: 'postOrg', message: { status: 'success', data: response.data , org_name: org.name}});
         })
         .catch((error) => {
           resolve({ request: 'postOrg', message: { status: 'failed', data: error }});
@@ -36,10 +36,10 @@ async function createOrgInfluxDb(items, INFLUX_API_TOKEN) {
   }
 }
 //---------------------------------------------------------------------//
-async function createBucketInfluxDb(org, items, INFLUX_API_TOKEN) {
+async function createBucketInfluxDb(org, uN, INFLUX_API_TOKEN) {
   try {
     const bucket = {
-      name: 'data_device_' + items.user_un,
+      name: generateBucketName(uN),
       description: 'A bucket holding data from ChirpStack',
       orgID: org.id,
     };
@@ -54,7 +54,7 @@ async function createBucketInfluxDb(org, items, INFLUX_API_TOKEN) {
         .then((response) => {
           console.log('Bucket created:', response.data);
 
-          resolve({ request: 'postBucket', message: { status: 'success', data: response.data }});
+          resolve({ request: 'postBucket', message: { status: 'success', data: response.data, bucket_name: bucket.name }});
         })
         .catch((error) => {
           resolve({ request: 'postBucket', message: { status: 'failed', data: error }});
@@ -65,12 +65,10 @@ async function createBucketInfluxDb(org, items, INFLUX_API_TOKEN) {
   }
 }
 //---------------------------------------------------------------------// 
-async function createUserInfluxDb(org, items, INFLUX_API_TOKEN) {
+async function createUserInfluxDb(items, INFLUX_API_TOKEN) {
   try {
     const user = {
       name: items.user_un,
-      orgID: org.id,
-      role: 'owner',
       status: 'active',
     };
     
@@ -122,10 +120,37 @@ async function updatePasswordInfluxDb(usr, items, INFLUX_API_TOKEN) {
   }
 }
 //---------------------------------------------------------------------//
-async function addMemberInfluxDb(org, usr, INFLUX_API_TOKEN) {
+async function addMemberInfluxDb(org, usrId, INFLUX_API_TOKEN) {
+  try {
+    const member = {
+      id: usrId,
+    };
+    
+    const headers = {
+      Authorization: `Token ${INFLUX_API_TOKEN}`,
+      'Content-Type': 'application/json',
+    };
+
+    return new Promise(async (resolve, reject) => {
+      axios.post(`${INFLUX_URL}/api/v2/orgs/${org.id}/owners`, member, { headers })
+        .then((response) => {
+          console.log('Add member completed.', response.data);
+
+          resolve({ request: 'postAddMember', message: { status: 'success', data: response.data }});
+        })
+        .catch((error) => {
+          resolve({ request: 'postAddMember', message: { status: 'failed', data: error }});
+        });
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+//---------------------------------------------------------------------// 
+async function addRoleInfluxDb(org, usrId, INFLUX_API_TOKEN) {
   try {
     const owner = {
-      id: usr.id,
+      id: usrId,
     };
     
     const headers = {
@@ -136,12 +161,35 @@ async function addMemberInfluxDb(org, usr, INFLUX_API_TOKEN) {
     return new Promise(async (resolve, reject) => {
       axios.post(`${INFLUX_URL}/api/v2/orgs/${org.id}/owners`, owner, { headers })
         .then((response) => {
-          console.log('Add member completed.', response.data);
+          console.log('Add role completed.', response.data);
 
-          resolve({ request: 'postAddMember', message: { status: 'success', data: response.data }});
+          resolve({ request: 'postAddRole', message: { status: 'success', data: response.data }});
         })
         .catch((error) => {
-          resolve({ request: 'postAddMember', message: { status: 'failed', data: error }});
+          resolve({ request: 'postAddRole', message: { status: 'failed', data: error }});
+        });
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+//---------------------------------------------------------------------// 
+async function getInfluxDbUser(INFLUX_API_TOKEN) {
+  try {
+    const headers = {
+      Authorization: `Token ${INFLUX_API_TOKEN}`,
+      'Content-Type': 'application/json',
+    };
+
+    return new Promise(async (resolve, reject) => {
+      axios.get(`${INFLUX_URL}/api/v2/users`, { headers })
+        .then((response) => {
+          console.log('User list completed.\n', response.data);
+
+          resolve({ request: 'getInfluxUser', message: { status: 'success', data: response.data }});
+        })
+        .catch((error) => {
+          resolve({ request: 'getInfluxUser', message: { status: 'failed', data: error }});
         });
     });
   } catch (error) {
@@ -219,7 +267,25 @@ module.exports = {
   createUserInfluxDb,
   updatePasswordInfluxDb,
   addMemberInfluxDb,
+  addRoleInfluxDb,
   getApiTokenFromDB,
-  getCSTenantIdFromDB
+  getCSTenantIdFromDB,
+  getInfluxDbUser
 };
+//---------------------------------------------------------------------//
+//----------------------------COMMON ZONE------------------------------//
+//---------------------------------------------------------------------//
+function generateOrgName(username) {
+  var random16Bit = generateRandom16Bit().toString(16);
+  var orgName = 'org-' + random16Bit + '-' + username;
+  return orgName;
+}
+function generateBucketName(username) {
+  var random16Bit = generateRandom16Bit().toString(16);
+  var bucketName = 'data_device_' + random16Bit + '_' + username;
+  return bucketName;
+}
+function generateRandom16Bit() {
+  return Math.floor(Math.random() * 65536);
+}
 //---------------------------------------------------------------------//

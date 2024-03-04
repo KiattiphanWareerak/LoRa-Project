@@ -64,6 +64,8 @@ function logIsSucc(resp) {
         socket.close();
         window.location.href = 'dashboard.html';
     } else {
+        const input_id = document.getElementById('username');
+        const input_pw = document.getElementById('password');
         input_id.value = '';
         input_pw.value = '';
         alert("Login failed.");
