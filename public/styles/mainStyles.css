@@ -10,6 +10,9 @@
 body {
     display: flex;
 }
+.warp-content {
+    flex-wrap: wrap;
+}
 .display_2_elements {
     display: flex;
     justify-content: space-between;
@@ -195,7 +198,8 @@ textarea{
     margin: 1rem;
 }
 .header--title{
-    color: rgba(113, 99, 186, 255);
+    /* color: rgba(113, 99, 186, 255); */
+    color: rgba(75, 140, 255, 255);
 }
 .user--info{
     display: flex;
@@ -239,11 +243,51 @@ textarea{
 .located h4 {
     margin: 0 3px; /* Adjust the margin as needed */
   }
-/* * * * Map Display Part * * * */
+
+/* * * * Dashboard Display Part * * * */
+.dashboard-chart-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    width: 100%;
+    height: 400px;
+    /* background-color: #26489a; */
+    margin-bottom: 10px;
+}
+
+.dashboard-chart-container .dashboard-chart {
+    width: 350px;
+    height: 400px;
+    background-color: rgb(237, 237, 237);
+    border-radius: 20px;
+    margin-right: 40px;
+    border: #dfdfdf 1px solid;
+}
+
+/* .dashboard-chart canvas {
+    max-width: 350px;
+    max-height: 350px;
+    flex-wrap: wrap;
+} */
+
+.dashboard-chart .dashboard-chart-headder {
+    margin-top: 10px;
+    padding-bottom: 5px;
+    text-align: center;
+    border-bottom: #dfdfdf 1px solid;
+    cursor: default;
+}
+
+.map-containner {
+    width: 100%;
+    background-color: rgb(237, 237, 237);
+    justify-content: center;
+}
+
 .gateway-map {
+    width: 95%;
     padding-bottom: 50%;
     position: relative;
-    height: 50%;
 }
 
 /* .gateway-map iframe {
@@ -330,6 +374,17 @@ input:checked + .toggle_button-label::before{
 .toggle_button input{
     display: none;
 }
+
+.action_btn {
+    color: #fff;
+    padding: 8px 22px;
+    width: 200px;
+    border-radius: 20px;
+    transition: all 0.2s ease;
+    background-color: #4780fb;
+    cursor: pointer;
+}
+
 /* * * * Data display Part * * * */
 .section {
     width: 100%;
@@ -622,4 +677,26 @@ tfoot td {
 .enqueue-table_container .enqueue_table {
     border: 1px solid black; /* This will create a solid black border around the div */
     padding: 10px;
+}
+
+/* * * Tutorial Part * * */
+.tutorial_container {
+    margin-left: 20px;
+}
+
+.tutorial_container .tutorial_guide {
+    margin-top: 20px;
+}
+.tutorial_container .tutorial_guide img {
+    max-width: 50%;
+    max-height: 350px;
+    margin-bottom: 30px;
+    text-align: center;
+}
+.tutorial_container .tutorial_codebox {
+    margin: 10px;
+    border: 1px solid black; /* This will create a solid black border around the div */
+    padding: 10px;
+    background-color: white;
+    border-radius: 5px;
 }

@@ -374,6 +374,7 @@ function displayDeviceEvents(dev_events) {
         // Create a button to display full dev_events
         const button = document.createElement("button");
         button.textContent = actionValue;
+        button.classList.add("action_btn");
         button.addEventListener("click", function() {
             alert(JSON.stringify(dev_events, null, 2)); // Display dev_events as JSON in an alert
         });
@@ -399,7 +400,7 @@ function displayDeviceFrames(dev_frames) {
     }
 
     // Loop through each device event
-dev_frames.forEach((data, index) => {
+    dev_frames.forEach((data, index) => {
     // Accessing "join" at index 2 of the array
     const actionValue = data.array[2];
 
@@ -438,6 +439,7 @@ dev_frames.forEach((data, index) => {
         // Create a button to display full dev_events
         const button = document.createElement("button");
         button.textContent = actionValue;
+        button.classList.add("action_btn");
         button.addEventListener("click", function() {
             alert(JSON.stringify(dev_frames, null, 2)); // Display dev_events as JSON in an alert
         });

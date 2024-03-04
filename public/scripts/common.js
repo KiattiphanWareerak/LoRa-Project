@@ -135,10 +135,119 @@ function display_HeaderAndMiddleTitle_deviceProfiles() {
     headerTitleDiv.appendChild(newH1Element);
     locatedDiv.appendChild(newH4Element);
 }
-function display_mainContent_dashboard(gets) {
-  // Call the initMap function when the page has loaded
-  window.onload = initMap(gets.gateways_list);
+
+function gateway_state_analyse(state) {
+  var analysed = ''
+  var color = ''
+  if (state === 0) {
+    analysed = 'Never seen'
+    color = 'gray'
+  } else if (state === 1) {
+    analysed = 'Online'
+    color = 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png'
+  } else if (state === 2) {
+    analysed = 'Offline'
+    color = 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png'
+  } else {
+    analysed = 'Error, unknow state'
+    color = 'black'
+  }
+  return { analysed: analysed, color: color };
 }
+
+function set_pieChart_data(greenData, redData, grayData) {
+  // green = active, red = inactive, gray = never seen
+  if (greenData == 0 & redData == 0 & grayData == 0) {
+    var data = {
+      labels: ['No Data to Display'],
+      datasets: [{
+          data: [1],
+          backgroundColor: ['#BDBABB']
+      }]
+    };
+  } else {
+    // set data
+  var data = {
+    labels: ['Online', 'Offline', 'Never Seen'],
+    datasets: [{
+        data: [greenData, redData, grayData],
+        backgroundColor: ['#4B8CFF', '#EE5F55', '#E0DFDF']
+    }]
+  };
+  }
+  return data
+}
+
+function display_mainContent_dashboard(gets) {
+
+  // KKU latitude and longitude = [16.466, 102.817] zoom_level = 14
+  var map = L.map('map').setView([16.466, 102.817], 14);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+  const device_active_count = gets.devs_summary.activeCount;
+  const device_inactive_count = gets.devs_summary.inactiveCount;
+  const device_neverseen_count = gets.devs_summary.neverSeenCount;
+
+  const gateways_data = gets.gateways_list.resultList;
+  const total_gateways = gets.gateways_list.totalCount;
+
+  var deviceActive_data = set_pieChart_data(4,1,1);
+  // var deviceActive_data = set_pieChart_data(device_active_count, device_inactive_count, device_neverseen_count);
+  var gatewayActive_data = set_pieChart_data(device_active_count, device_inactive_count, device_neverseen_count);
+
+  // Options for the pie chart
+  var options = {
+    responsive: false,
+    maintainAspectRatio: false
+  };
+
+  // Get the canvas element
+  var device_ctx = document.getElementById('device-pieChart').getContext('2d');
+  var gateway_ctx = document.getElementById('gateway-pieChart').getContext('2d');
+
+  // Create the pie chart
+  var device_pieChart = new Chart(device_ctx, {
+    type: 'pie',
+    data: deviceActive_data,
+    options: options
+  });
+
+  // Create the pie chart
+  var gateway_pieChart = new Chart(gateway_ctx, {
+    type: 'pie',
+    data: gatewayActive_data,
+    options: options
+  });
+
+  for (var marking = 0; marking < total_gateways; marking++) {
+    var gateway_name = gateways_data[marking].name;
+    var gateway_description = gateways_data[marking].description;
+    var gateway_latitude = gateways_data[marking].location.latitude;
+    var gateway_longitude = gateways_data[marking].location.longitude;
+    var unanalyse_gateway_state = gateways_data[marking].state;
+    var analysed_gateway_state = gateway_state_analyse(unanalyse_gateway_state);
+    var marker_color = analysed_gateway_state.color;
+    var gateway_state = analysed_gateway_state.analysed;
+    
+    if (gateway_state == 'Never seen') {
+      continue
+    } else {
+      var colorIcon = new L.Icon({
+        iconUrl: marker_color,
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41]
+      });
+      var marker = L.marker([gateway_latitude, gateway_longitude], {icon: colorIcon}).addTo(map);
+      marker.bindPopup(`<b>Name: </b>${gateway_name}<br><b>Description: </b>${gateway_description}<br><b>State: </b>${gateway_state}`);
+    }
+  }
+}
+
 function display_mainContent_deviceProfiles(gets) {
     const tableBody = document.getElementById("data-table");
 
@@ -320,34 +429,3 @@ function getRevisionName(revision) {
         return "Unknown";
     }
 }
-function initMap(gateway_data) {
-  // Check if gateway_data is defined and contains at least one gateway
-  if (gateway_data && gateway_data.resultList && gateway_data.resultList.length > 0) {
-      // Initialize the map
-      var map = L.map('map').setView([0, 0], 13); // Default center if no gateways found
-
-      // Loop through each gateway and add markers to the map
-      gateway_data.resultList.forEach(function(gateway) {
-          const latitude = gateway.location.latitude;
-          const longitude = gateway.location.longitude;
-
-          // Add a marker for each gateway
-          var marker = L.marker([latitude, longitude]).addTo(map);
-          marker.bindPopup(`<b>${gateway.name}</b><br>${gateway.description}`).openPopup(); // Set the popup content
-      });
-
-      // If there are gateways, set the map view to the first gateway
-      const firstGateway = gateway_data.resultList[0];
-      if (firstGateway) {
-          map.setView([firstGateway.location.latitude, firstGateway.location.longitude], 13);
-      }
-      
-      // Add a tile layer
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-      }).addTo(map);
-  } else {
-      console.error("No gateway data available");
-  }
-}
-//---------------------------------------------------------------------//
