@@ -1,65 +1,81 @@
 //---------------------------------------------------------------------// 
-//----------------------------EVENTS ZONE------------------------------// 
+//---------------------------WEB SOCKET ZONE---------------------------//
+//---------------------------------------------------------------------//
+const socket = new WebSocket('ws://localhost:3001');
+
+socket.addEventListener('open', () => {
+    console.log('WebSocket connection established with WebServer');
+});
+
+socket.addEventListener('message', (event) => {
+    const messageFromServer = JSON.parse(event.data);
+    console.log('Message from server:', messageFromServer);
+
+    logIsSucc(messageFromServer);
+});
+  
+socket.addEventListener('error', (event) => {
+    console.log('WebSocket error:', event);
+});
+  
+socket.addEventListener('close', (event) => {
+    console.log('WebSocket closed:', event);
+});
+//---------------------------------------------------------------------// 
+//----------------------------EVENT ZONE-------------------------------//
 //---------------------------------------------------------------------//
 document.addEventListener('DOMContentLoaded', () => {
-    //-----SENDER ZONE-----//
-    const socket = new WebSocket('ws://localhost:3001');
-    
     const loginForm = document.getElementById('login-form');
+    const input_id = document.getElementById('username');
+    const input_pw = document.getElementById('password');
 
-    socket.addEventListener('open', () => {
-        console.log('WebSocket connection established with WebServer');
-
-        loginForm.addEventListener('submit', (event) => {
-            event.preventDefault();
-        
-            const input_id = document.getElementById('username');
-            const input_pw = document.getElementById('password');
-
-            const emailRegex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-            const isEmail = emailRegex.test(input_id.value);
-
-            if (isEmail) {
-                const req = { request: 'loginByEmail', message: { status: undefined,
-                    data: { 
-                        user_em: input_id.value.trim(), 
-                        user_pw: input_pw.value.trim(), }
-                    }};
-
-                socket.send(JSON.stringify(req));
-            } else {
-                const req = { request: 'loginByUname', message:
-                { status: undefined,
-                    data: { 
-                        user_un: input_id.value.trim(), 
-                        user_pw: input_pw.value.trim(), }
-                }};
-                
-                socket.send(JSON.stringify(req));
-            }
-        });
-    });
-    //----RECEIVER ZONE----//
-    socket.addEventListener('message', (event) => {
-        const messageFromServer = JSON.parse(event.data);
-        console.log('Message from server:', messageFromServer);
-
-        const input_id = document.getElementById('username');
-        const input_pw = document.getElementById('password');
-
-        if ( messageFromServer.request === 'loginByEmail' && messageFromServer.message.status === 'success' ) {
-            input_id.value = '';
-            input_pw.value = '';
-            window.location.href = 'dashboard.html';
-        } else if ( messageFromServer.request === 'loginByUname' && messageFromServer.message.status === 'success' ) {
-            input_id.value = '';
-            input_pw.value = '';
-            window.location.href = 'dashboard.html';
+    loginForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+ 
+        if ( isEmail(input_id.value) ) {
+            const req = { request: 'loginByEmail', message: 
+            { status: undefined,
+                data: { 
+                    user_em: input_id.value.trim(), 
+                    user_pw: input_pw.value.trim(), }
+            }};
+            sendRequest(req);
         } else {
-            input_id.value = '';
-            input_pw.value = '';
-            alert("Login failed.\nThere are no users on our ChirpStack.");
+            const req = { request: 'loginByUname', message:
+            { status: undefined,
+                data: { 
+                    user_un: input_id.value.trim(), 
+                    user_pw: input_pw.value.trim(), }
+            }};
+            sendRequest(req);
         }
     });
 });
+//---------------------------------------------------------------------//
+//----------------------------COMMON ZONE------------------------------//
+//---------------------------------------------------------------------//
+function isEmail(id) {
+    const emailRegex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return emailRegex.test(id);;
+}
+function logIsSucc(resp) {
+    if ( resp.request === 'loginByEmail' && resp.message.status === 'success' 
+    || resp.request === 'loginByUname' && resp.message.status === 'success' ) {
+        socket.close();
+        window.location.href = 'dashboard.html';
+    } else {
+        const input_id = document.getElementById('username');
+        const input_pw = document.getElementById('password');
+        input_id.value = '';
+        input_pw.value = '';
+        alert("Login failed.");
+    }
+}
+function sendRequest(data) {
+    if (socket.readyState === WebSocket.OPEN) {
+    socket.send(JSON.stringify(data));
+    } else {
+    console.log('WebSocket not ready, message not sent!');
+    }
+}
 //---------------------------------------------------------------------//

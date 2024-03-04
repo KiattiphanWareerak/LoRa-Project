@@ -2,41 +2,96 @@
 //-------------------------------FUNCTIONS-----------------------------//
 // Set services
 const chirpStackServices = require('./chirpStackServices.js');
-const dataBaseServices = require('./dataBaseSevices.js');
+const dataBaseServices = require('./dataBaseServices.js');
 //---------------------------------------------------------------------//
 //Set values stored
-let globalUserToken, globalUserId, globalTenantId;
+let globalUserToken, globalUserId, globalTenantId, globalUserName;
 let globalAppId, globalAppName, globalAppDesc, globalDevId, globalDevName, globalDevDesc;
 //---------------------------------------------------------------------//
 async function myApp(values) {
     try {
         return new Promise(async (resolve, reject) => {
             if (values.request === 'addApp') {
-                const respFromAddApp = await chirpStackServices.addApplicationRequest(values.message.data,
-                    globalUserToken, globalTenantId);
+                if ( values.message.data.app_intg === true) {
+                    const respFromAddApp = await chirpStackServices.addApplicationRequest(values.message.data,
+                        globalUserToken, globalTenantId);
+            
+                    if ( respFromAddApp.request === 'addApp' && respFromAddApp.message.status === 'success') {
+                        const respFromCreateOrgInfluxDb = await dataBaseServices.createOrgInfluxDb(globalUserName, respFromApiToken.message.data[0].influx_token);
+
+                        if ( respFromCreateOrgInfluxDb.request === 'postOrg' && respFromCreateOrgInfluxDb.message.status === 'success' ) {
+                            const respFromCreateBuckets = await dataBaseServices.createBucketInfluxDb(respFromCreateOrgInfluxDb.message.data, globalUserName,
+                                respFromApiToken.message.data[0].influx_token);
         
-                if ( respFromAddApp.request === 'addApp' && respFromAddApp.message.status === 'success') {
-                    resolve({ request: 'addApp', message: { status: 'success', data: undefined }} );
-                } else {
-                    console.log(respFromAddApp);
+                            if ( respFromCreateBuckets.request === 'postBucket' && respFromCreateBuckets.message.status === 'success' ) {
+                                const respFromGetUserInf = await dataBaseServices.getInfluxDbUser();
 
-                    resolve({ request: 'addApp', message: { status: 'failed', data: undefined }});
-                }
-            } 
-            else if (values.request === 'appConfig') {
-                const respFromAppConfig = await chirpStackServices.applicationConfigurationsRequest(values.message.data,
-                    globalUserToken, globalTenantId, globalAppId);
+                                const matchingUser = respFromGetUserInf.message.data.users.find(user => user.name === globalUserName);
+
+                                if (matchingUser) {
+                                    console.log(`User ${globalUserName} found! ID: ${matchingUser.id}`);
+
+                                    const respFromAddMems = await dataBaseServices.addMemberInfluxDb(respFromCreateOrgInfluxDb.message.data, 
+                                        matchingUser.id, respFromApiToken.message.data[0].influx_token);
+                                    const respFromAddRole = await dataBaseServices.addRoleInfluxDb(respFromCreateOrgInfluxDb.message.data, matchingUser.id, 
+                                        respFromApiToken.message.data[0].influx_token);
+                
+                                    if ( respFromAddMems.request === 'postAddMember' && respFromAddMems.message.status === 'success' 
+                                    && respFromAddRole.request === 'postAddRole' && respFromAddRole.message.status === 'success') {
+                                        // Setup InfluxDB completed
+                                        // ...         
+                                        const respFromIntgApp = await chirpStackServices.createInfluxDbIntegrationRequest(respFromAddApp.message.data.id,
+                                            respFromCreateOrgInfluxDb.org_name, respFromCreateBuckets.bucket_name,
+                                            respFromApiToken.message.data[0].cs_token, respFromApiToken.message.data[0].influx_token);
+                    
+                                        if ( respFromIntgApp.request === 'intgApp' && respFromIntgApp.message.status === 'success' ) {
+                                            // finished
+                                            // ........
+                                            resolve({ request: 'addApp', message: { status: 'success', data: undefined }});
+                                        } else {
+                                            console.log(respFromCreateOrgInfluxDb);
+                    
+                                            resolve({ request: 'addApp', message: { status: 'failed', data: undefined }});
+                                        }
+                                    } else {
+                                        console.log(respFromAddMems);
+            
+                                        resolve({ request: 'addApp', message: { status: 'failed', data: undefined }});
+                                        return;
+                                    }
+                                } else {
+                                  console.log(`User ${globalUserName} not found.`);
+                                }
+                            } else {
+                                console.log(respFromCreateBuckets);
         
-                if ( respFromAppConfig.request === 'appConfig' && respFromAppConfig.message.status === 'success') {
-                    globalAppName = values.message.data.app_name;
-
-                    resolve({ request: 'appConfig', message: { status: 'success', data: undefined }});
+                                resolve({ request: 'addApp', message: { status: 'failed', data: undefined }});
+                                return;
+                            }
+                        } else {
+                            console.log(respFromCreateOrgInfluxDb);
+        
+                            resolve({ request: 'addApp', message: { status: 'failed', data: undefined }});
+                            return;
+                        }
+                    } else {
+                        console.log(respFromAddApp);
+    
+                        resolve({ request: 'addApp', message: { status: 'failed', data: undefined }});
+                    }
                 } else {
-                    console.log(respFromAppConfig);
-
-                    resolve({ request: 'appConfig', message: { status: 'failed', data: undefined }});
+                    const respFromAddApp = await chirpStackServices.addApplicationRequest(values.message.data,
+                        globalUserToken, globalTenantId);
+            
+                    if ( respFromAddApp.request === 'addApp' && respFromAddApp.message.status === 'success') {
+                        resolve({ request: 'addApp', message: { status: 'success', data: undefined }} );
+                    } else {
+                        console.log(respFromAddApp);
+    
+                        resolve({ request: 'addApp', message: { status: 'failed', data: undefined }});
+                    }
                 }
-            } 
+            }
             else if (values.request === 'addDev') {
                 const respFromAddDev = await chirpStackServices.addDeviceRequest(values.message.data,
                     globalUserToken, globalAppId);
@@ -55,6 +110,20 @@ async function myApp(values) {
                     console.log(respFromAddDev);
 
                     resolve({ request: 'addDev', message: { status: 'failed', data: undefined }});
+                }
+            }
+            else if (values.request === 'appConfig') {
+                const respFromAppConfig = await chirpStackServices.applicationConfigurationsRequest(values.message.data,
+                    globalUserToken, globalTenantId, globalAppId);
+        
+                if ( respFromAppConfig.request === 'appConfig' && respFromAppConfig.message.status === 'success') {
+                    globalAppName = values.message.data.app_name;
+
+                    resolve({ request: 'appConfig', message: { status: 'success', data: undefined }});
+                } else {
+                    console.log(respFromAppConfig);
+
+                    resolve({ request: 'appConfig', message: { status: 'failed', data: undefined }});
                 }
             } 
             else if (values.request === 'delApp') {
@@ -188,7 +257,29 @@ async function myApp(values) {
 
                     resolve({ request: 'enterDevId', message: { status: 'failed', data: undefined }});
                 }
-            } 
+            }
+            else if (values.request === 'enqueueDev') {
+                const respFromEnqueue = await chirpStackServices.enqueueDeviceRequest(values.message.data, globalDevId, globalUserToken);
+        
+                if ( respFromEnqueue.request === 'enqueueDev' && respFromEnqueue.message.status === 'success') {
+                    resolve({ request: 'enqueueDev', message: { status: 'success', data: respFromEnqueue.message.data }});
+                } else {
+                    console.log(respFromEnqueue);
+
+                    resolve({ request: 'enqueueDev', message: { status: 'failed', data: undefined }});
+                }
+            }
+            else if (values.request === 'flushQueueDev') {
+                const respFromEnqueue = await chirpStackServices.flushQueueDeviceRequest(globalDevId, globalUserToken);
+        
+                if ( respFromEnqueue.request === 'flushQueueDev' && respFromEnqueue.message.status === 'success') {
+                    resolve({ request: 'flushQueueDev', message: { status: 'success', data: undefined }});
+                } else {
+                    console.log(respFromEnqueue);
+
+                    resolve({ request: 'flushQueueDev', message: { status: 'failed', data: undefined }});
+                }
+            }
             else if (values.request === 'getApp') {
                 const respFromGetApp = await chirpStackServices.getApplicationRequest(globalAppId, globalUserToken);
             
@@ -330,16 +421,21 @@ async function myApp(values) {
                         globalUserToken = respFromLoginUser.message.data.jwt;
 
                         const respFromProfileUser = await chirpStackServices.profileUserRequest(globalUserToken);
-
+                        
                         if ( respFromProfileUser.request === 'profileUser' && respFromProfileUser.message.status === 'success' ) {
                             globalUserId = respFromProfileUser.message.data.user_profile.user.id;
-
+                            
                             if (respFromProfileUser.message.data.user_profile.tenantsList.length > 0) {
                                 globalTenantId = respFromProfileUser.message.data.user_profile.tenantsList[0].tenantId;
+
                             } else {
                                 globalUserToken = respFromApiToken.message.data[0].cs_token;
                                 globalTenantId = await dataBaseServices.getCSTenantIdFromDB();
                             }
+                            const respFromGetTenant = await chirpStackServices.getTenantProfileRequest(globalTenantId, respFromApiToken.message.data[0].cs_token);
+                            globalUserName = respFromGetTenant.message.data.tenant.name
+
+                            console.log("USER NAME: ", globalUserName);
                             console.log("USER ID: ", globalUserId);
                             console.log("USER TENANT ID: ", globalTenantId);
                             console.log("USER TOKEN: ", globalUserToken);
@@ -418,6 +514,10 @@ async function myApp(values) {
                             globalUserToken = respFromApiToken.message.data[0].cs_token;
                             globalTenantId = "52f14cd4-c6f1-4fbd-8f87-4025e1d49242";
                         }
+                        const respFromGetTenant = await chirpStackServices.getTenantProfileRequest(globalTenantId, respFromApiToken.message.data[0].cs_token);
+                        globalUserName = respFromGetTenant.message.data.tenant.name
+
+                        console.log("USER NAME: ", globalUserName);
                         console.log("USER ID: ", globalUserId);
                         console.log("USER TENANT ID: ", globalTenantId);
                         console.log("USER TOKEN: ", globalUserToken);
@@ -507,7 +607,6 @@ async function myApp(values) {
                     }
                 }
 
-                let tenant_id;
                 const respFromCreateUser = await chirpStackServices.createUser(values.message.data, respFromApiToken.message.data[0].cs_token);
 
                 if ( respFromCreateUser.request === 'createUser' && respFromCreateUser.message.status === 'success' ) {
@@ -548,68 +647,27 @@ async function myApp(values) {
                     return;
                 }
                 
-                const respFromCreateOrgInfluxDb = await dataBaseServices.createOrgInfluxDb(values.message.data, respFromApiToken.message.data[0].influx_token);
+                const respFromCreateUserDb = await dataBaseServices.createUserInfluxDb(values.message.data,
+                    respFromApiToken.message.data[0].influx_token);
 
-                if ( respFromCreateOrgInfluxDb.request === 'postOrg' && respFromCreateOrgInfluxDb.message.status === 'success' ) {
-                    const respFromCreateBuckets = await dataBaseServices.createBucketInfluxDb(respFromCreateOrgInfluxDb.message.data, values.message.data,
+                if ( respFromCreateUserDb.request === 'postCreateUser' && respFromCreateUserDb.message.status === 'success' ) {
+                    const respFromUpdatePw = await dataBaseServices.updatePasswordInfluxDb(respFromCreateUserDb.message.data, values.message.data,
                         respFromApiToken.message.data[0].influx_token);
-                    const respFromCreateUserDb = await dataBaseServices.createUserInfluxDb(respFromCreateOrgInfluxDb.message.data, values.message.data,
-                        respFromApiToken.message.data[0].influx_token);
 
-                    if (respFromCreateBuckets.request === 'postBucket' && respFromCreateBuckets.message.status === 'success' 
-                    && respFromCreateUserDb.request === 'postCreateUser' && respFromCreateUserDb.message.status === 'success') {
-                        const respFromUpdatePw = await dataBaseServices.updatePasswordInfluxDb(respFromCreateUserDb.message.data, values.message.data,
-                            respFromApiToken.message.data[0].influx_token);
-                        const respFromAddMems = await dataBaseServices.addMemberInfluxDb(respFromCreateOrgInfluxDb.message.data, 
-                            respFromCreateUserDb.message.data, respFromApiToken.message.data[0].influx_token);
-
-                        if (respFromUpdatePw.request === 'postUpPw' && respFromUpdatePw.message.status === 'success' 
-                        && respFromAddMems.request === 'postAddMember' && respFromAddMems.message.status === 'success') {
-                            // Setup InfluxDB completed
-                            // do nothing
-                        } else {
-                            console.log(respFromUpdatePw);
-                            console.log(respFromAddMems);
-
-                            resolve({ request: 'register', message: { status: 'failed', data: undefined }});
-                            return;
-                        }
+                    if ( respFromUpdatePw.request === 'postUpPw' && respFromUpdatePw.message.status === 'success' ) {
+                        
+                        resolve({ request: 'register', message: { status: 'success', data: undefined }});
                     } else {
-                        console.log(respFromCreateBuckets);
-                        console.log(respFromCreateUserDb);
+                        console.log(respFromUpdatePw);
 
                         resolve({ request: 'register', message: { status: 'failed', data: undefined }});
                         return;
                     }
                 } else {
-                    console.log(respFromCreateOrgInfluxDb);
+                    console.log(respFromCreateUserDb);
 
                     resolve({ request: 'register', message: { status: 'failed', data: undefined }});
                     return;
-                }
-
-                const respFromCreateApp = await chirpStackServices.addApplicationRequest({ 
-                    app_name: 'influxDB-app', app_desc: 'Integrated for InfluxDBv2' },
-                    respFromApiToken.message.data[0].cs_token,
-                    tenant_id);
-                
-                if ( respFromCreateApp.request === 'addApp' && respFromCreateApp.message.status === 'success' ) {
-                    const respFromIntgApp = await chirpStackServices.createInfluxDbIntegrationRequest(respFromCreateApp.message.data.id,
-                        values.message.user_un, respFromApiToken.message.data[0].cs_token, respFromApiToken.message.data[0].influx_token);
-
-                    if ( respFromIntgApp.request === 'intgApp' && respFromIntgApp.message.status === 'success' ) {
-                        // finished
-                        // ........
-                        resolve({ request: 'register', message: { status: 'success', data: undefined }});
-                    } else {
-                        console.log(respFromCreateOrgInfluxDb);
-
-                        resolve({ request: 'register', message: { status: 'failed', data: undefined }});
-                    }
-                } else {
-                    console.log(respFromCreateApp);
-
-                    resolve({ request: 'register', message: { status: 'failed', data: undefined }});
                 }
             }
             else {

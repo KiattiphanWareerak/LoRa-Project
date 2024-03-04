@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const addAppConfirm = () => {
             let appNameInput = document.getElementById('appNameInput');
             let descriptionInput = document.getElementById('descriptionInput');
+            let appIntgInput = document.getElementById('appIntgInput');
             
             let appNameValue = appNameInput.value.trim();
             
@@ -24,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 let descriptionValue = descriptionInput.value.trim();
             
-                let addAppData = { app_name: appNameValue, app_desc: descriptionValue };
+                let addAppData = { app_name: appNameValue, app_desc: descriptionValue, app_intg: appIntgInput };
             
                 const req = {
                     request: 'addApp',

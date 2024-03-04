@@ -2,7 +2,7 @@
 //----------------------------EVENTS ZONE------------------------------// 
 //---------------------------------------------------------------------//
 let sentRequests = {};
-
+let checkPayload = true;
 document.addEventListener('DOMContentLoaded', () => {
     // submit device configurations button
     const saveButton = document.getElementById("save-config_btn");
@@ -38,6 +38,30 @@ document.addEventListener('DOMContentLoaded', () => {
     sendDeviceConfigConfirmRequest(data);
     });
     //-----------------------------------//
+    // submit enqueue button
+    const enqueueButton = document.getElementById("send_enqueue");
+
+    enqueueButton.addEventListener("click", () => {
+        if (document.getElementById("Fport").value === "") {
+            alert("Please enter a value for Fport. (Fport: Number)");
+            return;
+        }
+        if (document.getElementById("jsonInput").value === "") {
+            alert("Please enter a value for data to enqueue. (Data: String | Uint8Array)");
+            return;
+        }
+
+        const data = {
+            dev_id: undefined,
+            eq_cnf: document.getElementById("enqueue-confirm").checked,
+            eq_fport: parseInt(document.getElementById("Fport").value),
+            eq_isEncry: document.getElementById("enqueue-encrypt").checked,
+            eq_data: JSON.parse(document.getElementById("jsonInput").value),
+        };
+    
+        sendEnqueueDeviceConfirmRequest(data);
+    });
+    //-----------------------------------//
     const activeTabIndex = sessionStorage.getItem('activeTabIndex');
 
     const setActiveTab = (tabButton) => {
@@ -55,15 +79,19 @@ document.addEventListener('DOMContentLoaded', () => {
         activeLine.style.width = tabButton.offsetWidth + "px";
 
         sessionStorage.setItem('activeTab', tabName);
-        onPageLoad();
+        onPageLoad(checkPayload);
     };
 
-    function onPageLoad() {
+    function onPageLoad(checkPayload) {
         const activeTab = sessionStorage.getItem('activeTab');
 
-        if (activeTab && !sentRequests[activeTab]) {
-            sendSpecificRequest(activeTab);
-            sentRequests[activeTab] = true;
+        if (checkPayload) {
+            if (activeTab && !sentRequests[activeTab]) {
+                sendSpecificRequest(activeTab);
+                sentRequests[activeTab] = true;
+
+                checkPayload = false;
+            }
         }
     }
 
@@ -154,6 +182,29 @@ const sendDeviceConfigConfirmRequest = (data) => {
     }};
     sender_and_reciver_in_device(req);
 };
+const sendEnqueueDeviceConfirmRequest = (data) => {
+    // recuit to enqueue device
+    // data = {
+    //     dev_id: String,
+    //     eq_cnf: Boolean,
+    //     eq_fport: Number,
+    //     eq_isEncry: Boolean,
+    //     eq_data: String | Uint8Array,
+    // };
+
+    const req = { request: 'enqueueDev', message: { 
+        status: undefined, 
+        data: data 
+    }};
+    sender_and_reciver_in_device(req);
+};
+const sendFlushQueueDeviceConfirmRequest = (data) => {
+    const req = { request: 'flushQueueDev', message: { 
+        status: undefined, 
+        data: undefined 
+    }};
+    sender_and_reciver_in_device(req);
+};
 //---------------------------------------------------------------------//
 //---------------------------WEB SOCKET ZONE---------------------------//
 //---------------------------------------------------------------------//
@@ -198,6 +249,14 @@ function sender_and_reciver_in_device(req) {
           else if ( messageFromServer.request === 'postDevConfigConfirm' ) {
             alert("Your device is now updated.");
             sendDeviceInfomationsRequest();
+          }
+          else if ( messageFromServer.request === 'enqueueDev' ) {
+            alert("Enqueue device successfully.");
+            sendQueuesDeviceRequest();
+          }
+          else if ( messageFromServer.request === 'flushQueueDev' ) {
+            alert("Flush queue device successfully.");
+            sendQueuesDeviceRequest();
           }
         } else {
           alert("Error: Request-" + messageFromServer.request + "-Status-"  + messageFromServer.message.status + 
@@ -524,5 +583,11 @@ function sendSpecificRequest(tabName) {
     } else if (tabName === 'LoRaWAN_frame') {
       sendFramesDeviceRequest();
     }
+}
+function flush_function() {
+    sendFlushQueueDeviceConfirmRequest();
+}
+function reload_function() {
+    sendQueuesDeviceRequest();
 }
 //---------------------------------------------------------------------// 
