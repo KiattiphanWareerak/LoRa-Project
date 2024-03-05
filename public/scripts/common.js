@@ -213,10 +213,14 @@ function display_mainContent_dashboard(gets) {
 
   const gateways_data = gets.gateways_list.resultList;
   const total_gateways = gets.gateways_list.totalCount;
+  const online_gateway = gets.gateways_summary.onlineCount;
+  const Offline_gateway = gets.gateways_summary.offlineCount;
+  const neverseen_gateway = gets.gateways_summary.neverSeenCount;
 
-  var deviceActive_data = set_pieChart_data(4, 1, 1);
-  // var deviceActive_data = set_pieChart_data(device_active_count, device_inactive_count, device_neverseen_count);
-  var gatewayActive_data = set_pieChart_data(device_active_count, device_inactive_count, device_neverseen_count);
+
+  // var test_data = set_pieChart_data(4, 1, 1);
+  var deviceActive_data = set_pieChart_data(device_active_count, device_inactive_count, device_neverseen_count);
+  var gatewayActive_data = set_pieChart_data(online_gateway, Offline_gateway, neverseen_gateway);
 
   // Options for the pie chart
   var options = {
