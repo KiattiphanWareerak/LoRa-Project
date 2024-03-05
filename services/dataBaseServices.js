@@ -10,22 +10,24 @@ const INFLUX_URL = 'http://202.28.95.234:8086';
 //---------------------------------------------------------------------//
 async function createOrgInfluxDb(uN, INFLUX_API_TOKEN) {
   try {
-    const org = {
-      name: generateOrgName(uN),
-      description: 'Organization: ' + uN,
-    };
-
-    const headers = {
-      Authorization: `Token ${INFLUX_API_TOKEN}`,
-      'Content-Type': 'application/json',
-    };
-
     return new Promise(async (resolve, reject) => {
+      let name = generateOrgName(uN);
+
+      const org = {
+        name: name,
+        description: 'Organization: ' + uN,
+      };
+  
+      const headers = {
+        Authorization: `Token ${INFLUX_API_TOKEN}`,
+        'Content-Type': 'application/json',
+      };
+
       axios.post(`${INFLUX_URL}/api/v2/orgs`, org, { headers })
         .then((response) => {
           console.log('Organization created:', response.data);
 
-          resolve({ request: 'postOrg', message: { status: 'success', data: response.data, org_name: org.name } });
+          resolve({ request: 'postOrg', message: { status: 'success', data: response.data, org_name: name } });
         })
         .catch((error) => {
           console.log(error);
@@ -39,23 +41,25 @@ async function createOrgInfluxDb(uN, INFLUX_API_TOKEN) {
 //---------------------------------------------------------------------//
 async function createBucketInfluxDb(org, uN, INFLUX_API_TOKEN) {
   try {
-    const bucket = {
-      name: generateBucketName(uN),
-      description: 'A bucket holding data from ChirpStack',
-      orgID: org.id,
-    };
-
-    const headers = {
-      Authorization: `Token ${INFLUX_API_TOKEN}`,
-      'Content-Type': 'application/json',
-    };
-
     return new Promise(async (resolve, reject) => {
+      let name = generateBucketName(uN);
+
+      const bucket = {
+        name: name,
+        description: 'A bucket holding data from ChirpStack',
+        orgID: org.id,
+      };
+  
+      const headers = {
+        Authorization: `Token ${INFLUX_API_TOKEN}`,
+        'Content-Type': 'application/json',
+      };  
+
       axios.post(`${INFLUX_URL}/api/v2/buckets`, bucket, { headers })
         .then((response) => {
           console.log('Bucket created:', response.data);
 
-          resolve({ request: 'postBucket', message: { status: 'success', data: response.data, bucket_name: bucket.name } });
+          resolve({ request: 'postBucket', message: { status: 'success', data: response.data, bucket_name: name } });
         })
         .catch((error) => {
           console.log(error);
@@ -294,16 +298,16 @@ module.exports = {
 //----------------------------COMMON ZONE------------------------------//
 //---------------------------------------------------------------------//
 function generateOrgName(username) {
-  var random16Bit = generateRandom16Bit().toString(16);
-  var orgName = 'org-' + random16Bit + '-' + username;
+  var random32Bit = generateRandom32Bit().toString(16);
+  var orgName = 'org-' + random32Bit + '-' + username;
   return orgName;
 }
 function generateBucketName(username) {
-  var random16Bit = generateRandom16Bit().toString(16);
-  var bucketName = 'data_device_' + random16Bit + '_' + username;
+  var random32Bit = generateRandom32Bit().toString(16);
+  var bucketName = 'data_device_' + random32Bit + '_' + username;
   return bucketName;
 }
-function generateRandom16Bit() {
-  return Math.floor(Math.random() * 65536);
+function generateRandom32Bit() {
+  return Math.floor(Math.random() * 4294967296);
 }
 //---------------------------------------------------------------------//

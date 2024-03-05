@@ -364,8 +364,10 @@ function opentab(evt, tabName) {
 }
 function display_headerAndMiddleTitle_device_configurations(devName, appName) {
     // Header and Middle title
+    let newPElement = document.createElement('p');
     let newH1Element = document.createElement('h1');
     let newH4Element = document.createElement('h4');
+    newPElement.textContent = 'Device: ';
     newH1Element.textContent = devName;
     newH4Element.innerHTML = `</h4><a href="applications.html" >Applications</a>
      > <a href="devices.html" id="appLink">${appName}</a> > <a>${devName}</a></h4>`;
@@ -374,7 +376,7 @@ function display_headerAndMiddleTitle_device_configurations(devName, appName) {
     let locatedDiv = document.querySelector('.located');
     locatedDiv.innerHTML = '';
     headerTitleDiv.innerHTML = '';
-
+    headerTitleDiv.appendChild(newPElement);
     headerTitleDiv.appendChild(newH1Element);
     locatedDiv.appendChild(newH4Element);
 }
