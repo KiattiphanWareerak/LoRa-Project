@@ -175,7 +175,7 @@
                                 </div>
                                 <div class="right-element">
                                     <label for="joinEUI">Join EUI (EUI64)</label>
-                                    <div><input type="text" id="joinIdInput" class="joinEUI"></div>
+                                    <div><input type="text" disabled="disabled" id="joinIdInput" class="joinEUI"></div>
                                 </div>
                             </div>
                             <div>
@@ -185,16 +185,9 @@
                             <div>
                                 <div>Device-Profile</div>
                                 <div class="dropdown">
-                                    <div class="select">
-                                        <span class="selected">Select your device profile</span>
-                                        <div class="caret"></div>
-                                    </div>
-                                    <ul class="list_menu">
-                                        <li>LoRaWAN 1.0.1</li>
-                                        <li>LoRaWAN 1.0.2</li>
-                                        <li class="active">LoRaWAN 1.0.3</li>
-                                        <li>LoRaWAN 1.1.2</li>
-                                    </ul>
+                                    <select id="deviceProfile_List">
+                                        <!-- <option value="LoRaWAN 1.0.2">LoRaWAN 1.0.2</option> -->
+                                    </select>
                                 </div>
                             </div>
                             <div class="display_2_elements">
@@ -327,6 +320,4 @@
         </div>
     </div>
 </body>
-<!-- Scripts -->
-<script src="scripts/webScript.js"></script>
 </html>
