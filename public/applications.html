@@ -124,9 +124,22 @@
                 <i class="fa-solid fa-circle-xmark" onclick="closeModal('app_AddApp')"></i>
             </div>
             <!-- Form inputs -->
-            <div>
+            <div>General
                 <input type="text" placeholder="Application name" id="appNameInput" required>
                 <textarea name="Description" placeholder="Description" id="descriptionInput" cols="30" rows="5"></textarea>
+            </div>
+            <!-- Checkboxes -->
+            <div class="integration-containner"> Integration
+                <div class="integration-checkboxes">
+                    <div class="checkbox-containner">
+                        <input type="checkbox" id="influxDB" name="integration" value="influxDB">
+                        <label for="influxDB">InfluxDB</label>
+                    </div>
+                    <div class="checkbox-containner">
+                        <input type="checkbox" name="integration" value="other">
+                        <div>Other</div>
+                    </div>
+                </div>
             </div>
             <!-- Submit button -->
             <div>

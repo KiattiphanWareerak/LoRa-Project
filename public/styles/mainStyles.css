@@ -43,7 +43,8 @@ input{
     width: 100%;
     border-radius: 10px;
     border-right: 10px;
-    margin-bottom: 1.5rem;
+    margin-bottom: 20px;
+    /* margin-bottom: 1.5rem; */
     border: 1px solid #333;
     padding: 8px;
 }
@@ -51,7 +52,8 @@ textarea{
     width: 100%;
     border-radius: 10px;
     resize: none;
-    margin-bottom: 1.5rem;
+    margin-bottom: 20px;
+    /* margin-bottom: 1.5rem; */
     border: 1px solid #333;
     padding: 8px;
 }
@@ -506,11 +508,31 @@ tfoot td {
     border-radius: 12px;
     width: 500px;
     margin: 0 auto;
-    text-align: center;
     padding: 50px;
     background-color: whitesmoke;
     display: none;
 }
+
+.integration-containner .integration-checkboxes {
+    display: flex;
+    width: 100%;
+    border: #000000 1px solid;
+    border-radius: 10px;
+    justify-content: space-evenly;
+}
+
+.integration-checkboxes .checkbox-containner {
+    padding-top: 5px;
+    display: flex;
+    margin-top: 5px;
+    background-color: whitesmoke;
+    border-radius: 10px;
+}
+
+.checkbox-containner input {
+    width: 20px;
+}
+
 .modal_button {
     width: 100%;
     text-align: center;
