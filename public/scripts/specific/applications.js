@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
             var checkboxes = document.querySelectorAll(".integration-checkboxes input[type='checkbox']");
 
             var isChecked = false;
-            checkboxes.forEach(function(checkbox) {
+            checkboxes.forEach(function (checkbox) {
                 if (checkbox.checked) {
                     isChecked = true;
                 }
@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             let appIntgInput;
-            checkboxes.forEach(function(checkbox) {
+            checkboxes.forEach(function (checkbox) {
                 if (checkbox.checked) {
                     if (checkbox.id === "influxDB") {
                         console.log("InfluxDB checkbox is checked!");
@@ -75,9 +75,39 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         // Delete application button
-        const delAppButton = document.getElementById('delAppConfirm');
+        const delAppButton = document.getElementById('deleteAppButton');
+        const delAppConfirm = document.getElementById('delAppConfirm');
+
+        const deleteList = () => {
+            let selectedAppNames = [];
+            for (let i = 0; i < document.querySelectorAll("input[type='checkbox']").length; i++) {
+                if (document.querySelectorAll("input[type='checkbox']")[i].checked) {
+                    const checkedCheckbox = document.querySelectorAll("input[type='checkbox']")[i];
+
+                    const appNameCell = checkedCheckbox.closest("tr").querySelector("td:nth-child(3)");
+
+                    if (appNameCell) {
+                        const appName = appNameCell.textContent;
+                        selectedAppNames.push(appName);
+                    } else {
+                        console.error("appName cell not found");
+                    }
+                }
+            }
+
+            const deleteSelectedTBody = document.getElementById('delete-selected');
+            deleteSelectedTBody.innerHTML = "";
+            selectedAppNames.forEach(function (appName) {
+                const row = document.createElement('tr');
+                const appNameCell = document.createElement('td');
+                appNameCell.textContent = appName;
+                row.appendChild(appNameCell);
+                deleteSelectedTBody.appendChild(row);
+            });
+        }
 
         const deleteForm = () => {
+            let checkedCount = 0;
             let appIDs = [];
             for (let i = 0; i < document.querySelectorAll("input[type='checkbox']").length; i++) {
                 if (document.querySelectorAll("input[type='checkbox']")[i].checked) {
@@ -91,8 +121,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     } else {
                         console.error("appID cell not found");
                     }
+
+                    checkedCount++;
                 }
             }
+            if (checkedCount === 0) {
+                alert("Please select a application to delete.");
+                return;
+            }
+
             let appIDsSelect = appIDs.map((appID) => ({ app_id: appID }));
 
             const req = {
@@ -107,6 +144,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         delAppButton.addEventListener('click', (event) => {
+            event.preventDefault();
+            deleteList();
+        })
+
+        delAppConfirm.addEventListener('click', (event) => {
             event.preventDefault();
             deleteForm();
         })
@@ -138,7 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
     applicationSocket.addEventListener('error', (event) => {
         console.log('WebSocket error:', event);
     });
-    
+
     applicationSocket.addEventListener('close', (event) => {
         console.log('WebSocket closed:', event);
     });
@@ -154,7 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
 //---------------------------------------------------------------------//
 document.addEventListener("DOMContentLoaded", function () {
     var integrationCheckboxes = document.querySelectorAll('.integration-checkboxes input[type="checkbox"]');
-    
+
     integrationCheckboxes.forEach(function (checkbox) {
         checkbox.addEventListener('change', function () {
             if (this.checked) {

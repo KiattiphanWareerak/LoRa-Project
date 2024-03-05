@@ -43,9 +43,9 @@ async function myApp(values) {
 
                                     if (respFromAddMems.request === 'postAddMember' && respFromAddMems.message.status === 'success') {
                                         // Setup InfluxDB completed
-                                        // ...         
+                                        // ...
                                         const respFromIntgApp = await chirpStackServices.createInfluxDbIntegrationRequest(respFromAddApp.message.data.id,
-                                            respFromCreateOrgInfluxDb.org_name, respFromCreateBuckets.bucket_name,
+                                            respFromCreateOrgInfluxDb.message.org_name, respFromCreateBuckets.message.bucket_name,
                                             respFromApiToken.message.data[0].cs_token, respFromApiToken.message.data[0].influx_token);
 
                                         if (respFromIntgApp.request === 'intgApp' && respFromIntgApp.message.status === 'success') {
@@ -334,6 +334,15 @@ async function myApp(values) {
                     }
                 } else {
                     resolve({ request: 'getDevInfo', message: { status: 'failed', data: undefined } });
+                }
+            }
+            else if (values.request === 'getDevProfList') {
+                const respGetDevProfList = await chirpStackServices.getDeviceProfileListRequest(globalTenantId, globalUserToken);
+
+                if (respGetDevProfList.request === 'getDevProfList' && respGetDevProfList.message.status === 'success') {
+                    resolve(respGetDevProfList);
+                } else {
+                    resolve({ request: 'getDevProfList', message: { status: 'failed', data: undefined } });
                 }
             }
             else if (values.request === 'getDevQueues') {

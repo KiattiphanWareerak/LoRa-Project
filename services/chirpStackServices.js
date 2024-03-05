@@ -939,7 +939,7 @@ async function getDeviceKeyRequest(values, apiToken) {
   }
 }
 //---------------------------------------------------------------------//
-async function getDeviceProfile(values, apiToken) {
+async function getDeviceProfileListRequest(values, apiToken) {
   try {
     // Create the Metadata object.
     const metadata = new grpc.Metadata();
@@ -954,12 +954,12 @@ async function getDeviceProfile(values, apiToken) {
       deviceProfileService.list(createReq, metadata, (err, resp) => {
         if (err !== null) {
           console.log(err);
-          resolve(err);
+          resolve({ request: 'getDevProfList', message: { status: 'failed', data: undefined } });
           return;
         }
         console.log('List Device Profiles has been completed.');
 
-        resolve(resp.toObject());
+        resolve({ request: 'getDevProfList', message: { status: 'success', data: resp.toObject() }});
       });
     });
   } catch (error) {
@@ -1642,6 +1642,7 @@ module.exports = {
   getDeviceEventsRequest,
   getDeviceFramesRequest,
   getDeviceKeyRequest,
+  getDeviceProfileListRequest,
   getLinkMetricsRequest,
   getDeviceConfigurationRequest,
   getMainDashboard,
