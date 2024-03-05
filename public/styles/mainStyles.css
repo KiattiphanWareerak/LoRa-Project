@@ -79,7 +79,8 @@ textarea{
     display: flex;
     justify-content: space-around;
     align-items: center;
-    border-bottom: 2px solid rgba(299,299,299);
+    /* border-bottom: 2px solid rgba(299,299,299); */
+    border-bottom: 2px solid #000000;
     position: relative;
 }
 .tab_box .tab_button{
@@ -418,7 +419,10 @@ input:checked + .toggle_button-label::before{
     width: auto;
 }
 table {
+    margin-top: 20px;
     width: 100%;
+    border-right: 1px solid black;
+    border-left: 1px solid black;
     border-collapse: collapse;
 }
 thead {
@@ -428,6 +432,7 @@ thead {
 th {
     padding: 12px;
     text-align: center;
+    background-color: #ccc;
 }
 tbody{
     background: #fff;
@@ -456,6 +461,27 @@ tfoot td {
     color: red; /* Set the color for the xmark icon to red */
 }
 
+.enqueue_table table, tbody, tr, td {
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+    border-collapse: collapse;
+}
+
+.event_table table, tbody, tr, td {
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+    /* border-right: 1px solid black;
+    border-left: 1px solid black; */
+    border-collapse: collapse;
+}
+
+.frame_table table, tbody, tr, td {
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+    /* border-right: 1px solid black;
+    border-left: 1px solid black; */
+    border-collapse: collapse;
+}
 /* * * * Modal Part * * * */
 .modal_container {
     display: flex;

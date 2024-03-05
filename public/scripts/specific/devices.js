@@ -427,6 +427,7 @@ function displayDeviceProfilesDropDown(items) {
         var devProfile_name = user_devProfiles[added_option].name;
         var devProfile_id = user_devProfiles[added_option].id;
 
+
         // Create a new option element
         var deviceProfile = document.createElement("option");
 
