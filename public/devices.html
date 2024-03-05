@@ -147,7 +147,6 @@
             </div>
         </div>
         
-
         <!-- Add Device Modal -->
         <div class="form" id="dev_AddDevice">
             <div class="form_headder">
@@ -156,12 +155,18 @@
             </div>
             <!-- Form inputs -->
             <div>
-                <label for="devName">Device Name:</label>
-                <input type="text" id="devNameInput" class="devName" required>
+                <label for="devName">General:</label>
+                <input type="text" id="devNameInput" class="devName" placeholder="Device name" required>
+                <input type="text" id="devIdInput" class="devEUI" placeholder="Device EUI" required>
             </div>
+            <!-- Device Profile dropdown -->
             <div>
-                <label for="devEUI">Device EUI:</label>
-                <input type="text" id="devIdInput" class="devEUI" required>
+                <div>Device-Profile</div>
+                <div class="dropdown">
+                    <select id="deviceProfile_List">
+                        <!-- <option value="LoRaWAN 1.0.2">LoRaWAN 1.0.2</option> -->
+                    </select>
+                </div>
             </div>
             <!-- Next button -->
             <div>

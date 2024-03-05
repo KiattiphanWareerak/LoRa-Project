@@ -266,12 +266,6 @@ textarea{
     border: #dfdfdf 1px solid;
 }
 
-/* .dashboard-chart canvas {
-    max-width: 350px;
-    max-height: 350px;
-    flex-wrap: wrap;
-} */
-
 .dashboard-chart .dashboard-chart-headder {
     margin-top: 10px;
     padding-bottom: 5px;
@@ -291,15 +285,6 @@ textarea{
     padding-bottom: 50%;
     position: relative;
 }
-
-/* .gateway-map iframe {
-    border-radius: 12px;
-    height: 50%;
-    width: 100%;
-    left: 0;
-    top: 0;
-    position: absolute;
-} */
 
 /* * * * Button Part * * * */
 .save-button-container {
@@ -513,6 +498,10 @@ tfoot td {
     display: none;
 }
 
+.modal_container .form input{
+    margin-bottom: 10px;
+}
+
 .integration-containner .integration-checkboxes {
     display: flex;
     width: 100%;
@@ -545,78 +534,18 @@ tfoot td {
 }
 
 /* * * Dropdown Part * * */
-.dropdown{
-    min-width: 15em;
-    position: relative;
-    margin-top: 0.5em;
-    margin-bottom: 2rem;
-}
-.dropdown * {
-    box-sizing: border-box;
-}
-.select{
-    background: transparent;
-    color: black;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border: 1px #2a2f3b solid;
-    border-radius: 10px;
-    padding: 1em;
-    cursor: pointer;
-    transition: background 0.3s;
-}
-.select-clicked{
-    border: 2px #26489a solid;
-    box-shadow: 0 0 0.8em #26489a;
-}
-.select:hover {
-    background: #9eb0d6;
-}
-.caret {
-    width: 0;
-    height: 0;
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
-    border-top: 6px solid #000000;
-    transition: 0.3s;
-}
-.caret {
-    transform: rotate(180deg);
-}
-.list_menu {
-    list-style: none;
-    padding: 0.2em 0.5em;
-    background: #476fbf;
-    border: 1px #e0a184 solid;
-    box-shadow: 0 0.5em 1em rgba(224, 201, 27, 0.2);
-    border-radius: 10px;
-    color: #9fa5b5;
-    position: absolute;
-    top: 3em;
-    left: 50%;
+.dropdown {
     width: 100%;
-    transform: translateX(-50%);
-    opacity: 0;
-    display: none;
-    transition: 0.2s;
-    z-index: 1;
 }
-.list_menu li {
-    padding: 0.7em 0.5em;
-    margin:  0.3em 0;
+
+.dropdown select {
+    width: 100%;
+    height: 32px;
+    margin-top: 5px;
+    margin-bottom: 20px;
     border-radius: 10px;
-    cursor: pointer;
-}
-.list_menu li:hover {
-    background: #d61378;
-}
-.list_menu.active {
-    background: #33b621;
-}
-.list_menu-open {
-    display: block;
-    opacity: 1;
+    font-size: 15px;
+    border: #000000 1px solid;
 }
 
 /* * * Device-data Part (Graph) * * */
