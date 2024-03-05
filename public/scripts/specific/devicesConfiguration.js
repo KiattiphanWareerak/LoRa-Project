@@ -25,9 +25,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const isDeviceDisabled = document.getElementById("device_disabled-check").checked;
             const isFrameCounterValidationDisabled = document.getElementById("frame-counter-validation_disabled-check").checked;
 
-            // ดึง device profile ID
-            const selectElement = document.getElementById("deviceProfile_List");
-            const selectedDeviceProfileId = selectElement.value;
+            // Get the select element from device profile by its ID
+            const selected_devProfile = document.getElementById("deviceProfile_List");
+
+            // Get the value of the currently selected option
+            const selectedValue = selected_devProfile.value;
 
             const data = {
                 app_id: undefined,
@@ -35,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 dev_id: devId,
                 dev_joinEui: joinId,
                 dev_desc: deviceDescription,
-                dev_devProfId: selectedDeviceProfileId,
+                dev_devProfId: selectedValue,
                 dev_IsDis: isDeviceDisabled,
                 dev_SkFntC: isFrameCounterValidationDisabled,
                 dev_key: appKey,
@@ -448,11 +450,12 @@ function displayConfigurationsDevice(dev_config, dev_Profiles, dev_key, dev_acti
     }
 
     // Get the select element by its device profile ID
-    const selected_devProfile = document.getElementById("deviceProfile_List");
-    const deviceProfileId = deviceData.deviceProfileId; // Assuming deviceData.deviceProfileId holds the desired value
+    var selected_devProfile = document.getElementById("deviceProfile_List");
+    var deviceProfileId = deviceData.deviceProfileId; // Assuming deviceData.deviceProfileId holds the desired value
 
+    console.log('now profileID:', deviceProfileId);
     // Find the option with the desired value
-    const optionToSelect = selected_devProfile.querySelector(`option[value="${deviceProfileId}"]`);
+    var optionToSelect = selected_devProfile.querySelector(`option[value="${deviceProfileId}"]`);
 
     if (optionToSelect) {
         // If the option exists, set it as selected
