@@ -13,11 +13,37 @@ document.addEventListener('DOMContentLoaded', () => {
         const addAppConfirm = () => {
             let appNameInput = document.getElementById('appNameInput');
             let descriptionInput = document.getElementById('descriptionInput');
-            let appIntgInput = document.getElementById('appIntgInput');
 
             let appNameValue = appNameInput.value.trim();
-
             let appNameRegex = /^[a-zA-Z0-9_\-@]+$/;
+
+            // integration-checkboxes
+            var checkboxes = document.querySelectorAll(".integration-checkboxes input[type='checkbox']");
+
+            var isChecked = false;
+            checkboxes.forEach(function(checkbox) {
+                if (checkbox.checked) {
+                    isChecked = true;
+                }
+            });
+
+            if (!isChecked) {
+                alert("Please select at least one integration checkbox, which allows only one selection.");
+                return;
+            }
+
+            let appIntgInput;
+            checkboxes.forEach(function(checkbox) {
+                if (checkbox.checked) {
+                    if (checkbox.id === "influxDB") {
+                        console.log("InfluxDB checkbox is checked!");
+                        appIntgInput = 'influxDB';
+                    } else {
+                        console.log("Other checkbox is checked!");
+                        appIntgInput = 'other';
+                    }
+                }
+            });
 
             if (appNameValue === '') {
                 alert('Please enter the application name.');

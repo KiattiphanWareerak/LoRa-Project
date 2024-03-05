@@ -11,6 +11,11 @@ registerSocket.addEventListener('message', (event) => {
     const messageFromServer = JSON.parse(event.data);
     console.log('Message from server:', messageFromServer);
 
+    const input_un = document.getElementById('user-name');
+    const input_em = document.getElementById('email');
+    const input_pw = document.getElementById('password');
+    const input_pw_cf = document.getElementById('confirm-password');
+
     if (messageFromServer.request === 'register') {
         if (messageFromServer.message.status === 'failed') {
             if (messageFromServer.message.data.check_un === true) {

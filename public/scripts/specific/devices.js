@@ -18,7 +18,13 @@ deviceSocket.addEventListener('message', (event) => {
         if (messageFromServer.message.status === 'success') {
             alert('Application has been updated.');
 
-            sendDevicesListRequest();
+            const req = {
+                request: 'dispDev', message: {
+                    status: undefined,
+                    data: undefined
+                }
+            };
+            sendRequset(req);
         } else {
             alert('Update application has been failed.');
         }
@@ -26,7 +32,13 @@ deviceSocket.addEventListener('message', (event) => {
         if (messageFromServer.message.status === 'success') {
             alert('Add device has been completed.');
 
-            sendDevicesListRequest();
+            const req = {
+                request: 'dispDev', message: {
+                    status: undefined,
+                    data: undefined
+                }
+            };
+            sendRequset(req);
         } else {
             alert('Add device has been failed.');
         }
@@ -34,7 +46,13 @@ deviceSocket.addEventListener('message', (event) => {
         if (messageFromServer.message.status === 'success') {
             alert('Delete application has been completed.');
 
-            sendDevicesListRequest();
+            const req = {
+                request: 'dispDev', message: {
+                    status: undefined,
+                    data: undefined
+                }
+            };
+            sendRequset(req);
         } else {
             alert('Delete application has been failed.');
         }
@@ -110,7 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 data: undefined
             }
         };
-        sendRequset(req);
+        deviceSocket.send(JSON.stringify(req));
     };
 
     appConfigButton.addEventListener('click', (event) => {
@@ -142,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     data: message
                 }
             };
-            sendRequset(req);
+            deviceSocket.send(JSON.stringify(req));
 
             appNameInput.value = '';
             descriptionInput.value = '';
@@ -185,7 +203,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 data: messageToAddDev
             }
         };
-        sendRequset(req);
+        deviceSocket.send(JSON.stringify(req));
 
         devKeyInput.value = '';
         document.getElementById('dev_AddDevice').style.display = "none";

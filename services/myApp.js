@@ -12,7 +12,14 @@ async function myApp(values) {
     try {
         return new Promise(async (resolve, reject) => {
             if (values.request === 'addApp') {
-                if (values.message.data.app_intg === true) {
+                const respFromApiToken = await dataBaseServices.getApiTokenFromDB();
+
+                if (respFromApiToken.request === 'getApiToken' && respFromApiToken.message.status === 'failed') {
+                    resolve({ request: 'register', message: { status: 'failed', data: undefined } });
+                    return;
+                }
+
+                if (values.message.data.app_intg === 'influxDB') {
                     const respFromAddApp = await chirpStackServices.addApplicationRequest(values.message.data,
                         globalUserToken, globalTenantId);
 
@@ -24,7 +31,7 @@ async function myApp(values) {
                                 respFromApiToken.message.data[0].influx_token);
 
                             if (respFromCreateBuckets.request === 'postBucket' && respFromCreateBuckets.message.status === 'success') {
-                                const respFromGetUserInf = await dataBaseServices.getInfluxDbUser();
+                                const respFromGetUserInf = await dataBaseServices.getInfluxDbUser(respFromApiToken.message.data[0].influx_token);
 
                                 const matchingUser = respFromGetUserInf.message.data.users.find(user => user.name === globalUserName);
 
@@ -33,11 +40,8 @@ async function myApp(values) {
 
                                     const respFromAddMems = await dataBaseServices.addMemberInfluxDb(respFromCreateOrgInfluxDb.message.data,
                                         matchingUser.id, respFromApiToken.message.data[0].influx_token);
-                                    const respFromAddRole = await dataBaseServices.addRoleInfluxDb(respFromCreateOrgInfluxDb.message.data, matchingUser.id,
-                                        respFromApiToken.message.data[0].influx_token);
 
-                                    if (respFromAddMems.request === 'postAddMember' && respFromAddMems.message.status === 'success'
-                                        && respFromAddRole.request === 'postAddRole' && respFromAddRole.message.status === 'success') {
+                                    if (respFromAddMems.request === 'postAddMember' && respFromAddMems.message.status === 'success') {
                                         // Setup InfluxDB completed
                                         // ...         
                                         const respFromIntgApp = await chirpStackServices.createInfluxDbIntegrationRequest(respFromAddApp.message.data.id,

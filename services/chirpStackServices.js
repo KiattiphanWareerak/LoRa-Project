@@ -1207,7 +1207,7 @@ async function getMainDashboard(tenantId, csTenantId, apiToken) {
   try {
     let data = {
       gateways_list: {},
-      geteways_summary: {},
+      gateways_summary: {},
       devs_summary: {}
     };
 
@@ -1233,7 +1233,7 @@ async function getMainDashboard(tenantId, csTenantId, apiToken) {
 
       const respFromGetewaysSummary = await getGatewaysSummaryRequest(csTenantId, apiToken);
       if (respFromGetewaysSummary.message.status === 'success') {
-        data.geteways_summary = respFromGetewaysSummary.message.data;
+        data.gateways_summary = respFromGetewaysSummary.message.data;
       }
       const respFromDevicesSummary = await getDevicesSummaryRequest(tenantId, apiToken);
       if (respFromDevicesSummary.message.status === 'success') {

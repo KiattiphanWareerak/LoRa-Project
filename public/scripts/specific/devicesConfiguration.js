@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
             };
             sendRequset(req);
         });
-        //-----------------------------------//
+
         // submit enqueue button
         const enqueueButton = document.getElementById("send_enqueue");
 
@@ -75,6 +75,32 @@ document.addEventListener('DOMContentLoaded', () => {
                 request: 'enqueueDev', message: {
                     status: undefined,
                     data: data
+                }
+            };
+            sendRequset(req);
+        });
+
+        // reload queue button
+        const reloadQueueButton = document.getElementById("queue_reload");
+
+        reloadQueueButton.addEventListener("click", () => {
+            const req = {
+                request: 'getDevQueues', message: {
+                    status: undefined,
+                    data: undefined
+                }
+            };
+            sendRequset(req);
+        });
+        //-----------------------------------//
+        // flush queue button
+        const flushQueueButton = document.getElementById("queue_flush");
+
+        flushQueueButton.addEventListener("click", () => {
+            const req = {
+                request: 'flushQueueDev', message: {
+                    status: undefined,
+                    data: undefined
                 }
             };
             sendRequset(req);
@@ -302,24 +328,6 @@ document.addEventListener('DOMContentLoaded', () => {
             };
             sendRequset(req);
         }
-    }
-    function flush_function() {
-        const req = {
-            request: 'flushQueueDev', message: {
-                status: undefined,
-                data: undefined
-            }
-        };
-        sendRequset(req);
-    }
-    function reload_function() {
-        const req = {
-            request: 'getDevQueues', message: {
-                status: undefined,
-                data: undefined
-            }
-        };
-        sendRequset(req);
     }
 });
 //---------------------------------------------------------------------// 

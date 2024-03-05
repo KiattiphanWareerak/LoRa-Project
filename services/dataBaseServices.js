@@ -179,7 +179,7 @@ async function addRoleInfluxDb(org, usrId, INFLUX_API_TOKEN) {
     console.log(error);
   }
 }
-//---------------------------------------------------------------------// 
+//---------------------------------------------------------------------//
 async function getInfluxDbUser(INFLUX_API_TOKEN) {
   try {
     const headers = {
