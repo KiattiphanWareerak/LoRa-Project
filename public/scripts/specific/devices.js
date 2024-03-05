@@ -412,8 +412,27 @@ function displayHeaderAndMiddleTitle(items) {
     headerTitleDiv.appendChild(newH1Element);
     locatedDiv.appendChild(newH4Element);
 }
-function displayDeviceProfilesDropDown(items) {
+function displatDeviceProfilesDropDown(items) {
+    const total_devProfile = items.totalCount;
+    const user_devProfiles = items.resultList;
 
+    // Get the select element by its id
+    const selectElement = document.getElementById("deviceProfile_List");
+
+    for (var added_option = 0; added_option < total_devProfile; added_option++) {
+        var devProfile_name = user_devProfiles[added_option].name;
+        var devProfile_id = user_devProfiles[added_option].id;
+
+        // Create a new option element
+        var deviceProfile = document.createElement("option");
+
+        // Set the value and text of the new option
+        deviceProfile.value = devProfile_id;
+        deviceProfile.text = devProfile_name;
+
+        // Append the new option to the select element
+        selectElement.appendChild(deviceProfile);
+    }
 }
 //---------------------------------------------------------------------// 
 //----------------------------COMMONS ZONE-----------------------------// 
@@ -433,13 +452,11 @@ const generate128BitRandom = () => {
     const buffer = crypto.getRandomValues(new Uint8Array(16));
     const hexString = Array.from(buffer).map(byte => byte.toString(16).padStart(2, '0')).join('');
     return hexString;
-
 }
 const generate64BitRandom = () => {
     const buffer = crypto.getRandomValues(new Uint8Array(8));
     const hexString = Array.from(buffer).map(byte => byte.toString(16).padStart(2, '0')).join('');
     return hexString;
-
 }
 //---------------------------------------------------------------------//
 
