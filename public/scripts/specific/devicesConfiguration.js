@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const isDeviceDisabled = document.getElementById("device_disabled-check").checked;
             const isFrameCounterValidationDisabled = document.getElementById("frame-counter-validation_disabled-check").checked;
 
-            // ดึง device profile ID  ////////////////////////////////////////////////////////// not yet
+            // ดึง device profile ID
             const selectElement = document.getElementById("deviceProfile_List");
             const selectedDeviceProfileId = selectElement.value;
 
@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     data: data
                 }
             };
-            // sendRequset(req);
+            sendRequset(req);
         });
 
         // submit enqueue button

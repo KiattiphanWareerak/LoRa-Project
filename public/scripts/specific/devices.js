@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
         })
 
 
-        // Add device confirm button
+        // Add device button
         const addDevNextButton = document.getElementById("addDevNext");
         const addDevConfirmButton = document.getElementById("addDevConfirm");
         let messageToAddDev;
@@ -98,6 +98,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const nextAddDev = () => {
             let devNameInput = document.getElementById('devNameInput');
             let devIdInput = document.getElementById('devIdInput');
+            const selectElement = document.getElementById("deviceProfile_List");
+            const selectedDeviceProfileId = selectElement.value;
 
             let devNameValue = devNameInput.value.trim();
             let devNameRegex = /^[a-zA-Z0-9_\-@]+$/;
@@ -109,7 +111,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert('Please enter the device name in English lowercase-uppercase, numbers 0-9, "_", "-", and "@".');
                 return;
             }
-            messageToAddDev = { dev_name: devNameInput.value, dev_id: devIdInput.value };
+            messageToAddDev = { dev_name: devNameInput.value, 
+                dev_id: devIdInput.value, 
+                dev_devProfId: selectedDeviceProfileId };
 
             devIdInput.value = '';
             devNameInput.value = '';
@@ -412,7 +416,7 @@ function displayHeaderAndMiddleTitle(items) {
     headerTitleDiv.appendChild(newH1Element);
     locatedDiv.appendChild(newH4Element);
 }
-function displatDeviceProfilesDropDown(items) {
+function displayDeviceProfilesDropDown(items) {
     const total_devProfile = items.totalCount;
     const user_devProfiles = items.resultList;
 
