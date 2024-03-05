@@ -26,8 +26,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const isFrameCounterValidationDisabled = document.getElementById("frame-counter-validation_disabled-check").checked;
 
             // ดึง device profile ID  ////////////////////////////////////////////////////////// not yet
-            const activeElement = document.querySelector(".list_menu li.active");
-            const deviceProfileId = activeElement.getAttribute("value");
+            const selectElement = document.getElementById("deviceProfile_List");
+            const selectedDeviceProfileId = selectElement.value;
 
             const data = {
                 app_id: undefined,
@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 dev_id: devId,
                 dev_joinEui: joinId,
                 dev_desc: deviceDescription,
-                dev_devProfId: deviceProfileId,
+                dev_devProfId: selectedDeviceProfileId,
                 dev_IsDis: isDeviceDisabled,
                 dev_SkFntC: isFrameCounterValidationDisabled,
                 dev_key: appKey,
@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     data: data
                 }
             };
-            sendRequset(req);
+            // sendRequset(req);
         });
 
         // submit enqueue button
@@ -431,7 +431,7 @@ function displayConfigurationsDevice(dev_config, dev_Profiles, dev_key, dev_acti
 
     // Get the select element by its id
     const selectElement = document.getElementById("deviceProfile_List");
-
+    
     for (var added_option = 0; added_option < total_devProfile; added_option++) {
         var devProfile_name = user_devProfiles[added_option].name;
         var devProfile_id = user_devProfiles[added_option].id;

@@ -112,10 +112,10 @@ async function addDeviceRequest(values, apiToken, appId) {
       newDevice.setApplicationId(appId);
       newDevice.setName(values.dev_name);
       newDevice.setDevEui(values.dev_id);
-      newDevice.setDeviceProfileId('222ebb6d-e497-4ef2-825b-db8ec5fd1680');
+      newDevice.setDeviceProfileId(values.dev_devProfId);
       newDevice.setDescription("");
       newDevice.setIsDisabled(false);
-      newDevice.setSkipFcntCheck(true);
+      newDevice.setSkipFcntCheck(false);
 
       // Create a request to add a new device.
       const createReq = new device_pb.CreateDeviceRequest();

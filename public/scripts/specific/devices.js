@@ -25,10 +25,6 @@ document.addEventListener('DOMContentLoaded', () => {
         addDeviceButton.addEventListener("click", (event) => {
             event.preventDefault();
     
-            let devIdInput = document.getElementById('devIdInput');
-            devIdInput.value = generate64BitRandom();
-            console.log(generate64BitRandom());
-    
             const req = {
                 request: 'getDevProfList', message: {
                     status: undefined,
@@ -119,8 +115,6 @@ document.addEventListener('DOMContentLoaded', () => {
             devNameInput.value = '';
             document.getElementById('dev_AddDevice').style.display = "none";
             document.getElementById('dev_AddAppkey').style.display = "block";
-            let devKeyInput = document.getElementById('devKeyInput');
-            devKeyInput.value = generate128BitRandom();
         };
 
         const addDevConfirm = () => {
@@ -236,7 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (messageFromServer.request === 'enterAppId' || messageFromServer.request === 'dispDev') {
             if (messageFromServer.message.status === 'success') {
-                displatHeaderAndMiddleTitle(messageFromServer.message.data.app_name);
+                displayHeaderAndMiddleTitle(messageFromServer.message.data.app_name);
                 displayDevicesList(messageFromServer.message.data.devs_list);
             } else {
                 alert('Devices list failed.');
@@ -285,13 +279,13 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } else if (messageFromServer.request === 'getApp') {
             if (messageFromServer.message.status === 'success') {
-                displatApplicationConfiguration(messageFromServer.message.data.app_config);
+                displayApplicationConfiguration(messageFromServer.message.data.app_config);
             } else {
                 alert('Get application has been failed.');
             }
         } else if (messageFromServer.request === 'getDevProfList') {
             if (messageFromServer.message.status === 'success') {
-                displatDeviceProfilesDropDown(messageFromServer.message.data);
+                displayDeviceProfilesDropDown(messageFromServer.message.data);
             } else {
                 console.log('Device profile list has been failed.');
             }
@@ -320,7 +314,7 @@ document.addEventListener('DOMContentLoaded', () => {
 //---------------------------------------------------------------------// 
 //---------------------------DISPLAYS ZONE-----------------------------// 
 //---------------------------------------------------------------------// 
-function displatApplicationConfiguration(items) {
+function displayApplicationConfiguration(items) {
     // Application Configuration Modal
     let appNameInput = document.getElementById('appNameInput');
     let descriptionInput = document.getElementById('descriptionInput');
@@ -401,7 +395,7 @@ function displayDevicesList(items) {
         tbody.appendChild(row);
     });
 }
-function displatHeaderAndMiddleTitle(items) {
+function displayHeaderAndMiddleTitle(items) {
     // Header and Middle title
     let newPElement = document.createElement('p');
     let newH1Element = document.createElement('h1');
@@ -418,7 +412,7 @@ function displatHeaderAndMiddleTitle(items) {
     headerTitleDiv.appendChild(newH1Element);
     locatedDiv.appendChild(newH4Element);
 }
-function displatDeviceProfilesDropDown(items) {
+function displayDeviceProfilesDropDown(items) {
 
 }
 //---------------------------------------------------------------------// 
