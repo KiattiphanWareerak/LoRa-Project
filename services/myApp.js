@@ -3,6 +3,7 @@
 // Set services
 const chirpStackServices = require('./chirpStackServices.js');
 const dataBaseServices = require('./dataBaseServices.js');
+const nodemailer = require('nodemailer');
 //---------------------------------------------------------------------//
 //Set values stored
 let globalUserToken, globalUserId, globalTenantId, globalUserName;
@@ -586,6 +587,95 @@ async function myApp(values) {
                     return;
                 }
             }
+            else if (values.request === 'forgotPassword') {
+                const respFromApiToken = await dataBaseServices.getApiTokenFromDB();
+
+                if (respFromApiToken.request === 'getApiToken' && respFromApiToken.message.status === 'failed') {
+                    resolve({ request: 'forgotPassword', message: { status: 'failed', data: undefined } });
+                    return;
+                }
+
+                const respFromUserList = await chirpStackServices.getUsersListRequest(respFromApiToken.message.data[0].cs_token);
+
+                if ( respFromUserList.request === 'getUsersList' && respFromUserList.message.status === 'success' ) {
+                    const resultCheckUserEmail = await checkUserEmail(values.message.data.user_em, respFromUserList.message.data);
+
+                    if ( resultCheckUserEmail.request === 'checkUserEmail' && resultCheckUserEmail.message.status === 'failed' ) {
+                        console.log(resultCheckUserEmail);
+                        globalUserId = resultCheckUserEmail.id;
+                        const userEmail = values.message.data.user_em;
+
+                        const transporter = nodemailer.createTransport({
+                            service: 'gmail',
+                            auth: {
+                                user: 'ten_5u@hotmail.com',
+                                pass: '_Ten5u7985'
+                            }
+                        });
+
+                        const mailOptions = {
+                            from: 'ten_5u@hotmail.com',
+                            to: userEmail,
+                            subject: 'Password Reset Request',
+                            text: 'Please click on the following link to reset your password: http://localhost/crp.html'
+                        };
+
+                        transporter.sendMail(mailOptions, (error, info) => {
+                            if (error) {
+                                console.log(error);
+                                resolve({ request: 'forgotPassword', message: { status: 'failed', data: undefined } });
+                            } else {
+                                console.log('Email sent: ' + info.response);
+                                resolve({ request: 'forgotPassword', message: { status: 'success', data: undefined } });
+                            }
+                        });
+                    } else {
+                        resolve({ request: 'forgotPassword', message: { status: 'failed', data: undefined } });
+                    }
+                } else {
+                    resolve({ request: 'forgotPassword', message: { status: 'failed', data: undefined } });
+                }
+            }
+            else if (values.request === 'updatePassword') {
+                const respFromApiToken = await dataBaseServices.getApiTokenFromDB();
+
+                if (respFromApiToken.request === 'getApiToken' && respFromApiToken.message.status === 'failed') {
+                    resolve({ request: 'updatePassword', message: { status: 'failed', data: undefined } });
+                    return;
+                }
+
+                const respFromUpdatePw = await chirpStackServices.updatePasswordUserRequest(globalUserId, values.message.data.user_pw, respFromApiToken.message.data[0].cs_token);
+
+                if (respFromUpdatePw.request === 'updatePassword' && respFromUpdatePw.message.status === 'success') {
+                    const respFromUserListIflux = await dataBaseServices.getUserListInfluxDb(respFromApiToken.message.data[0].influx_token);
+
+                    if (respFromUserListIflux.request === 'listUsersInflux' && respFromUserListIflux.message.status === 'success') {
+                        const matchedUsers = respFromUserListIflux.users.filter(user => user.name === values.message.data.user_un);
+
+                        if (matchedUsers.length > 0) {
+                          console.log(`Found user with`);
+                          matchedUsers.forEach(user => {
+                            console.log(`User ID: ${user.id}, Name: ${user.name}`);
+                          });
+                          
+                          const respFromUpPwIflux = await dataBaseServices.updatePasswordInfluxDb(matchedUsers.id, values.message.data,respFromApiToken.message.data[0].influx_token);
+
+                          if (respFromUpPwIflux.request === 'postUpPw' && respFromUpPwIflux.message.status === 'success') {
+                            resolve({ request: 'updatePassword', message: { status: 'success', data: undefined } });
+                          } else {
+                            resolve({ request: 'updatePassword', message: { status: 'failed', data: undefined } });
+                          }
+                        } else {
+                          console.log(`No user found with name '${values.message.data.user_un}'.`);
+                          resolve({ request: 'updatePassword', message: { status: 'failed', data: undefined } });
+                        }
+                    } else {
+                        resolve({ request: 'updatePassword', message: { status: 'failed', data: undefined } });
+                    }
+                } else {
+                    resolve({ request: 'updatePassword', message: { status: 'failed', data: undefined } });
+                }
+            }    
             else {
                 resolve({ request: 'unknow', message: { status: 'failed', data: 'Unknow request from Client.' } });
             }
@@ -607,7 +697,7 @@ async function checkUserEmail(em, emList) {
             const emailExists = emList.find(emails => emails.email === em);
 
             if (emailExists) {
-                resolve({ request: 'checkUserEmail', message: { status: 'failed', data: undefined } });
+                resolve({ request: 'checkUserEmail', message: { status: 'failed', data: emailExists } });
             } else {
                 resolve({ request: 'checkUserEmail', message: { status: 'success', data: undefined } });
             }

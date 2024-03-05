@@ -10,11 +10,10 @@ const server = http.createServer(app);
 
 // set the service
 const checkReq = require('./services/myApp.js');
-const { log } = require('console');
 
 // Set the port and IP address for the server
 const PORT = 3002;
-const IP_ADDRESS = 'localhost';
+const IP_ADDRESS = '0.0.0.0';
 
 // use body-parser to fecth JSON from req.body
 app.use(bodyParser.json());

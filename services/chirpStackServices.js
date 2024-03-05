@@ -1619,6 +1619,44 @@ async function profileUserRequest(apiToken) {
   }
 }
 //---------------------------------------------------------------------//
+async function updatePasswordUserRequest(uId, uPw, apiToken) {
+  try {
+    // Create the Metadata object.
+    const metadata = new grpc.Metadata();
+    metadata.set("authorization", "Bearer " + apiToken);
+
+    return new Promise((resolve, reject) => {
+      // Create a empty.
+      const createReq = new user_pb.UpdateUserPasswordRequest();
+      createReq.setUserId(uId);
+      createReq.setPassword(uPw);
+
+      internalService.profile(createReq, metadata, (err, resp) => {
+        if (err !== null) {
+          console.log(err);
+          resolve({
+            request: 'updatePassword', message: {
+              status: 'failed',
+              data: undefined
+            }
+          });
+          return;
+        }
+        console.log('Update Password has been completed.');
+
+        resolve({
+          request: 'updatePassword', message: {
+            status: 'success',
+            data: resp.toObject()
+          }
+        });
+      });
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+//---------------------------------------------------------------------//
 module.exports = {
   addApplicationRequest,
   addDeviceRequest,
@@ -1654,7 +1692,8 @@ module.exports = {
   loginUserRequest,
   profileUserRequest,
   postDeviceConfigurationRequest,
-  postDeviceKeyRequest
+  postDeviceKeyRequest,
+  updatePasswordUserRequest
 };
 //---------------------------------------------------------------------//
 //----------------------------COMMON ZONE------------------------------//

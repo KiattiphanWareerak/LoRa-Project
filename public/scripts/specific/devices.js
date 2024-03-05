@@ -1,8 +1,9 @@
 //---------------------------------------------------------------------// 
 //----------------------------EVENTS ZONE------------------------------// 
 //---------------------------------------------------------------------//
+const deviceSocket = new WebSocket('ws://localhost:3001');
+
 document.addEventListener('DOMContentLoaded', () => {
-    const deviceSocket = new WebSocket('ws://localhost:3001');
     //---------------------------SENDER ZONE---------------------------//
     deviceSocket.addEventListener('open', () => {
         console.log('WebSocket connection established with WebServer from devices');
@@ -24,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const addDeviceButton = document.getElementById('addDeviceButton');
         addDeviceButton.addEventListener("click", (event) => {
             event.preventDefault();
-    
+
             const req = {
                 request: 'getDevProfList', message: {
                     status: undefined,
@@ -104,16 +105,18 @@ document.addEventListener('DOMContentLoaded', () => {
             let devNameValue = devNameInput.value.trim();
             let devNameRegex = /^[a-zA-Z0-9_\-@]+$/;
 
-            if ( devNameValue.value === '') {
+            if (devNameValue.value === '') {
                 alert('Please enter the device name.');
                 return;
             } else if (!devNameRegex.test(devNameValue)) {
                 alert('Please enter the device name in English lowercase-uppercase, numbers 0-9, "_", "-", and "@".');
                 return;
             }
-            messageToAddDev = { dev_name: devNameInput.value, 
-                dev_id: devIdInput.value, 
-                dev_devProfId: selectedDeviceProfileId };
+            messageToAddDev = {
+                dev_name: devNameInput.value,
+                dev_id: devIdInput.value,
+                dev_devProfId: selectedDeviceProfileId
+            };
 
             devIdInput.value = '';
             devNameInput.value = '';
@@ -362,24 +365,21 @@ function displayDevicesList(items) {
             let devId = this.getAttribute('dev-id');
             let devName = item.name;
 
-            const deviceSocket = new WebSocket('ws://localhost:3001');
-
-            deviceSocket.addEventListener('open', () => {
-                const req = {
-                    request: 'enterDevId',
-                    message: {
-                        status: undefined,
-                        data: {
-                            dev_id: devId, dev_name: devName,
-                            timeAgo: "1m",
-                            aggregation: "DAY"
-                        }
+            const req = {
+                request: 'enterDevId',
+                message: {
+                    status: undefined,
+                    data: {
+                        dev_id: devId, dev_name: devName,
+                        timeAgo: "1m",
+                        aggregation: "DAY"
                     }
-                };
-                deviceSocket.send(JSON.stringify(req));
-    
-                window.location.href = 'devicesConfiguration.html';
-            });
+                }
+            };
+            deviceSocket.send(JSON.stringify(req));
+
+            window.location.href = 'devicesConfiguration.html';
+
         });
         devNameLink.textContent = item.name;
         devNameCell.appendChild(devNameLink);

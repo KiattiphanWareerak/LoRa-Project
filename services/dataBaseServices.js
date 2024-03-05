@@ -128,6 +128,28 @@ async function updatePasswordInfluxDb(usr, items, INFLUX_API_TOKEN) {
   }
 }
 //---------------------------------------------------------------------//
+async function getUserListInfluxDb(INFLUX_API_TOKEN) {
+  try {
+    const headers = {
+      Authorization: `Token ${INFLUX_API_TOKEN}`,
+      'Content-Type': 'application/json',
+    };
+  
+    try {
+      return new Promise(async (resolve, reject) => {
+        const response = await axios.get(`${INFLUX_URL}/api/v2/users`, { headers });
+        console.log('List of users:', response.data);
+        resolve({ request: 'listUsersInflux', message: { status: 'success', data: response.data }});
+      });
+    } catch (error) {
+      console.error('Error listing users:', error);
+      return { request: 'listUsersInflux', message: { status: 'failed', data: undefined } };
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+//---------------------------------------------------------------------//
 async function addMemberInfluxDb(org, usrId, INFLUX_API_TOKEN) {
   try {
     const member = {
@@ -292,7 +314,8 @@ module.exports = {
   addRoleInfluxDb,
   getApiTokenFromDB,
   getCSTenantIdFromDB,
-  getInfluxDbUser
+  getInfluxDbUser,
+  getUserListInfluxDb,
 };
 //---------------------------------------------------------------------//
 //----------------------------COMMON ZONE------------------------------//

@@ -1,11 +1,12 @@
-//---------------------------------------------------------------------// 
-//----------------------------EVENTS ZONE------------------------------// 
 //---------------------------------------------------------------------//
+//----------------------------EVENTS ZONE------------------------------//
+//---------------------------------------------------------------------//
+const deviceConfigSocket = new WebSocket('ws://localhost:3001');
+
 let sentRequests = {};
 let checkPayload = true;
 
 document.addEventListener('DOMContentLoaded', () => {
-    const deviceConfigSocket = new WebSocket('ws://localhost:3001');
     //---------------------------SENDER ZONE---------------------------//
     deviceConfigSocket.addEventListener('open', () => {
         console.log('WebSocket connection established with WebServer from devices');
