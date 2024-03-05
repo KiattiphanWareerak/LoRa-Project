@@ -4,26 +4,44 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FAQs</title>
-    <link rel="stylesheet" href="styles/mainStyles.css" />
+    <link rel="stylesheet" href="applications.css" />
 </head>
 <body>
-  <div class="faq">
-    <section>
-        <h2 class="title">FAQs</h2>
-        <div class="question">
-            <h3>Getting Started</h3>
-            <svg width="15" height="10" viewBox="0 0 42 25">
-                <path d="M3 3L21 21L39 3" stroke="black" stroke-width="7" stroke-linecap="round" />
-            </svg>
-            <hr>
-        </div>
-        <div class="answer">
-            <p>(1) Add Application</p>
-            <p>(2) Add Device</p>
-            <p>(3) Start Communication</p>
-        </div>
-    </section>
-  </div>
+    <div class="enqueue_table">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Pending</th>
+                    <th>Encrypted</th>
+                    <th>Frame-counter</th>
+                    <th>Confirmed</th>
+                    <th>Fport</th>
+                    <th>Data</th>
+                </tr>
+            </thead>
+            <tbody id="enqueue_data">
+                <tr>
+                    <td>...</td>
+                    <td>...</td>
+                    <td>...</td>
+                    <td>...</td>
+                    <td>...</td>
+                    <td>...</td>
+                    <td>...</td>
+                </tr>
+                <tr>
+                    <td>a</td>
+                    <td>b</td>
+                    <td>c</td>
+                    <td>d</td>
+                    <td>e</td>
+                    <td>f</td>
+                    <td>g</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </body>
     <script src="scripts/webScript.js"></script>
 </html>

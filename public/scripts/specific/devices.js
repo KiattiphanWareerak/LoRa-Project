@@ -414,6 +414,7 @@ function displatHeaderAndMiddleTitle(items) {
     headerTitleDiv.appendChild(newH1Element);
     locatedDiv.appendChild(newH4Element);
 }
+
 function displatDeviceProfilesDropDown(items) {
     const total_devProfile = items.totalCount;
     const user_devProfiles = items.resultList;
@@ -424,6 +425,7 @@ function displatDeviceProfilesDropDown(items) {
     for (var added_option = 0; added_option < total_devProfile; added_option++) {
         var devProfile_name = user_devProfiles[added_option].name;
         var devProfile_id = user_devProfiles[added_option].id;
+
 
         // Create a new option element
         var deviceProfile = document.createElement("option");
