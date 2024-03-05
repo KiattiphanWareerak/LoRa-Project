@@ -129,7 +129,7 @@
                 <textarea name="Description" placeholder="Description" id="descriptionInput" cols="30" rows="5"></textarea>
             </div>
             <!-- Checkboxes -->
-            <div class="integration-containner"> Integration
+            <!-- <div class="integration-containner"> Integration
                 <div class="integration-checkboxes">
                     <div class="checkbox-containner">
                         <input type="checkbox" id="influxDB" name="integration" value="influxDB">
@@ -140,7 +140,7 @@
                         <div>Other</div>
                     </div>
                 </div>
-            </div>
+            </div> -->
             <!-- Submit button -->
             <div>
                 <button class="modal_button" id="appConfigConfirm">Submit</button>
@@ -171,9 +171,9 @@
 
         <!-- Add Appkey Modal -->
         <div class="form" id="dev_AddAppkey">
-            <span class="close" onclick="closeModal('dev_AddAppkey')">&times;</span>
             <div class="form_headder">
                 <h4>Add Device > Appkey or OTAA key</h4>
+                <i class="fa-solid fa-circle-xmark" onclick="closeModal('dev_AddAppkey')"></i>
             </div>
             <!-- Form inputs -->
             <div>
