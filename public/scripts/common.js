@@ -422,7 +422,7 @@ function sendRequset(data) {
   commonSocket.addEventListener('open', () => {
     console.log('WebSocket connection established with WebServer');
 
-    if (socket.readyState === WebSocket.OPEN) {
+    if (commonSocket.readyState === WebSocket.OPEN) {
       commonSocket.send(JSON.stringify(data));
     } else {
       console.log('WebSocket not ready, message not sent!');
