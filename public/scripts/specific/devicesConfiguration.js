@@ -433,7 +433,7 @@ function displayConfigurationsDevice(dev_config, dev_Profiles, dev_key, dev_acti
 
     // Get the select element by its id
     const selectElement = document.getElementById("deviceProfile_List");
-
+    
     for (var added_option = 0; added_option < total_devProfile; added_option++) {
         var devProfile_name = user_devProfiles[added_option].name;
         var devProfile_id = user_devProfiles[added_option].id;

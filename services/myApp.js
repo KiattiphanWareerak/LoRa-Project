@@ -470,10 +470,17 @@ async function myApp(values) {
                 resolve({ request: 'logout', message: { status: 'success', data: undefined } });
             }
             else if (values.request === 'postDevConfigConfirm') {
-                const respPostDevConfig = await chirpStackServices.postDeviceConfigurationRequest(values.message.data, globalAppId, globalUserToken);
+                const respFromApiToken = await dataBaseServices.getApiTokenFromDB();
+
+                if (respFromApiToken.request === 'getApiToken' && respFromApiToken.message.status === 'failed') {
+                    resolve({ request: 'postDevConfigConfirm', message: { status: 'failed', data: undefined } });
+                    return;
+                }
+
+                const respPostDevConfig = await chirpStackServices.postDeviceConfigurationRequest(values.message.data, globalAppId, respFromApiToken.message.data[0].cs_token);
 
                 if (respPostDevConfig.request === 'postDev' && respPostDevConfig.message.status === 'success') {
-                    const respPostDevKey = await chirpStackServices.postDeviceKeyRequest(values.message.data, globalUserToken);
+                    const respPostDevKey = await chirpStackServices.postDeviceKeyRequest(values.message.data, respFromApiToken.message.data[0].cs_token);
 
                     if (respPostDevKey.request === 'postDevKey' && respPostDevKey.message.status === 'success') {
 

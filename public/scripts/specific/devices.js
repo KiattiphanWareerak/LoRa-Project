@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
         })
 
 
-        // Add device confirm button
+        // Add device button
         const addDevNextButton = document.getElementById("addDevNext");
         const addDevConfirmButton = document.getElementById("addDevConfirm");
         let messageToAddDev;
@@ -98,6 +98,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const nextAddDev = () => {
             let devNameInput = document.getElementById('devNameInput');
             let devIdInput = document.getElementById('devIdInput');
+            const selectElement = document.getElementById("deviceProfile_List");
+            const selectedDeviceProfileId = selectElement.value;
 
             let devNameValue = devNameInput.value.trim();
             let devNameRegex = /^[a-zA-Z0-9_\-@]+$/;
@@ -109,14 +111,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert('Please enter the device name in English lowercase-uppercase, numbers 0-9, "_", "-", and "@".');
                 return;
             }
-            messageToAddDev = { dev_name: devNameInput.value, dev_id: devIdInput.value };
+            messageToAddDev = { dev_name: devNameInput.value, 
+                dev_id: devIdInput.value, 
+                dev_devProfId: selectedDeviceProfileId };
 
             devIdInput.value = '';
             devNameInput.value = '';
             document.getElementById('dev_AddDevice').style.display = "none";
             document.getElementById('dev_AddAppkey').style.display = "block";
-            let devKeyInput = document.getElementById('devKeyInput');
-            devKeyInput.value = generate128BitRandom();
         };
 
         const addDevConfirm = () => {
@@ -232,7 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (messageFromServer.request === 'enterAppId' || messageFromServer.request === 'dispDev') {
             if (messageFromServer.message.status === 'success') {
-                displatHeaderAndMiddleTitle(messageFromServer.message.data.app_name);
+                displayHeaderAndMiddleTitle(messageFromServer.message.data.app_name);
                 displayDevicesList(messageFromServer.message.data.devs_list);
             } else {
                 alert('Devices list failed.');
@@ -281,13 +283,13 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } else if (messageFromServer.request === 'getApp') {
             if (messageFromServer.message.status === 'success') {
-                displatApplicationConfiguration(messageFromServer.message.data.app_config);
+                displayApplicationConfiguration(messageFromServer.message.data.app_config);
             } else {
                 alert('Get application has been failed.');
             }
         } else if (messageFromServer.request === 'getDevProfList') {
             if (messageFromServer.message.status === 'success') {
-                displatDeviceProfilesDropDown(messageFromServer.message.data);
+                displayDeviceProfilesDropDown(messageFromServer.message.data);
             } else {
                 console.log('Device profile list has been failed.');
             }
@@ -316,7 +318,7 @@ document.addEventListener('DOMContentLoaded', () => {
 //---------------------------------------------------------------------// 
 //---------------------------DISPLAYS ZONE-----------------------------// 
 //---------------------------------------------------------------------// 
-function displatApplicationConfiguration(items) {
+function displayApplicationConfiguration(items) {
     // Application Configuration Modal
     let appNameInput = document.getElementById('appNameInput');
     let descriptionInput = document.getElementById('descriptionInput');
@@ -397,7 +399,7 @@ function displayDevicesList(items) {
         tbody.appendChild(row);
     });
 }
-function displatHeaderAndMiddleTitle(items) {
+function displayHeaderAndMiddleTitle(items) {
     // Header and Middle title
     let newPElement = document.createElement('p');
     let newH1Element = document.createElement('h1');
@@ -414,8 +416,7 @@ function displatHeaderAndMiddleTitle(items) {
     headerTitleDiv.appendChild(newH1Element);
     locatedDiv.appendChild(newH4Element);
 }
-
-function displatDeviceProfilesDropDown(items) {
+function displayDeviceProfilesDropDown(items) {
     const total_devProfile = items.totalCount;
     const user_devProfiles = items.resultList;
 
@@ -456,13 +457,11 @@ const generate128BitRandom = () => {
     const buffer = crypto.getRandomValues(new Uint8Array(16));
     const hexString = Array.from(buffer).map(byte => byte.toString(16).padStart(2, '0')).join('');
     return hexString;
-
 }
 const generate64BitRandom = () => {
     const buffer = crypto.getRandomValues(new Uint8Array(8));
     const hexString = Array.from(buffer).map(byte => byte.toString(16).padStart(2, '0')).join('');
     return hexString;
-
 }
 //---------------------------------------------------------------------//
 
