@@ -400,7 +400,7 @@ function displayDashboardDevice(dev_linkMetrics, dev_config) {
         // Optionally, you can handle this case by displaying an error message or taking other actions.
     }
 }
-function displayConfigurationsDevice(dev_config, dev_profiles, dev_key, dev_activation) {
+function displayConfigurationsDevice(dev_config, dev_Profiles, dev_key, dev_activation) {
     // Configurations tab
     const deviceNameInput = document.getElementById("device_Name");
     const deviceDescriptionTextarea = document.getElementById("Description");
@@ -424,9 +424,38 @@ function displayConfigurationsDevice(dev_config, dev_profiles, dev_key, dev_acti
     deviceDisabledCheckbox.checked = deviceData.isDisabled;
     frameCounterValidationCheckbox.checked = deviceData.skipFcntCheck; // Assuming "skipFcntCheck" corresponds to frame counter validation
 
-    // Set device profiles dropdown
-    const activeElement = document.querySelector(".list_menu li.active");
-    activeElement.setAttribute("value", deviceData.deviceProfileId);
+    const total_devProfile = dev_Profiles.totalCount;
+    const user_devProfiles = dev_Profiles.resultList;
+
+    // Get the select element by its id
+    const selectElement = document.getElementById("deviceProfile_List");
+
+    for (var added_option = 0; added_option < total_devProfile; added_option++) {
+        var devProfile_name = user_devProfiles[added_option].name;
+        var devProfile_id = user_devProfiles[added_option].id;
+
+        // Create a new option element
+        var deviceProfile = document.createElement("option");
+
+        // Set the value and text of the new option
+        deviceProfile.value = devProfile_id;
+        deviceProfile.text = devProfile_name;
+
+        // Append the new option to the select element
+        selectElement.appendChild(deviceProfile);
+    }
+
+    // Get the select element by its device profile ID
+    const selected_devProfile = document.getElementById("deviceProfile_List");
+    const deviceProfileId = deviceData.deviceProfileId; // Assuming deviceData.deviceProfileId holds the desired value
+
+    // Find the option with the desired value
+    const optionToSelect = selected_devProfile.querySelector(`option[value="${deviceProfileId}"]`);
+
+    if (optionToSelect) {
+        // If the option exists, set it as selected
+        optionToSelect.selected = true;
+    }
 
     // Handle potential errors (from feedback)
     if (!deviceData.name) {
