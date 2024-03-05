@@ -1,26 +1,44 @@
 //---------------------------------------------------------------------// 
 //---------------------------WEB SOCKET ZONE---------------------------//
 //---------------------------------------------------------------------//
-const socket = new WebSocket('ws://localhost:3001');
+const loginSocket = new WebSocket('ws://localhost:3001');
 
-socket.addEventListener('open', () => {
+loginSocket.addEventListener('open', () => {
     console.log('WebSocket connection established with WebServer');
 });
 
-socket.addEventListener('message', (event) => {
+loginSocket.addEventListener('message', (event) => {
     const messageFromServer = JSON.parse(event.data);
     console.log('Message from server:', messageFromServer);
 
-    logIsSucc(messageFromServer);
+    if (messageFromServer.request === 'loginByEmail' && messageFromServer.message.status === 'success'
+        || messageFromServer.request === 'loginByUname' && messageFromServer.message.status === 'success') {
+        loginSocket.close();
+        window.location.href = 'dashboard.html';
+    } else {
+        const input_id = document.getElementById('username');
+        const input_pw = document.getElementById('password');
+        input_id.value = '';
+        input_pw.value = '';
+        alert("Login failed.");
+    }
 });
-  
-socket.addEventListener('error', (event) => {
+
+loginSocket.addEventListener('error', (event) => {
     console.log('WebSocket error:', event);
 });
-  
-socket.addEventListener('close', (event) => {
+
+loginSocket.addEventListener('close', (event) => {
     console.log('WebSocket closed:', event);
 });
+
+function sendRequest(data) {
+    if (loginSocket.readyState === WebSocket.OPEN) {
+        loginSocket.send(JSON.stringify(data));
+    } else {
+        console.log('WebSocket not ready, message not sent!');
+    }
+}
 //---------------------------------------------------------------------// 
 //----------------------------EVENT ZONE-------------------------------//
 //---------------------------------------------------------------------//
@@ -31,22 +49,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
     loginForm.addEventListener('submit', (event) => {
         event.preventDefault();
- 
-        if ( isEmail(input_id.value) ) {
-            const req = { request: 'loginByEmail', message: 
-            { status: undefined,
-                data: { 
-                    user_em: input_id.value.trim(), 
-                    user_pw: input_pw.value.trim(), }
-            }};
+
+        if (isEmail(input_id.value)) {
+            const req = {
+                request: 'loginByEmail', message:
+                {
+                    status: undefined,
+                    data: {
+                        user_em: input_id.value.trim(),
+                        user_pw: input_pw.value.trim(),
+                    }
+                }
+            };
             sendRequest(req);
         } else {
-            const req = { request: 'loginByUname', message:
-            { status: undefined,
-                data: { 
-                    user_un: input_id.value.trim(), 
-                    user_pw: input_pw.value.trim(), }
-            }};
+            const req = {
+                request: 'loginByUname', message:
+                {
+                    status: undefined,
+                    data: {
+                        user_un: input_id.value.trim(),
+                        user_pw: input_pw.value.trim(),
+                    }
+                }
+            };
             sendRequest(req);
         }
     });
@@ -57,25 +83,5 @@ document.addEventListener('DOMContentLoaded', () => {
 function isEmail(id) {
     const emailRegex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return emailRegex.test(id);;
-}
-function logIsSucc(resp) {
-    if ( resp.request === 'loginByEmail' && resp.message.status === 'success' 
-    || resp.request === 'loginByUname' && resp.message.status === 'success' ) {
-        socket.close();
-        window.location.href = 'dashboard.html';
-    } else {
-        const input_id = document.getElementById('username');
-        const input_pw = document.getElementById('password');
-        input_id.value = '';
-        input_pw.value = '';
-        alert("Login failed.");
-    }
-}
-function sendRequest(data) {
-    if (socket.readyState === WebSocket.OPEN) {
-    socket.send(JSON.stringify(data));
-    } else {
-    console.log('WebSocket not ready, message not sent!');
-    }
 }
 //---------------------------------------------------------------------//

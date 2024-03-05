@@ -3,267 +3,325 @@
 //---------------------------------------------------------------------//
 let sentRequests = {};
 let checkPayload = true;
+
 document.addEventListener('DOMContentLoaded', () => {
-    // submit device configurations button
-    const saveButton = document.getElementById("save-config_btn");
+    const deviceConfigSocket = new WebSocket('ws://localhost:3001');
+    //---------------------------SENDER ZONE---------------------------//
+    deviceConfigSocket.addEventListener('open', () => {
+        console.log('WebSocket connection established with WebServer from devices');
 
-    saveButton.addEventListener("click", () => {
-    // ดึงค่าจาก input fields
-    const deviceName = document.getElementById("device_Name").value;
-    const deviceDescription = document.getElementById("Description").value;
-    const devId = document.getElementById("devIdInput").value;
-    const joinId = document.getElementById("joinIdInput").value;
-    const appKey = document.getElementById("appkey").value;
+        // submit device configurations button
+        const saveButton = document.getElementById("save-config_btn");
 
-    // ดึงค่าจาก checkboxes
-    const isDeviceDisabled = document.getElementById("device_disabled-check").checked;
-    const isFrameCounterValidationDisabled = document.getElementById("frame-counter-validation_disabled-check").checked;
+        saveButton.addEventListener("click", () => {
+            // ดึงค่าจาก input fields
+            const deviceName = document.getElementById("device_Name").value;
+            const deviceDescription = document.getElementById("Description").value;
+            const devId = document.getElementById("devIdInput").value;
+            const joinId = document.getElementById("joinIdInput").value;
+            const appKey = document.getElementById("appkey").value;
 
-    // ดึง device profile ID
-    const activeElement = document.querySelector(".list_menu li.active");
-    const deviceProfileId = activeElement.getAttribute("value");
+            // ดึงค่าจาก checkboxes
+            const isDeviceDisabled = document.getElementById("device_disabled-check").checked;
+            const isFrameCounterValidationDisabled = document.getElementById("frame-counter-validation_disabled-check").checked;
 
-    const data = {
-        app_id: undefined,
-        dev_name: deviceName,
-        dev_id: devId,
-        dev_joinEui: joinId,
-        dev_desc: deviceDescription,
-        dev_devProfId: deviceProfileId,
-        dev_IsDis: isDeviceDisabled,
-        dev_SkFntC: isFrameCounterValidationDisabled,
-        dev_key: appKey,
-    };
+            // ดึง device profile ID  ////////////////////////////////////////////////////////// not yet
+            const activeElement = document.querySelector(".list_menu li.active");
+            const deviceProfileId = activeElement.getAttribute("value");
 
-    sendDeviceConfigConfirmRequest(data);
-    });
-    //-----------------------------------//
-    // submit enqueue button
-    const enqueueButton = document.getElementById("send_enqueue");
+            const data = {
+                app_id: undefined,
+                dev_name: deviceName,
+                dev_id: devId,
+                dev_joinEui: joinId,
+                dev_desc: deviceDescription,
+                dev_devProfId: deviceProfileId,
+                dev_IsDis: isDeviceDisabled,
+                dev_SkFntC: isFrameCounterValidationDisabled,
+                dev_key: appKey,
+            };
 
-    enqueueButton.addEventListener("click", () => {
-        if (document.getElementById("Fport").value === "") {
-            alert("Please enter a value for Fport. (Fport: Number)");
-            return;
-        }
-        if (document.getElementById("jsonInput").value === "") {
-            alert("Please enter a value for data to enqueue. (Data: String | Uint8Array)");
-            return;
-        }
+            const req = {
+                request: 'postDevConfigConfirm', message: {
+                    status: undefined,
+                    data: data
+                }
+            };
+            sendRequset(req);
+        });
+        //-----------------------------------//
+        // submit enqueue button
+        const enqueueButton = document.getElementById("send_enqueue");
 
-        const data = {
-            dev_id: undefined,
-            eq_cnf: document.getElementById("enqueue-confirm").checked,
-            eq_fport: parseInt(document.getElementById("Fport").value),
-            eq_isEncry: document.getElementById("enqueue-encrypt").checked,
-            eq_data: JSON.parse(document.getElementById("jsonInput").value),
+        enqueueButton.addEventListener("click", () => {
+            if (document.getElementById("Fport").value === "") {
+                alert("Please enter a value for Fport. (Fport: Number)");
+                return;
+            }
+            if (document.getElementById("jsonInput").value === "") {
+                alert("Please enter a value for data to enqueue. (Data: String | Uint8Array)");
+                return;
+            }
+
+            const data = {
+                dev_id: undefined,
+                eq_cnf: document.getElementById("enqueue-confirm").checked,
+                eq_fport: parseInt(document.getElementById("Fport").value),
+                eq_isEncry: document.getElementById("enqueue-encrypt").checked,
+                eq_data: JSON.parse(document.getElementById("jsonInput").value),
+            };
+
+            const req = {
+                request: 'enqueueDev', message: {
+                    status: undefined,
+                    data: data
+                }
+            };
+            sendRequset(req);
+        });
+        //-----------------------------------//
+        const activeTabIndex = sessionStorage.getItem('activeTabIndex');
+
+        const setActiveTab = (tabButton) => {
+            tabButton.classList.add('active');
+            const tabName = tabButton.getAttribute('onclick').match(/'(.*?)'/)[1];
+
+            if (!sentRequests[tabName]) {
+                sendSpecificRequest(tabName); // Call function sending the specific request
+                sentRequests[tabName] = true; // Mark request sent
+            }
+
+            document.getElementById(tabName).classList.add('active');
+            const activeLine = document.querySelector(".active_line");
+            activeLine.style.left = tabButton.offsetLeft + "px";
+            activeLine.style.width = tabButton.offsetWidth + "px";
+
+            sessionStorage.setItem('activeTab', tabName);
+            onPageLoad(checkPayload);
         };
-    
-        sendEnqueueDeviceConfirmRequest(data);
-    });
-    //-----------------------------------//
-    const activeTabIndex = sessionStorage.getItem('activeTabIndex');
 
-    const setActiveTab = (tabButton) => {
-        tabButton.classList.add('active');
-        const tabName = tabButton.getAttribute('onclick').match(/'(.*?)'/)[1];
+        function onPageLoad(checkPayload) {
+            const activeTab = sessionStorage.getItem('activeTab');
 
-        if (!sentRequests[tabName]) {
-            sendSpecificRequest(tabName); // Call function sending the specific request
-            sentRequests[tabName] = true; // Mark request sent
-        }
+            if (checkPayload) {
+                if (activeTab && !sentRequests[activeTab]) {
+                    sendSpecificRequest(activeTab);
+                    sentRequests[activeTab] = true;
 
-        document.getElementById(tabName).classList.add('active');
-        const activeLine = document.querySelector(".active_line");
-        activeLine.style.left = tabButton.offsetLeft + "px";
-        activeLine.style.width = tabButton.offsetWidth + "px";
-
-        sessionStorage.setItem('activeTab', tabName);
-        onPageLoad(checkPayload);
-    };
-
-    function onPageLoad(checkPayload) {
-        const activeTab = sessionStorage.getItem('activeTab');
-
-        if (checkPayload) {
-            if (activeTab && !sentRequests[activeTab]) {
-                sendSpecificRequest(activeTab);
-                sentRequests[activeTab] = true;
-
-                checkPayload = false;
+                    checkPayload = false;
+                }
             }
         }
-    }
 
-    if (activeTabIndex !== null) {
-        const activeTabButton = document.querySelectorAll('.tab_button')[activeTabIndex];
-        setActiveTab(activeTabButton);
-    } else {
-        document.querySelector('.tab_button.active').click();
-    }
+        if (activeTabIndex !== null) {
+            const activeTabButton = document.querySelectorAll('.tab_button')[activeTabIndex];
+            setActiveTab(activeTabButton);
+        } else {
+            document.querySelector('.tab_button.active').click();
+        }
 
-    // Set up event listeners for tab clicks
-    const tabButtons = document.querySelectorAll('.tab_button');
-    tabButtons.forEach(tabButton => {
-        tabButton.addEventListener('click', () => {
-            setActiveTab(tabButton);
-            // Send request specific to the active tab
-            if (tabButton.getAttribute('onclick').includes('Dashboard')) {
-                sendDashboardDeviceRequest("1y", "MONTH");
-            } else if (tabButton.getAttribute('onclick').includes('Configuration')) {
-                sendDeviceInfomationsRequest()
-            } else if (tabButton.getAttribute('onclick').includes('Queue')) {
-                sendQueuesDeviceRequest();
-            } else if (tabButton.getAttribute('onclick').includes('Event')) {
-                sendEventsDeviceRequest();
-            } else if (tabButton.getAttribute('onclick').includes('LoRaWAN_frame')) {
-                sendFramesDeviceRequest();
-            }
+        // Set up event listeners for tab clicks
+        const tabButtons = document.querySelectorAll('.tab_button');
+        tabButtons.forEach(tabButton => {
+            tabButton.addEventListener('click', () => {
+                setActiveTab(tabButton);
+                // Send request specific to the active tab
+                if (tabButton.getAttribute('onclick').includes('Dashboard')) {
+                    const req = {
+                        request: 'getDashDev', message: {
+                            status: undefined,
+                            data: {
+                                timeAgo: "1y", // timeAgo: "1y","1m","1d"
+                                aggregation: "MONTH" // aggregation: "DAY", "HOUR", "MONTH"
+                            }
+                        }
+                    };
+                    sendRequset(req);
+                } else if (tabButton.getAttribute('onclick').includes('Configuration')) {
+                    const req = {
+                        request: 'getDevInfo', message: {
+                            status: undefined,
+                            data: undefined
+                        }
+                    };
+                    sendRequset(req);
+                } else if (tabButton.getAttribute('onclick').includes('Queue')) {
+                    const req = {
+                        request: 'getDevQueues', message: {
+                            status: undefined,
+                            data: undefined
+                        }
+                    };
+                    sendRequset(req);
+                } else if (tabButton.getAttribute('onclick').includes('Event')) {
+                    const req = {
+                        request: 'getDevEvents', message: {
+                            status: undefined,
+                            data: undefined
+                        }
+                    };
+                    sendRequset(req);
+                } else if (tabButton.getAttribute('onclick').includes('LoRaWAN_frame')) {
+                    const req = {
+                        request: 'getDevFrames', message: {
+                            status: undefined,
+                            data: undefined
+                        }
+                    };
+                    sendRequset(req);
+                }
+            });
         });
     });
-});
-//-------------------------REQUEST FUNCTIONS---------------------------// 
-const sendDashboardDeviceRequest = (timeAgo, aggregation) => {
-    // timeAgo: "1y","1m","1d"
-    // aggregation: "DAY", "HOUR", "MONTH"
-    const req = { request: 'getDashDev', message: { 
-        status: undefined, 
-        data: { timeAgo: timeAgo, 
-            aggregation: aggregation
-        }
-    }};
-    sender_and_reciver_in_device(req);
-};
-const sendDeviceInfomationsRequest = () => {
-    const req = { request: 'getDevInfo', message: { 
-        status: undefined, 
-        data: undefined 
-    }};
-    sender_and_reciver_in_device(req);
-};
-const sendQueuesDeviceRequest = () => {
-    const req = { request: 'getDevQueues', message: { 
-        status: undefined, 
-        data: undefined 
-    }};
-    sender_and_reciver_in_device(req);
-};
-const sendEventsDeviceRequest = () => {
-    const req = { request: 'getDevEvents', message: { 
-        status: undefined, 
-        data: undefined 
-    }};
-    sender_and_reciver_in_device(req);
-};
-const sendFramesDeviceRequest = () => {
-    const req = { request: 'getDevFrames', message: { 
-        status: undefined, 
-        data: undefined 
-    }};
-    sender_and_reciver_in_device(req);
-};
-const sendDeviceConfigConfirmRequest = (data) => {
-    // recuit to update device
-    // data = {
-    //     app_id: String,
-    //     dev_name: String,
-    //     dev_id: String,
-    //     dev_joinEui: String,
-    //     dev_desc: String,
-    //     dev_devProfId: String,
-    //     dev_IsDis: Boolean,
-    //     dev_SkFntC: Boolean,
-    //     dev_key: String
-    // }
-
-    const req = { request: 'postDevConfigConfirm', message: { 
-        status: undefined, 
-        data: data 
-    }};
-    sender_and_reciver_in_device(req);
-};
-const sendEnqueueDeviceConfirmRequest = (data) => {
-    // recuit to enqueue device
-    // data = {
-    //     dev_id: String,
-    //     eq_cnf: Boolean,
-    //     eq_fport: Number,
-    //     eq_isEncry: Boolean,
-    //     eq_data: String | Uint8Array,
-    // };
-
-    const req = { request: 'enqueueDev', message: { 
-        status: undefined, 
-        data: data 
-    }};
-    sender_and_reciver_in_device(req);
-};
-const sendFlushQueueDeviceConfirmRequest = (data) => {
-    const req = { request: 'flushQueueDev', message: { 
-        status: undefined, 
-        data: undefined 
-    }};
-    sender_and_reciver_in_device(req);
-};
-//---------------------------------------------------------------------//
-//---------------------------WEB SOCKET ZONE---------------------------//
-//---------------------------------------------------------------------//
-function sender_and_reciver_in_device(req) {
-    const socket = new WebSocket('ws://localhost:3001');
-    //-----SENDER-----//
-    socket.addEventListener('open', () => {
-      console.log('WebSocket connection established with WebServer');
-  
-      socket.send(JSON.stringify(req));
-    });
-    //-----RECEIVER-----//
-    socket.addEventListener('message', (event) => {
+    //-------------------------RECEIVER ZONE-------------------------//
+    deviceConfigSocket.addEventListener('message', (event) => {
         const messageFromServer = JSON.parse(event.data);
         console.log('Message from server:', messageFromServer);
-  
-        if ( messageFromServer.message.status === 'success' ) {
-          if ( messageFromServer.request === 'enterDevId' || messageFromServer.request === 'getDashDev' ) {
-            display_headerAndMiddleTitle_device_configurations(messageFromServer.message.data.dev_config.device.name, messageFromServer.message.data.app_name);
-            displayDashboardDevice(messageFromServer.message.data.dev_linkMetrics,
-                messageFromServer.message.data.dev_config);
-          } 
-          else if ( messageFromServer.request === 'getDevInfo' ) {
-            display_headerAndMiddleTitle_device_configurations(messageFromServer.message.data.dev_config.device.name, messageFromServer.message.data.app_name);
-            displayConfigurationsDevice(messageFromServer.message.data.dev_config,
-                messageFromServer.message.data.dev_profilesList,
-                messageFromServer.message.data.dev_key, 
-                messageFromServer.message.data.dev_activation);
-          } 
-          else if ( messageFromServer.request === 'getDevQueues' ) {
-            display_headerAndMiddleTitle_device_configurations(messageFromServer.message.data.dev_name, messageFromServer.message.data.app_name);
-            displayQueuesDevice(messageFromServer.message.data.dev_queueItems);
-          } 
-          else if ( messageFromServer.request === 'getDevEvents' ) {
-            display_headerAndMiddleTitle_device_configurations(messageFromServer.message.data.dev_name, messageFromServer.message.data.app_name);
-            displayDeviceEvents(messageFromServer.message.data.dev_events);
-          }
-          else if ( messageFromServer.request === 'getDevFrames' ) {
-            display_headerAndMiddleTitle_device_configurations(messageFromServer.message.data.dev_name, messageFromServer.message.data.app_name);
-            displayDeviceFrames(messageFromServer.message.data.dev_frames);
-          }
-          else if ( messageFromServer.request === 'postDevConfigConfirm' ) {
-            alert("Your device is now updated.");
-            sendDeviceInfomationsRequest();
-          }
-          else if ( messageFromServer.request === 'enqueueDev' ) {
-            alert("Enqueue device successfully.");
-            sendQueuesDeviceRequest();
-          }
-          else if ( messageFromServer.request === 'flushQueueDev' ) {
-            alert("Flush queue device successfully.");
-            sendQueuesDeviceRequest();
-          }
+    
+        if (messageFromServer.message.status === 'success') {
+            if (messageFromServer.request === 'enterDevId' || messageFromServer.request === 'getDashDev') {
+                display_headerAndMiddleTitle_device_configurations(messageFromServer.message.data.dev_config.device.name, messageFromServer.message.data.app_name);
+                displayDashboardDevice(messageFromServer.message.data.dev_linkMetrics,
+                    messageFromServer.message.data.dev_config);
+            }
+            else if (messageFromServer.request === 'getDevInfo') {
+                display_headerAndMiddleTitle_device_configurations(messageFromServer.message.data.dev_config.device.name, messageFromServer.message.data.app_name);
+                displayConfigurationsDevice(messageFromServer.message.data.dev_config,
+                    messageFromServer.message.data.dev_profilesList,
+                    messageFromServer.message.data.dev_key,
+                    messageFromServer.message.data.dev_activation);
+            }
+            else if (messageFromServer.request === 'getDevQueues') {
+                display_headerAndMiddleTitle_device_configurations(messageFromServer.message.data.dev_name, messageFromServer.message.data.app_name);
+                displayQueuesDevice(messageFromServer.message.data.dev_queueItems);
+            }
+            else if (messageFromServer.request === 'getDevEvents') {
+                display_headerAndMiddleTitle_device_configurations(messageFromServer.message.data.dev_name, messageFromServer.message.data.app_name);
+                displayDeviceEvents(messageFromServer.message.data.dev_events);
+            }
+            else if (messageFromServer.request === 'getDevFrames') {
+                display_headerAndMiddleTitle_device_configurations(messageFromServer.message.data.dev_name, messageFromServer.message.data.app_name);
+                displayDeviceFrames(messageFromServer.message.data.dev_frames);
+            }
+            else if (messageFromServer.request === 'postDevConfigConfirm') {
+                alert("Your device is now updated.");
+    
+                const req = {
+                    request: 'getDevInfo', message: {
+                        status: undefined,
+                        data: undefined
+                    }
+                };
+                sendRequset(req);
+            }
+            else if (messageFromServer.request === 'enqueueDev') {
+                alert("Enqueue device successfully.");
+    
+                const req = {
+                    request: 'getDevQueues', message: {
+                        status: undefined,
+                        data: undefined
+                    }
+                };
+                sendRequset(req);
+            }
+            else if (messageFromServer.request === 'flushQueueDev') {
+                alert("Flush queue device successfully.");
+    
+                const req = {
+                    request: 'getDevQueues', message: {
+                        status: undefined,
+                        data: undefined
+                    }
+                };
+                sendRequset(req);
+            }
         } else {
-          alert("Error: Request-" + messageFromServer.request + "-Status-"  + messageFromServer.message.status + 
-          "\n-Data-" + messageFromServer.message.data);
+            console.log("Error: Request-" + messageFromServer.request + "-Status-" + messageFromServer.message.status +
+                "\n-Data-" + messageFromServer.message.data);
         }
     });
-  }
+    
+    deviceConfigSocket.addEventListener('error', (event) => {
+        console.log('WebSocket error:', event);
+    });
+    
+    deviceConfigSocket.addEventListener('close', (event) => {
+        console.log('WebSocket closed:', event);
+    });
+    
+    function sendRequset(data) {
+            if (deviceConfigSocket.readyState === WebSocket.OPEN) {
+                deviceConfigSocket.send(JSON.stringify(data));
+            } else {
+                console.log('WebSocket not ready, message not sent!');
+            }
+    }
+    function sendSpecificRequest(tabName) {
+        if (tabName === 'Dashboard') {
+            const req = {
+                request: 'getDashDev', message: {
+                    status: undefined,
+                    data: {
+                        timeAgo: "1y",
+                        aggregation: "MONTH"
+                    }
+                }
+            };
+            sendRequset(req);
+        } else if (tabName === 'Configuration') {
+            const req = {
+                request: 'getDevInfo', message: {
+                    status: undefined,
+                    data: undefined
+                }
+            };
+            sendRequset(req);
+        } else if (tabName === 'Queue') {
+            const req = {
+                request: 'getDevQueues', message: {
+                    status: undefined,
+                    data: undefined
+                }
+            };
+            sendRequset(req);
+        } else if (tabName === 'Event') {
+            const req = {
+                request: 'getDevEvents', message: {
+                    status: undefined,
+                    data: undefined
+                }
+            };
+            sendRequset(req);
+        } else if (tabName === 'LoRaWAN_frame') {
+            const req = {
+                request: 'getDevFrames', message: {
+                    status: undefined,
+                    data: undefined
+                }
+            };
+            sendRequset(req);
+        }
+    }
+    function flush_function() {
+        const req = {
+            request: 'flushQueueDev', message: {
+                status: undefined,
+                data: undefined
+            }
+        };
+        sendRequset(req);
+    }
+    function reload_function() {
+        const req = {
+            request: 'getDevQueues', message: {
+                status: undefined,
+                data: undefined
+            }
+        };
+        sendRequset(req);
+    }
+});
 //---------------------------------------------------------------------// 
 //---------------------------DISPLAYS ZONE-----------------------------// 
 //---------------------------------------------------------------------//
@@ -303,12 +361,12 @@ function display_headerAndMiddleTitle_device_configurations(devName, appName) {
     newH1Element.textContent = devName;
     newH4Element.innerHTML = `</h4><a href="applications.html" >Applications</a>
      > <a href="devices.html" id="appLink">${appName}</a> > <a>${devName}</a></h4>`;
-    
+
     let headerTitleDiv = document.querySelector('.header--title');
     let locatedDiv = document.querySelector('.located');
     locatedDiv.innerHTML = '';
     headerTitleDiv.innerHTML = '';
-    
+
     headerTitleDiv.appendChild(newH1Element);
     locatedDiv.appendChild(newH4Element);
 }
@@ -322,18 +380,18 @@ function displayDashboardDevice(dev_linkMetrics, dev_config) {
         const receivedPerDR_Data = dev_linkMetrics.rxPacketsPerDr;
         const Errors_Data = dev_linkMetrics.errors;
 
-         // Call the displayChartData function with the appropriate data
-         displayChartData(received_Data, 'receivedChart', 'Received Data', 'rx_count');
-         displayChartData(RSSI_Data, 'rssiChart', 'RSSI', 'rssi_strength');
-         displayChartData(SNR_Data, 'snrChart', 'SNR', 'snr_strength');
+        // Call the displayChartData function with the appropriate data
+        displayChartData(received_Data, 'receivedChart', 'Received Data', 'rx_count');
+        displayChartData(RSSI_Data, 'rssiChart', 'RSSI', 'rssi_strength');
+        displayChartData(SNR_Data, 'snrChart', 'SNR', 'snr_strength');
         //  displayChartData(receivedPerfrequency_Data, 'receivedPerFreqChart', 'Received per Frequency', 'rx_count_per_freq');
         //  displayChartData(receivedPerDR_Data, 'receivedPerDRChart', 'Received per Data Rate', 'rx_count_per_dr');
-         displayChartData(Errors_Data, 'errorsChart', 'Errors', 'error_count');
-     } else {
-         console.error("dev_linlMetrics is undefined. Cannot display dashboard data.");
-         // Optionally, you can handle this case by displaying an error message or taking other actions.
-     }
- }
+        displayChartData(Errors_Data, 'errorsChart', 'Errors', 'error_count');
+    } else {
+        console.error("dev_linlMetrics is undefined. Cannot display dashboard data.");
+        // Optionally, you can handle this case by displaying an error message or taking other actions.
+    }
+}
 function displayConfigurationsDevice(dev_config, dev_profiles, dev_key, dev_activation) {
     // Configurations tab
     const deviceNameInput = document.getElementById("device_Name");
@@ -434,7 +492,7 @@ function displayDeviceEvents(dev_events) {
         const button = document.createElement("button");
         button.textContent = actionValue;
         button.classList.add("action_btn");
-        button.addEventListener("click", function() {
+        button.addEventListener("click", function () {
             alert(JSON.stringify(dev_events, null, 2)); // Display dev_events as JSON in an alert
         });
 
@@ -460,63 +518,63 @@ function displayDeviceFrames(dev_frames) {
 
     // Loop through each device event
     dev_frames.forEach((data, index) => {
-    // Accessing "join" at index 2 of the array
-    const actionValue = data.array[2];
+        // Accessing "join" at index 2 of the array
+        const actionValue = data.array[2];
 
-    // Accessing the JSON string containing "time"
-    const jsonString = data.array[3];
+        // Accessing the JSON string containing "time"
+        const jsonString = data.array[3];
 
-    // Parsing the JSON string to extract "time"
-    const parsedJson = JSON.parse(jsonString);
-    
-    // Check if nsTime exists in rx_info array before accessing it
-    let nsTime = parsedJson.rx_info && parsedJson.rx_info[0] && parsedJson.rx_info[0].nsTime;
+        // Parsing the JSON string to extract "time"
+        const parsedJson = JSON.parse(jsonString);
 
-    // Check if nsTime exists and is not null, otherwise use nsTime of the next action
-    if (!nsTime && index < dev_frames.length - 1) {
-        const nextJsonString = dev_frames[index + 1].array[3];
-        const nextParsedJson = JSON.parse(nextJsonString);
-        nsTime = nextParsedJson.rx_info && nextParsedJson.rx_info[0] && nextParsedJson.rx_info[0].nsTime;
-    }
+        // Check if nsTime exists in rx_info array before accessing it
+        let nsTime = parsedJson.rx_info && parsedJson.rx_info[0] && parsedJson.rx_info[0].nsTime;
 
-    // Check if nsTime exists and is not null
-    if (nsTime) {
-        // Convert the time value to the desired format
-        const thailandTime = convertUTCtoThailandTime(nsTime);
+        // Check if nsTime exists and is not null, otherwise use nsTime of the next action
+        if (!nsTime && index < dev_frames.length - 1) {
+            const nextJsonString = dev_frames[index + 1].array[3];
+            const nextParsedJson = JSON.parse(nextJsonString);
+            nsTime = nextParsedJson.rx_info && nextParsedJson.rx_info[0] && nextParsedJson.rx_info[0].nsTime;
+        }
 
-        // Create a new row element
-        const newRow = document.createElement("tr");
+        // Check if nsTime exists and is not null
+        if (nsTime) {
+            // Convert the time value to the desired format
+            const thailandTime = convertUTCtoThailandTime(nsTime);
 
-        // Create a new cell for the time value
-        const timeCell = document.createElement("td");
-        timeCell.textContent = thailandTime;
+            // Create a new row element
+            const newRow = document.createElement("tr");
 
-        // Create a new cell for the action value (join)
-        const actionCell = document.createElement("td");
-        // actionCell.textContent = actionValue;
+            // Create a new cell for the time value
+            const timeCell = document.createElement("td");
+            timeCell.textContent = thailandTime;
 
-        // Create a button to display full dev_events
-        const button = document.createElement("button");
-        button.textContent = actionValue;
-        button.classList.add("action_btn");
-        button.addEventListener("click", function() {
-            alert(JSON.stringify(dev_frames, null, 2)); // Display dev_events as JSON in an alert
-        });
+            // Create a new cell for the action value (join)
+            const actionCell = document.createElement("td");
+            // actionCell.textContent = actionValue;
 
-        // Append the button to the action cell
-        actionCell.appendChild(button);
+            // Create a button to display full dev_events
+            const button = document.createElement("button");
+            button.textContent = actionValue;
+            button.classList.add("action_btn");
+            button.addEventListener("click", function () {
+                alert(JSON.stringify(dev_frames, null, 2)); // Display dev_events as JSON in an alert
+            });
 
-        // Append the cells to the new row
-        newRow.appendChild(timeCell);
-        newRow.appendChild(actionCell);
+            // Append the button to the action cell
+            actionCell.appendChild(button);
 
-        // Append the new row to the table body
-        const tableBody = document.getElementById("frame_data");
-        tableBody.appendChild(newRow);
-    } else {
-        console.log("nsTime is not available for action:", actionValue);
-    }
-});
+            // Append the cells to the new row
+            newRow.appendChild(timeCell);
+            newRow.appendChild(actionCell);
+
+            // Append the new row to the table body
+            const tableBody = document.getElementById("frame_data");
+            tableBody.appendChild(newRow);
+        } else {
+            console.log("nsTime is not available for action:", actionValue);
+        }
+    });
 
 }
 //---------------------------------------------------------------------//
@@ -525,8 +583,8 @@ function displayDeviceFrames(dev_frames) {
 function displayChartData(data, chartId, chartLabel, datasetLabel) {
     // แปลง timestamp เป็นวันที่
     const labels = data.timestampsList.map(timestamp => {
-      const date = new Date(timestamp.seconds * 1000);
-      return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+        const date = new Date(timestamp.seconds * 1000);
+        return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
     });
 
     // แยกค่า rx_count
@@ -535,59 +593,40 @@ function displayChartData(data, chartId, chartLabel, datasetLabel) {
     const ctx = document.getElementById(chartId).getContext('2d');
 
     const myChart = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: labels,
-        datasets: [{
-          label: datasetLabel,
-          data: rxCounts,
-          backgroundColor: 'rgba(75, 192, 192, 0.2)',
-          borderColor: 'rgba(75, 192, 192, 1)',
-          borderWidth: 1
-        }]
-      },
-      options: {
-        scales: {
-          yAxes: [{
-            scaleLabel: {
-              display: true,
-              labelString: 'Value' // Add label for y-axis
-            },
-            ticks: {
-              beginAtZero: true
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: datasetLabel,
+                data: rxCounts,
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Value' // Add label for y-axis
+                    },
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }],
+                xAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Date' // Add label for x-axis
+                    },
+                    type: 'time',
+                    time: {
+                        unit: 'day'
+                    }
+                }]
             }
-          }],
-          xAxes: [{
-            scaleLabel: {
-              display: true,
-              labelString: 'Date' // Add label for x-axis
-            },
-            type: 'time',
-            time: {
-              unit: 'day'
-            }
-          }]
         }
-      }
     });
-}
-function sendSpecificRequest(tabName) {
-    if (tabName === 'Dashboard') {
-      sendDashboardDeviceRequest("1y", "MONTH");
-    } else if (tabName === 'Configuration') {
-      sendDeviceInfomationsRequest()
-    } else if (tabName === 'Queue') {
-      sendQueuesDeviceRequest();
-    } else if (tabName === 'Event') {
-      sendEventsDeviceRequest();
-    } else if (tabName === 'LoRaWAN_frame') {
-      sendFramesDeviceRequest();
-    }
-}
-function flush_function() {
-    sendFlushQueueDeviceConfirmRequest();
-}
-function reload_function() {
-    sendQueuesDeviceRequest();
 }
 //---------------------------------------------------------------------// 
