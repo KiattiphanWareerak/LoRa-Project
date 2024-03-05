@@ -109,3 +109,18 @@ document.addEventListener('DOMContentLoaded', () => {
     });    
 });
 //---------------------------------------------------------------------//
+document.addEventListener("DOMContentLoaded", function () {
+    var integrationCheckboxes = document.querySelectorAll('.integration-checkboxes input[type="checkbox"]');
+    
+    integrationCheckboxes.forEach(function (checkbox) {
+        checkbox.addEventListener('change', function () {
+            if (this.checked) {
+                integrationCheckboxes.forEach(function (otherCheckbox) {
+                    if (otherCheckbox !== checkbox) {
+                        otherCheckbox.checked = false;
+                    }
+                });
+            }
+        });
+    });
+});
