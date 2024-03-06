@@ -1,124 +1,113 @@
 //---------------------------------------------------------------------//
-//---------------------------WEB SOCKET ZONE---------------------------//
-//---------------------------------------------------------------------//
-const commonSocket = new WebSocket('ws://localhost:3001');
-
-commonSocket.addEventListener('message', (event) => {
-  const messageFromServer = JSON.parse(event.data);
-  console.log('Message from server:', messageFromServer);
-
-  if (messageFromServer.message.status === 'success') {
-    if (messageFromServer.request === 'dispMainDash') {
-      display_mainContent_dashboard(messageFromServer.message.data);
-    }
-    else if (messageFromServer.request === 'dispDevProfiles') {
-      display_HeaderAndMiddleTitle_deviceProfiles();
-      display_mainContent_deviceProfiles(messageFromServer.message.data);
-    }
-    else if (messageFromServer.request === 'dispApp') {
-      display_HeaderAndMiddleTitle_applications();
-      display_mainContent_applications(messageFromServer.message.data);
-    }
-    else if (messageFromServer.request === 'logout') {
-      window.location.href = "index.html";
-    }
-  } else {
-    alert("Error: Request-" + messageFromServer.request + "-Status-" + messageFromServer.message.status +
-      "-Data-" + messageFromServer.message.data);
-  }
-});
-
-commonSocket.addEventListener('error', (event) => {
-  console.log('WebSocket error:', event);
-});
-
-commonSocket.addEventListener('close', (event) => {
-  console.log('WebSocket closed:', event);
-});
-
-function sendRequset(data) {
-  commonSocket.addEventListener('open', () => {
-    console.log('WebSocket connection established with WebServer from common.');
-
-    if (commonSocket.readyState === WebSocket.OPEN) {
-      commonSocket.send(JSON.stringify(data));
-    } else {
-      console.log('WebSocket not ready, message not sent!');
-    }
-  });
-}
-//---------------------------------------------------------------------//
 //----------------------------EVENT ZONE-------------------------------//
 //---------------------------------------------------------------------//
 document.addEventListener('DOMContentLoaded', async () => {
-  //-----Menu active event-----//
-  const activeMenuItem = document.querySelector('.side_menu li.active');
-  if (activeMenuItem) {
-    let menuId = activeMenuItem.id;
-    let req;
-
-    switch (menuId) {
-      case 'menu-mainDashboard':
-        req = {
-          request: 'dispMainDash', message: {
-            status: undefined,
-            data: undefined
-          }
-        };
-        sendRequset(req);
-        break;
-      case 'menu-deviceProfiles':
-        req = {
-          request: 'dispDevProfiles', message: {
-            status: undefined,
-            data: undefined
-          }
-        };
-        sendRequset(req);
-        break;
-      case 'menu-applications':
-        req = {
-          request: 'dispApp', message: {
-            status: undefined,
-            data: undefined
-          }
-        };
-        sendRequset(req);
-        break;
-      case 'menu-tutorial':
-        // nothing
-        break;
-    }
-  }
-  //-----Menu click event----//
-  document.querySelectorAll('.side_menu li').forEach(menuItem => {
-    menuItem.addEventListener('click', () => {
-      const menuId = menuItem.id;
+  const socket = new WebSocket('ws://localhost:3001');
+  //---------------------------SENDER ZONE---------------------------//
+  socket.addEventListener('open', () => {
+    console.log('WebSocket connection established with WebServer from common');
+    //-----Menu active event-----//
+    const activeMenuItem = document.querySelector('.side_menu li.active');
+    if (activeMenuItem) {
+      let menuId = activeMenuItem.id;
+      let req;
 
       switch (menuId) {
         case 'menu-mainDashboard':
-          window.location.href = "dashboard.html";
-          break;
-        case 'menu-deviceProfiles':
-          window.location.href = "deviceProfiles.html";
-          break;
-        case 'menu-applications':
-          window.location.href = "applications.html";
-          break;
-        case 'menu-tutorial':
-          window.location.href = "tutorialPage.html";
-          break;
-        case 'menu-logout':
-          const req = {
-            request: 'logout', message: {
+          req = {
+            request: 'dispMainDash', message: {
               status: undefined,
               data: undefined
             }
           };
-          commonSocket.send(JSON.stringify(req));
+          socket.send(JSON.stringify(req));
+          break;
+        case 'menu-deviceProfiles':
+          req = {
+            request: 'dispDevProfiles', message: {
+              status: undefined,
+              data: undefined
+            }
+          };
+          socket.send(JSON.stringify(req));
+          break;
+        case 'menu-applications':
+          req = {
+            request: 'dispApp', message: {
+              status: undefined,
+              data: undefined
+            }
+          };
+          socket.send(JSON.stringify(req));
+          break;
+        case 'menu-tutorial':
+          // nothing
           break;
       }
+    }
+    //-----Menu click event----//
+    document.querySelectorAll('.side_menu li').forEach(menuItem => {
+      menuItem.addEventListener('click', () => {
+        const menuId = menuItem.id;
+
+        switch (menuId) {
+          case 'menu-mainDashboard':
+            window.location.href = "dashboard.html";
+            break;
+          case 'menu-deviceProfiles':
+            window.location.href = "deviceProfiles.html";
+            break;
+          case 'menu-applications':
+            window.location.href = "applications.html";
+            break;
+          case 'menu-tutorial':
+            window.location.href = "tutorialPage.html";
+            break;
+          case 'menu-logout':
+            const req = {
+              request: 'logout', message: {
+                status: undefined,
+                data: undefined
+              }
+            };
+            socket.send(JSON.stringify(req));
+            break;
+        }
+      });
     });
+  });
+  //-------------------------RECEIVER ZONE-------------------------//
+  socket.addEventListener('message', (event) => {
+    const messageFromServer = JSON.parse(event.data);
+    console.log('Message from server:', messageFromServer);
+
+    if (messageFromServer.message.status === 'success') {
+      if (messageFromServer.request === 'dispMainDash') {
+        display_mainContent_dashboard(messageFromServer.message.data);
+      }
+      else if (messageFromServer.request === 'dispDevProfiles') {
+        display_HeaderAndMiddleTitle_deviceProfiles();
+        display_mainContent_deviceProfiles(messageFromServer.message.data);
+      }
+      else if (messageFromServer.request === 'dispApp') {
+        display_HeaderAndMiddleTitle_applications();
+        display_mainContent_applications(messageFromServer.message.data);
+      }
+      else if (messageFromServer.request === 'logout') {
+        window.location.href = "index.html";
+      }
+    } else {
+      alert("Error: Request-" + messageFromServer.request + "-Status-" + messageFromServer.message.status +
+        "-Data-" + messageFromServer.message.data);
+    }
+  });
+
+  socket.addEventListener('error', (event) => {
+    console.log('WebSocket error:', event);
+  });
+
+  socket.addEventListener('close', (event) => {
+    console.log('WebSocket closed:', event);
   });
 });
 //---------------------------------------------------------------------//
@@ -346,17 +335,21 @@ function display_mainContent_applications(gets) {
       const appID = this.getAttribute('app-id');
       const appName = item.name;
 
-      const req = {
-        request: 'enterAppId', message: {
-          status: undefined,
-          data: {
-            app_id: appID, app_name: appName
-          }
-        }
-      };
-      commonSocket.send(JSON.stringify(req));
+      const socket = new WebSocket('ws://localhost:3001');
 
-      window.location.href = 'devices.html';
+      socket.addEventListener('open', () => {
+        const req = {
+          request: 'enterAppId', message: {
+            status: undefined,
+            data: {
+              app_id: appID, app_name: appName
+            }
+          }
+        };
+        socket.send(JSON.stringify(req));
+  
+        window.location.href = 'devices.html';
+      });
     });
     appNameLink.textContent = item.name;
     appNameCell.appendChild(appNameLink);

@@ -2,9 +2,9 @@
 //----------------------------EVENTS ZONE------------------------------// 
 //---------------------------------------------------------------------//
 document.addEventListener('DOMContentLoaded', () => {
-    const applicationSocket = new WebSocket('ws://localhost:3001');
+    const socket = new WebSocket('ws://localhost:3001');
     //---------------------------SENDER ZONE---------------------------//
-    applicationSocket.addEventListener('open', () => {
+    socket.addEventListener('open', () => {
         console.log('WebSocket connection established with WebServer from applications');
 
         // Add application button
@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         data: addAppData
                     }
                 };
-                sendRequset(req);
+                socket.send(JSON.stringify(data));
 
                 appNameInput.value = '';
                 descriptionInput.value = '';
@@ -138,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     data: appIDsSelect
                 }
             };
-            sendRequset(req);
+            socket.send(JSON.stringify(data));
 
             document.getElementById('app_DelApp').style.display = "none";
         }
@@ -154,7 +154,7 @@ document.addEventListener('DOMContentLoaded', () => {
         })
     });
     //-------------------------RECEIVER ZONE-------------------------//
-    applicationSocket.addEventListener('message', (event) => {
+    socket.addEventListener('message', (event) => {
         const messageFromServer = JSON.parse(event.data);
         console.log('Message from server:', messageFromServer);
 
@@ -177,21 +177,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    applicationSocket.addEventListener('error', (event) => {
+    socket.addEventListener('error', (event) => {
         console.log('WebSocket error:', event);
     });
 
-    applicationSocket.addEventListener('close', (event) => {
+    socket.addEventListener('close', (event) => {
         console.log('WebSocket closed:', event);
     });
-
-    function sendRequset(data) {
-        if (applicationSocket.readyState === WebSocket.OPEN) {
-            applicationSocket.send(JSON.stringify(data));
-        } else {
-            console.log('WebSocket not ready, message not sent!');
-        }
-    }
 });
 //---------------------------------------------------------------------//
 document.addEventListener("DOMContentLoaded", function () {

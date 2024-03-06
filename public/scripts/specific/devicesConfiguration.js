@@ -2,7 +2,6 @@
 //----------------------------EVENTS ZONE------------------------------//
 //---------------------------------------------------------------------//
 let sentRequests = {};
-let checkPayload = true;
 
 document.addEventListener('DOMContentLoaded', () => {
     const socket = new WebSocket('ws://localhost:3001');
@@ -49,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     data: data
                 }
             };
-            sendRequset(req);
+            socket.send(JSON.stringify(req));
         });
 
         // submit enqueue button
@@ -79,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     data: data
                 }
             };
-            sendRequset(req);
+            socket.send(JSON.stringify(req));
         });
 
         // reload queue button
@@ -92,7 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     data: undefined
                 }
             };
-            sendRequset(req);
+            socket.send(JSON.stringify(req));
         });
         //-----------------------------------//
         // flush queue button
@@ -105,7 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     data: undefined
                 }
             };
-            sendRequset(req);
+            socket.send(JSON.stringify(req));
         });
         //-----------------------------------//
         const activeTabIndex = sessionStorage.getItem('activeTabIndex');
@@ -125,21 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
             activeLine.style.width = tabButton.offsetWidth + "px";
 
             sessionStorage.setItem('activeTab', tabName);
-            onPageLoad(checkPayload);
         };
-
-        function onPageLoad(checkPayload) {
-            const activeTab = sessionStorage.getItem('activeTab');
-
-            if (checkPayload) {
-                if (activeTab && !sentRequests[activeTab]) {
-                    sendSpecificRequest(activeTab);
-                    sentRequests[activeTab] = true;
-
-                    checkPayload = false;
-                }
-            }
-        }
 
         if (activeTabIndex !== null) {
             const activeTabButton = document.querySelectorAll('.tab_button')[activeTabIndex];
@@ -164,7 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             }
                         }
                     };
-                    sendRequset(req);
+                    socket.send(JSON.stringify(req));
                 } else if (tabButton.getAttribute('onclick').includes('Configuration')) {
                     const req = {
                         request: 'getDevInfo', message: {
@@ -172,7 +157,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             data: undefined
                         }
                     };
-                    sendRequset(req);
+                    socket.send(JSON.stringify(req));
                 } else if (tabButton.getAttribute('onclick').includes('Queue')) {
                     const req = {
                         request: 'getDevQueues', message: {
@@ -180,7 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             data: undefined
                         }
                     };
-                    sendRequset(req);
+                    socket.send(JSON.stringify(req));
                 } else if (tabButton.getAttribute('onclick').includes('Event')) {
                     const req = {
                         request: 'getDevEvents', message: {
@@ -188,7 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             data: undefined
                         }
                     };
-                    sendRequset(req);
+                    socket.send(JSON.stringify(req));
                 } else if (tabButton.getAttribute('onclick').includes('LoRaWAN_frame')) {
                     const req = {
                         request: 'getDevFrames', message: {
@@ -196,7 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             data: undefined
                         }
                     };
-                    sendRequset(req);
+                    socket.send(JSON.stringify(req));
                 }
             });
         });
@@ -240,7 +225,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         data: undefined
                     }
                 };
-                sendRequset(req);
+                socket.send(JSON.stringify(req));
             }
             else if (messageFromServer.request === 'enqueueDev') {
                 alert("Enqueue device successfully.");
@@ -251,7 +236,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         data: undefined
                     }
                 };
-                sendRequset(req);
+                socket.send(JSON.stringify(req));
             }
             else if (messageFromServer.request === 'flushQueueDev') {
                 alert("Flush queue device successfully.");
@@ -262,7 +247,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         data: undefined
                     }
                 };
-                sendRequset(req);
+                socket.send(JSON.stringify(req));
             }
         } else {
             console.log("Error: Request-" + messageFromServer.request + "-Status-" + messageFromServer.message.status +
@@ -278,13 +263,6 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('WebSocket closed:', event);
     });
 
-    function sendRequset(data) {
-        if (socket.readyState === WebSocket.OPEN) {
-            socket.send(JSON.stringify(data));
-        } else {
-            console.log('WebSocket not ready, message not sent!');
-        }
-    }
     function sendSpecificRequest(tabName) {
         if (tabName === 'Dashboard') {
             const req = {
@@ -296,7 +274,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
             };
-            sendRequset(req);
+            socket.send(JSON.stringify(req));
         } else if (tabName === 'Configuration') {
             const req = {
                 request: 'getDevInfo', message: {
@@ -304,7 +282,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     data: undefined
                 }
             };
-            sendRequset(req);
+            socket.send(JSON.stringify(req));
         } else if (tabName === 'Queue') {
             const req = {
                 request: 'getDevQueues', message: {
@@ -312,7 +290,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     data: undefined
                 }
             };
-            sendRequset(req);
+            socket.send(JSON.stringify(req));
         } else if (tabName === 'Event') {
             const req = {
                 request: 'getDevEvents', message: {
@@ -320,7 +298,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     data: undefined
                 }
             };
-            sendRequset(req);
+            socket.send(JSON.stringify(req));
         } else if (tabName === 'LoRaWAN_frame') {
             const req = {
                 request: 'getDevFrames', message: {
@@ -328,7 +306,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     data: undefined
                 }
             };
-            sendRequset(req);
+            socket.send(JSON.stringify(req));
         }
     }
 });

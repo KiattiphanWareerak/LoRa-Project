@@ -2,9 +2,9 @@
 //----------------------------EVENTS ZONE------------------------------// 
 //---------------------------------------------------------------------//
 document.addEventListener('DOMContentLoaded', () => {
-    const deviceSocket = new WebSocket('ws://localhost:3001');
+    const socket = new WebSocket('ws://localhost:3001');
     //---------------------------SENDER ZONE---------------------------//
-    deviceSocket.addEventListener('open', () => {
+    socket.addEventListener('open', () => {
         console.log('WebSocket connection established with WebServer from devices');
 
         // refresh 
@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     data: undefined
                 }
             };
-            sendRequset(req);
+            socket.send(JSON.stringify(req));
         }
 
         // Add device button (GET DEVICE PROFILES)
@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     data: undefined
                 }
             };
-            deviceSocket.send(JSON.stringify(req));
+            socket.send(JSON.stringify(req));
         })
 
         // Application configuration button (GET)
@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     data: undefined
                 }
             };
-            deviceSocket.send(JSON.stringify(req));
+            socket.send(JSON.stringify(req));
         };
 
         appConfigButton.addEventListener('click', (event) => {
@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         data: message
                     }
                 };
-                deviceSocket.send(JSON.stringify(req));
+                socket.send(JSON.stringify(req));
 
                 appNameInput.value = '';
                 descriptionInput.value = '';
@@ -133,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     data: messageToAddDev
                 }
             };
-            deviceSocket.send(JSON.stringify(req));
+            socket.send(JSON.stringify(req));
 
             devKeyInput.value = '';
             document.getElementById('dev_AddDevice').style.display = "none";
@@ -214,7 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     data: messageToDelDev
                 }
             };
-            deviceSocket.send(JSON.stringify(req));
+            socket.send(JSON.stringify(req));
 
             document.getElementById('dev_DelDev').style.display = "none";
         }
@@ -230,7 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
         })
     });
     //-------------------------RECEIVER ZONE-------------------------//
-    deviceSocket.addEventListener('message', (event) => {
+    socket.addEventListener('message', (event) => {
         const messageFromServer = JSON.parse(event.data);
         console.log('Message from server:', messageFromServer);
 
@@ -251,7 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         data: undefined
                     }
                 };
-                sendRequset(req);
+                socket.send(JSON.stringify(req));
             } else {
                 alert('Update application has been failed.');
             }
@@ -265,7 +265,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         data: undefined
                     }
                 };
-                sendRequset(req);
+                socket.send(JSON.stringify(req));
             } else {
                 alert('Add device has been failed.');
             }
@@ -279,7 +279,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         data: undefined
                     }
                 };
-                sendRequset(req);
+                socket.send(JSON.stringify(req));
             } else {
                 alert('Delete application has been failed.');
             }
@@ -301,26 +301,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    deviceSocket.addEventListener('error', (event) => {
+    socket.addEventListener('error', (event) => {
         console.log('WebSocket error:', event);
     });
 
-    deviceSocket.addEventListener('close', (event) => {
+    socket.addEventListener('close', (event) => {
         console.log('WebSocket closed:', event);
     });
-
-    function sendRequset(data) {
-        if (deviceSocket.readyState === WebSocket.OPEN) {
-            deviceSocket.send(JSON.stringify(data));
-        } else {
-            console.log('WebSocket not ready, message not sent!');
-        }
-    }
 });
 //---------------------------------------------------------------------// 
 //---------------------------DISPLAYS ZONE-----------------------------//
 //for link to device config
-const configSocket = new WebSocket('ws://localhost:3001');
+// const configSocket = new WebSocket('ws://localhost:3001');
 //---------------------------------------------------------------------// 
 function displayApplicationConfiguration(items) {
     // Application Configuration Modal
@@ -365,21 +357,24 @@ function displayDevicesList(items) {
 
             let devId = this.getAttribute('dev-id');
             let devName = item.name;
+            const socket = new WebSocket('ws://localhost:3001');
 
-            const req = {
-                request: 'enterDevId',
-                message: {
-                    status: undefined,
-                    data: {
-                        dev_id: devId, dev_name: devName,
-                        timeAgo: "1m",
-                        aggregation: "DAY"
+            socket.addEventListener('open', () => {
+                const req = {
+                    request: 'enterDevId',
+                    message: {
+                        status: undefined,
+                        data: {
+                            dev_id: devId, dev_name: devName,
+                            timeAgo: "1m",
+                            aggregation: "DAY"
+                        }
                     }
-                }
-            };
-            configSocket.send(JSON.stringify(req));
-
-            window.location.href = 'devicesConfiguration.html';
+                };
+                socket.send(JSON.stringify(req));
+    
+                window.location.href = 'devicesConfiguration.html';
+            });
         });
         devNameLink.textContent = item.name;
         devNameCell.appendChild(devNameLink);
