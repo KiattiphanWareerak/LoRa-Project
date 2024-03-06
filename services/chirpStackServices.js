@@ -773,7 +773,7 @@ async function enqueueDeviceRequest(values, devId, apiToken) {
       queue.setConfirmed(values.eq_cnf);
       queue.setFPort(values.eq_fport);
       queue.setIsEncrypted(values.eq_isEncry);
-      queue.setData(values.eq_data);
+      queue.setData(Buffer.from(values.eq_data).toString('base64'));
       // Create a request to enqueue.
       const createReq = new device_pb.EnqueueDeviceQueueItemRequest();
       createReq.setQueueItem(queue);
@@ -1631,7 +1631,7 @@ async function updatePasswordUserRequest(uId, uPw, apiToken) {
       createReq.setUserId(uId);
       createReq.setPassword(uPw);
 
-      internalService.profile(createReq, metadata, (err, resp) => {
+      userService.updatePassword(createReq, metadata, (err, resp) => {
         if (err !== null) {
           console.log(err);
           resolve({

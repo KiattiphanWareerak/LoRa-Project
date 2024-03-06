@@ -1,14 +1,13 @@
 //---------------------------------------------------------------------//
 //----------------------------EVENTS ZONE------------------------------//
 //---------------------------------------------------------------------//
-const deviceConfigSocket = new WebSocket('ws://localhost:3001');
-
 let sentRequests = {};
 let checkPayload = true;
 
 document.addEventListener('DOMContentLoaded', () => {
+    const socket = new WebSocket('ws://localhost:3001');
     //---------------------------SENDER ZONE---------------------------//
-    deviceConfigSocket.addEventListener('open', () => {
+    socket.addEventListener('open', () => {
         console.log('WebSocket connection established with WebServer from devices');
 
         // submit device configurations button
@@ -203,10 +202,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
     //-------------------------RECEIVER ZONE-------------------------//
-    deviceConfigSocket.addEventListener('message', (event) => {
+    socket.addEventListener('message', (event) => {
         const messageFromServer = JSON.parse(event.data);
         console.log('Message from server:', messageFromServer);
-    
+
         if (messageFromServer.message.status === 'success') {
             if (messageFromServer.request === 'enterDevId' || messageFromServer.request === 'getDashDev') {
                 display_headerAndMiddleTitle_device_configurations(messageFromServer.message.data.dev_config.device.name, messageFromServer.message.data.app_name);
@@ -234,7 +233,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             else if (messageFromServer.request === 'postDevConfigConfirm') {
                 alert("Your device is now updated.");
-    
+
                 const req = {
                     request: 'getDevInfo', message: {
                         status: undefined,
@@ -245,7 +244,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             else if (messageFromServer.request === 'enqueueDev') {
                 alert("Enqueue device successfully.");
-    
+
                 const req = {
                     request: 'getDevQueues', message: {
                         status: undefined,
@@ -256,7 +255,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             else if (messageFromServer.request === 'flushQueueDev') {
                 alert("Flush queue device successfully.");
-    
+
                 const req = {
                     request: 'getDevQueues', message: {
                         status: undefined,
@@ -270,21 +269,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 "\n-Data-" + messageFromServer.message.data);
         }
     });
-    
-    deviceConfigSocket.addEventListener('error', (event) => {
+
+    socket.addEventListener('error', (event) => {
         console.log('WebSocket error:', event);
     });
-    
-    deviceConfigSocket.addEventListener('close', (event) => {
+
+    socket.addEventListener('close', (event) => {
         console.log('WebSocket closed:', event);
     });
-    
+
     function sendRequset(data) {
-            if (deviceConfigSocket.readyState === WebSocket.OPEN) {
-                deviceConfigSocket.send(JSON.stringify(data));
-            } else {
-                console.log('WebSocket not ready, message not sent!');
-            }
+        if (socket.readyState === WebSocket.OPEN) {
+            socket.send(JSON.stringify(data));
+        } else {
+            console.log('WebSocket not ready, message not sent!');
+        }
     }
     function sendSpecificRequest(tabName) {
         if (tabName === 'Dashboard') {
@@ -434,7 +433,7 @@ function displayConfigurationsDevice(dev_config, dev_Profiles, dev_key, dev_acti
 
     // Get the select element by its id
     const selectElement = document.getElementById("deviceProfile_List");
-    
+
     for (var added_option = 0; added_option < total_devProfile; added_option++) {
         var devProfile_name = user_devProfiles[added_option].name;
         var devProfile_id = user_devProfiles[added_option].id;
@@ -618,7 +617,6 @@ function displayDeviceFrames(dev_frames) {
             console.log("nsTime is not available for action:", actionValue);
         }
     });
-
 }
 //---------------------------------------------------------------------//
 //----------------------------COMMON ZONE------------------------------// 

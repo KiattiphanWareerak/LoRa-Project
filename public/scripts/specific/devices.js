@@ -1,9 +1,8 @@
 //---------------------------------------------------------------------// 
 //----------------------------EVENTS ZONE------------------------------// 
 //---------------------------------------------------------------------//
-const deviceSocket = new WebSocket('ws://localhost:3001');
-
 document.addEventListener('DOMContentLoaded', () => {
+    const deviceSocket = new WebSocket('ws://localhost:3001');
     //---------------------------SENDER ZONE---------------------------//
     deviceSocket.addEventListener('open', () => {
         console.log('WebSocket connection established with WebServer from devices');
@@ -319,7 +318,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 //---------------------------------------------------------------------// 
-//---------------------------DISPLAYS ZONE-----------------------------// 
+//---------------------------DISPLAYS ZONE-----------------------------//
+//for link to device config
+const configSocket = new WebSocket('ws://localhost:3001');
 //---------------------------------------------------------------------// 
 function displayApplicationConfiguration(items) {
     // Application Configuration Modal
@@ -376,10 +377,9 @@ function displayDevicesList(items) {
                     }
                 }
             };
-            deviceSocket.send(JSON.stringify(req));
+            configSocket.send(JSON.stringify(req));
 
             window.location.href = 'devicesConfiguration.html';
-
         });
         devNameLink.textContent = item.name;
         devNameCell.appendChild(devNameLink);

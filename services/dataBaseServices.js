@@ -100,10 +100,10 @@ async function createUserInfluxDb(items, INFLUX_API_TOKEN) {
   }
 }
 //---------------------------------------------------------------------//
-async function updatePasswordInfluxDb(usr, items, INFLUX_API_TOKEN) {
+async function updatePasswordInfluxDb(usrId, items, INFLUX_API_TOKEN) {
   try {
     const password = {
-      password: items.user_pw
+      password: items.user_npw
     };
 
     const headers = {
@@ -112,7 +112,7 @@ async function updatePasswordInfluxDb(usr, items, INFLUX_API_TOKEN) {
     };
 
     return new Promise(async (resolve, reject) => {
-      axios.post(`${INFLUX_URL}/api/v2/users/${usr.id}/password`, password, { headers })
+      axios.post(`${INFLUX_URL}/api/v2/users/${usrId}/password`, password, { headers })
         .then((response) => {
           console.log('Password updated.', response.data);
 

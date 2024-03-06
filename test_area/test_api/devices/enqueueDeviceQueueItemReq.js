@@ -2,9 +2,9 @@ const grpc = require("@grpc/grpc-js");
 const device_grpc = require("@chirpstack/chirpstack-api/api/device_grpc_pb");
 const device_pb = require("@chirpstack/chirpstack-api/api/device_pb");
 // This must point to the ChirpStack API interface.
-const serverChirpStack = "192.168.50.54:8080";
+const serverChirpStack = "202.28.95.234:8080";
 // The API token (can be obtained through the ChirpStack web-interface).
-const apiToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjaGlycHN0YWNrIiwiaXNzIjoiY2hpcnBzdGFjayIsInN1YiI6IjJmZjMzODRiLWZjYzgtNDE5OS1hNmY0LWVjYWEwNzUyMmE5NiIsInR5cCI6ImtleSJ9.HcJsMD_Vv-oPUFHqRIDo_xPlJOPPzNeNxSsixNXTRX0";
+const apiToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjaGlycHN0YWNrIiwiaXNzIjoiY2hpcnBzdGFjayIsInN1YiI6IjQyOGM5OWQwLWU3MjEtNDFkYy04OWJlLTg1ZWM4YjUwOTExOCIsInR5cCI6ImtleSJ9.OwZHbhj_KX2j0Pc6ekIb9RS9gpFO2Xbp8DupeZR7tpA";
 // Create the client for the DeviceService.
 const deviceService = new device_grpc.DeviceServiceClient(
   serverChirpStack,
@@ -18,7 +18,7 @@ function enqueueDeviceQueueItemRequest_to_chripstack(devEUI) {
   // Create a device queue item.
   const queueDevice = new device_pb.DeviceQueueItem();
   queueDevice.setConfirmed(true);
-  queueDevice.setData(Buffer.from("Hello!").toString('base64'));
+  queueDevice.setData(Buffer.from("Hello").toString('base64'));
   queueDevice.setDevEui(devEUI);
   // queueDevice.setExtension();
   // queueDevice.setFCntDown();
@@ -37,10 +37,10 @@ function enqueueDeviceQueueItemRequest_to_chripstack(devEUI) {
       return;
     }
 
-    data = resp.toObject().rxPackets.datasetsList;
+    data = resp.toObject();
     console.log(data);
     console.log('Enqueue Device has been compleled.');
   });
 }
 
-enqueueDeviceQueueItemRequest_to_chripstack("");
+enqueueDeviceQueueItemRequest_to_chripstack("1aec628d153c9ba1");

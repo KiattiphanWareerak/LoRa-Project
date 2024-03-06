@@ -1,9 +1,8 @@
 //---------------------------------------------------------------------// 
 //----------------------------EVENTS ZONE------------------------------// 
 //---------------------------------------------------------------------//
-const applicationSocket = new WebSocket('ws://localhost:3001');
-
 document.addEventListener('DOMContentLoaded', () => {
+    const applicationSocket = new WebSocket('ws://localhost:3001');
     //---------------------------SENDER ZONE---------------------------//
     applicationSocket.addEventListener('open', () => {
         console.log('WebSocket connection established with WebServer from applications');

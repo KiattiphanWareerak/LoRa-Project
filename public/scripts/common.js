@@ -3,10 +3,6 @@
 //---------------------------------------------------------------------//
 const commonSocket = new WebSocket('ws://localhost:3001');
 
-commonSocket.addEventListener('open', () => {
-  console.log('WebSocket connection established with WebServer from common');
-});
-
 commonSocket.addEventListener('message', (event) => {
   const messageFromServer = JSON.parse(event.data);
   console.log('Message from server:', messageFromServer);
@@ -42,7 +38,7 @@ commonSocket.addEventListener('close', (event) => {
 
 function sendRequset(data) {
   commonSocket.addEventListener('open', () => {
-    console.log('WebSocket connection established with WebServer from DOMContentLoaded.');
+    console.log('WebSocket connection established with WebServer from common.');
 
     if (commonSocket.readyState === WebSocket.OPEN) {
       commonSocket.send(JSON.stringify(data));

@@ -8,6 +8,7 @@ const nodemailer = require('nodemailer');
 //Set values stored
 let globalUserToken, globalUserId, globalTenantId, globalUserName;
 let globalAppId, globalAppName, globalAppDesc, globalDevId, globalDevName, globalDevDesc;
+let otpStored;
 //---------------------------------------------------------------------//
 async function myApp(values) {
     try {
@@ -602,22 +603,26 @@ async function myApp(values) {
 
                     if ( resultCheckUserEmail.request === 'checkUserEmail' && resultCheckUserEmail.message.status === 'failed' ) {
                         console.log(resultCheckUserEmail);
-                        globalUserId = resultCheckUserEmail.id;
+                        globalUserId = resultCheckUserEmail.message.data.id;
                         const userEmail = values.message.data.user_em;
 
-                        const transporter = nodemailer.createTransport({
-                            service: 'gmail',
+                        let transporter = nodemailer.createTransport({
+                            host: 'smtp-mail.outlook.com',
+                            port: 587,
+                            secure: false, 
                             auth: {
                                 user: 'ten_5u@hotmail.com',
                                 pass: '_Ten5u7985'
                             }
                         });
 
+                        const randomNumber = Math.floor(Math.random() * 900000) + 100000;
+
                         const mailOptions = {
                             from: 'ten_5u@hotmail.com',
                             to: userEmail,
                             subject: 'Password Reset Request',
-                            text: 'Please click on the following link to reset your password: http://localhost/crp.html'
+                            text: 'Please click on the following link to reset your password: http://localhost:3001/resetPassword.html\nOTP:' + randomNumber
                         };
 
                         transporter.sendMail(mailOptions, (error, info) => {
@@ -626,6 +631,9 @@ async function myApp(values) {
                                 resolve({ request: 'forgotPassword', message: { status: 'failed', data: undefined } });
                             } else {
                                 console.log('Email sent: ' + info.response);
+                                otpStored = randomNumber;
+                                setTimeout(resetOTP, 3 * 60 * 1000);
+                                
                                 resolve({ request: 'forgotPassword', message: { status: 'success', data: undefined } });
                             }
                         });
@@ -637,6 +645,10 @@ async function myApp(values) {
                 }
             }
             else if (values.request === 'updatePassword') {
+                if ( values.message.data.user_otp != otpStored) {
+                    resolve({ request: 'updatePassword', message: { status: 'failed', data: "Incorrect OTP code." } });
+                    return;
+                }
                 const respFromApiToken = await dataBaseServices.getApiTokenFromDB();
 
                 if (respFromApiToken.request === 'getApiToken' && respFromApiToken.message.status === 'failed') {
@@ -644,21 +656,23 @@ async function myApp(values) {
                     return;
                 }
 
-                const respFromUpdatePw = await chirpStackServices.updatePasswordUserRequest(globalUserId, values.message.data.user_pw, respFromApiToken.message.data[0].cs_token);
+                const respFromUpdatePw = await chirpStackServices.updatePasswordUserRequest(globalUserId, values.message.data.user_npw, respFromApiToken.message.data[0].cs_token);
 
                 if (respFromUpdatePw.request === 'updatePassword' && respFromUpdatePw.message.status === 'success') {
                     const respFromUserListIflux = await dataBaseServices.getUserListInfluxDb(respFromApiToken.message.data[0].influx_token);
 
                     if (respFromUserListIflux.request === 'listUsersInflux' && respFromUserListIflux.message.status === 'success') {
-                        const matchedUsers = respFromUserListIflux.users.filter(user => user.name === values.message.data.user_un);
+                        const matchedUsers = respFromUserListIflux.message.data.users.filter(user => user.name === values.message.data.user_un);
 
                         if (matchedUsers.length > 0) {
                           console.log(`Found user with`);
                           matchedUsers.forEach(user => {
                             console.log(`User ID: ${user.id}, Name: ${user.name}`);
                           });
-                          
-                          const respFromUpPwIflux = await dataBaseServices.updatePasswordInfluxDb(matchedUsers.id, values.message.data,respFromApiToken.message.data[0].influx_token);
+                          otpStored = null;
+                          globalUserId = null;
+
+                          const respFromUpPwIflux = await dataBaseServices.updatePasswordInfluxDb(matchedUsers[0].id, values.message.data,respFromApiToken.message.data[0].influx_token);
 
                           if (respFromUpPwIflux.request === 'postUpPw' && respFromUpPwIflux.message.status === 'success') {
                             resolve({ request: 'updatePassword', message: { status: 'success', data: undefined } });
@@ -675,7 +689,7 @@ async function myApp(values) {
                 } else {
                     resolve({ request: 'updatePassword', message: { status: 'failed', data: undefined } });
                 }
-            }    
+            }
             else {
                 resolve({ request: 'unknow', message: { status: 'failed', data: 'Unknow request from Client.' } });
             }
@@ -732,5 +746,12 @@ function logout() {
         globalAppId, globalAppName, globalAppDesc,
         globalDevId, globalDevName, globalDevDesc
         = null;
+}
+async function resetOTP() {
+    if (otpStored == null || globalUserId == null) {
+        return;
+    }
+    otpStored = null;
+    globalUserId = null;
 }
 //---------------------------------------------------------------------//
