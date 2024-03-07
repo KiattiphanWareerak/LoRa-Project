@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         data: addAppData
                     }
                 };
-                socket.send(JSON.stringify(data));
+                socket.send(JSON.stringify(req));
 
                 appNameInput.value = '';
                 descriptionInput.value = '';
@@ -138,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     data: appIDsSelect
                 }
             };
-            socket.send(JSON.stringify(data));
+            socket.send(JSON.stringify(req));
 
             document.getElementById('app_DelApp').style.display = "none";
         }

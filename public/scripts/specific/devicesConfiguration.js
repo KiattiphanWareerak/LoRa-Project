@@ -9,6 +9,22 @@ document.addEventListener('DOMContentLoaded', () => {
     socket.addEventListener('open', () => {
         console.log('WebSocket connection established with WebServer from devices');
 
+        // refresh 
+        const currentPath = window.location.pathname;
+
+        if (currentPath.includes('devicesConfiguration.html')) {
+            const req = {
+                request: 'getDashDev', message: {
+                    status: undefined,
+                    data: {
+                        timeAgo: "1y",
+                        aggregation: "MONTH"
+                    }
+                }
+            };
+            socket.send(JSON.stringify(req));
+        }
+
         // submit device configurations button
         const saveButton = document.getElementById("save-config_btn");
 

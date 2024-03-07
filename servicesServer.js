@@ -24,7 +24,6 @@ app.post('/service', async (req, res) => {
     const message = req.body;
     console.log(message);
 
-    // Do something with the message
     try {
         const result = await checkReq.myApp(message);
 
