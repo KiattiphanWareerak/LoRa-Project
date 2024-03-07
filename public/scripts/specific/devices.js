@@ -311,8 +311,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 //---------------------------------------------------------------------// 
 //---------------------------DISPLAYS ZONE-----------------------------//
-//for link to device config
-// const configSocket = new WebSocket('ws://localhost:3001');
 //---------------------------------------------------------------------// 
 function displayApplicationConfiguration(items) {
     // Application Configuration Modal
@@ -357,7 +355,7 @@ function displayDevicesList(items) {
 
             let devId = this.getAttribute('dev-id');
             let devName = item.name;
-            const socket = new WebSocket('ws://localhost:3001');
+            const socket = new WebSocket('ws://202.28.95.234:3001');
 
             socket.addEventListener('open', () => {
                 const req = {
