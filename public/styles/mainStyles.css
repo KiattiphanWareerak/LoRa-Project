@@ -275,6 +275,20 @@ textarea{
     cursor: default;
 }
 
+.guides h4 {
+    margin-left: 10px;
+    margin-top: 10px;
+}
+
+.guides span {
+    line-height: 1;
+    margin-left: 20px;
+}
+
+.guides #sub-detail {
+    margin-left: 30px;
+}
+
 .map-containner {
     width: 100%;
     background-color: rgb(237, 237, 237);

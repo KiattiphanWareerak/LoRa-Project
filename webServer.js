@@ -12,7 +12,7 @@ const server = http.createServer(app);
 
 // Set the port and IP address for the server
 const PORT = 3001;
-const IP_ADDRESS = 'localhost';
+const IP_ADDRESS = '0.0.0.0';
 
 // Serve static files (HTML, CSS, JS)
 app.use(express.static(path.join(__dirname, 'public')));

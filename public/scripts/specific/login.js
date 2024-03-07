@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------// 
 //---------------------------WEB SOCKET ZONE---------------------------//
 //---------------------------------------------------------------------//
-const loginSocket = new WebSocket('ws://localhost:3001');
+const loginSocket = new WebSocket('ws://202.28.95.234:3001');
 
 loginSocket.addEventListener('open', () => {
     console.log('WebSocket connection established with WebServer');

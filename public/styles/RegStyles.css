@@ -57,6 +57,11 @@ input {
 #backButton:hover {
     background-color: #e1e1e1;
 }
+#backButton {
+    width: 30px;
+    height: 30px;
+    border-radius: 15px;
+}
 
 button {
     padding: 10px;
@@ -89,4 +94,8 @@ button:hover {
 
 .form-links span {
     margin: 0 10px;
+}
+
+.container .form label {
+    text-align: left;
 }
