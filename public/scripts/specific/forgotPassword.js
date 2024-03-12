@@ -2,7 +2,7 @@
 //----------------------------EVENT ZONE-------------------------------//
 //---------------------------------------------------------------------//
 document.addEventListener('DOMContentLoaded', () => {
-    const forgotSocket = new WebSocket('ws://202.28.95.234:3001');
+    const forgotSocket = new WebSocket('ws://localhost:3001');
 
     forgotSocket.addEventListener('open', () => {
         console.log('WebSocket connection established with WebServer from forgot password');

@@ -79,6 +79,7 @@
                 <button class="button-config" id="appConfigButton" onclick="openModal('dev_ConfigApp')">Application Configuration</button>
                 <button class="button-add" id="addDeviceButton" onclick="openModal('dev_AddDevice')">Add Device</button>
                 <button class="button-del" id="deleteDevButton"  onclick="openModal('dev_DelDev')">Delete Device</button>
+                <button onclick="openModal('dev_AddAppkey')">fake button</button>
             </div>
         </div>
         <div class="dev-name">
@@ -94,20 +95,6 @@
                         </tr>
                     </thead>
                     <tbody id="data-table">
-                        <!-- <tr>
-                            <td><input type="checkbox" name="app1" /></td>
-                            <td>1</td>
-                            <td><a href="devicesConfiguration.html">My-App-1</a></td>
-                            <td>xxADzXxxxArd-***</td>
-                            <td>3</td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" name="app2" /></td>
-                            <td>2</td>
-                            <td>new-app</td>
-                            <td>xxcdaXxxxAff-***</td>
-                            <td>3</td>
-                        </tr> -->
                     </tbody>
                 </table>
             </div>
@@ -127,19 +114,6 @@
                 <input type="text" placeholder="Application name" id="appNameInput" required>
                 <textarea name="Description" placeholder="Description" id="descriptionInput" cols="30" rows="5"></textarea>
             </div>
-            <!-- Checkboxes -->
-            <!-- <div class="integration-containner"> Integration
-                <div class="integration-checkboxes">
-                    <div class="checkbox-containner">
-                        <input type="checkbox" id="influxDB" name="integration" value="influxDB">
-                        <label for="influxDB">InfluxDB</label>
-                    </div>
-                    <div class="checkbox-containner">
-                        <input type="checkbox" name="integration" value="other">
-                        <div>Other</div>
-                    </div>
-                </div>
-            </div> -->
             <!-- Submit button -->
             <div>
                 <button class="modal_button" id="appConfigConfirm">Submit</button>
@@ -181,6 +155,7 @@
             </div>
             <!-- Form inputs -->
             <div>
+                <button id="Generate_key" onclick="generateAppkey()"><i class="fa-solid fa-rotate"></i></button>
                 <input type="text" id="devKeyInput" class="dev_Appkey" placeholder="Key" required>
             </div>
             <!-- Submit button -->

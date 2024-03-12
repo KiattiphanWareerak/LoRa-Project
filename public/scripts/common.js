@@ -2,7 +2,7 @@
 //----------------------------EVENT ZONE-------------------------------//
 //---------------------------------------------------------------------//
 document.addEventListener('DOMContentLoaded', async () => {
-  const socket = new WebSocket('ws://202.28.95.234:3001');
+  const socket = new WebSocket('ws://localhost:3001');
   //---------------------------SENDER ZONE---------------------------//
   socket.addEventListener('open', () => {
     console.log('WebSocket connection established with WebServer from common');
@@ -177,6 +177,11 @@ function set_pieChart_data(greenData, redData, grayData) {
   }
   return data
 }
+
+function newtab() {
+  window.open('tutorialPage.html', '_blank');
+}
+
 function display_mainContent_dashboard(gets) {
 
   // KKU latitude and longitude = [16.466, 102.817] zoom_level = 14
@@ -335,7 +340,7 @@ function display_mainContent_applications(gets) {
       const appID = this.getAttribute('app-id');
       const appName = item.name;
 
-      const socket = new WebSocket('ws://202.28.95.234:3001');
+      const socket = new WebSocket('ws://localhost:3001');
 
       socket.addEventListener('open', () => {
         const req = {

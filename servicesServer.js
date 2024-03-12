@@ -13,7 +13,7 @@ const checkReq = require('./services/myApp.js');
 
 // Set the port and IP address for the server
 const PORT = 3002;
-const IP_ADDRESS = '0.0.0.0';
+const IP_ADDRESS = 'localhost';
 
 // use body-parser to fecth JSON from req.body
 app.use(bodyParser.json());
