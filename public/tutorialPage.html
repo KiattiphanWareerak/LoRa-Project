@@ -40,7 +40,7 @@
             <li class="active" id="menu-tutorial">
                 <a>
                     <i class="fas fa-question-circle"></i>
-                    <span>Tutorial</span>
+                    <span>Tutorial Code</span>
                 </a>
             </li>
             <!-- Logout link -->
@@ -146,7 +146,7 @@ import time, sys, os, math, random, network, machine
 check = 0
                         
 # Send AT Command function with <CR><LF>
-    def sendATcommand(ATcommand):
+def sendATcommand(ATcommand):
     rstr = ""
     print("Command: {0}\r\n".format(ATcommand))
     uart.write("{0}\r\n".format(ATcommand))
@@ -172,7 +172,7 @@ def sendHello():
     try:
         while True:
             #rstr = sendATcommand("AT+NCMGS=5,HELLO")
-            sendATcommand("AT+NMGS=3,585858")
+            sendATcommand("AT+NMGS=5,48454c4c4f")
             time.sleep(time_interval() + 1)
             count += 1
             print("Cycle: ", count)
