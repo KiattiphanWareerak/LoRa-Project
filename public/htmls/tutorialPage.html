@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Meta tags -->
+    <meta charset="UTF-8">
+    <title>Tutorial</title>
+    <!-- External stylesheets -->
+    <link rel="stylesheet" href="../styles/mainStyles.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <script src="../scripts/common.js"></script>
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="logo"></div>
+        <ul class="side_menu">
+            <!-- Dashboard link (active) -->
+            <li id="menu-mainDashboard">
+                <a>
+                    <i class="fa-solid fa-chart-pie"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <!-- Application link -->
+            <li id="menu-applications">
+                <a>
+                    <i class="fa-solid fa-microchip"></i>
+                    <span>Application</span>
+                </a>
+            </li>
+            <!-- Device Profiles link -->
+            <li id="menu-deviceProfiles">
+                <a>
+                    <i class="fa-regular fa-address-card"></i>
+                    <span>Device Profiles</span>
+                </a>
+            </li>
+            <!-- Tutorial link (active) -->
+            <li class="active" id="menu-tutorial">
+                <a>
+                    <i class="fas fa-question-circle"></i>
+                    <span>Tutorial</span>
+                </a>
+            </li>
+            <!-- Logout link -->
+            <li class="logout" id="menu-logout">
+                <a>
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main content -->
+    <div class="main--content">
+        <!-- Header -->
+        <div class="header--wrapper">
+            <div class="header--title">
+                <!-- Title for FAQs -->
+                <h1>Tutorial</h1>
+            </div>
+            <div class="user--info">
+                <img src="../components/user.png" alt="" />
+            </div>
+        </div>
+        <div class="tutorial_container">
+            <div class="tutorial_guide">
+                <span>1. Connect your micropython board which had connect with LoRa module to your computer</span>
+                <img src="components/connectUSB.png" alt="">
+            </div>
+            <div class="tutorial_guide">
+                <span>2. Open Thonny (Python IDE) (If you don't have Thonny you can download from <a
+                        href="https://thonny.org/">here</a>)</span>
+                <img src="../components/Thonny_Open.png" alt="">
+            </div>
+            <div class="tutorial_guide">
+                <span>3. Click "Options..." in "Tools" menu</span>
+                <img src="../components/Thonny_Options.png" alt="">
+            </div>
+            <div class="tutorial_guide">
+                <span>4. เลือกบอร์ดและพอร์ตในการเชื่อมต่อที่ใช้ (ในที่นี้คือ Micropython(ESP32) เชื่อมต่อที่ Serial Port
+                    @COM4)</span>
+                <img src="../components/Thonny_Tools.jpg" alt="">
+            </div>
+            <div class="tutorial_guide">
+                <span>5. Press (Ctrl+N) to create a new blank file</span>
+                <img src="../components/Thonny_newFilew.png" alt="">
+                <br>
+                <span>6. Then use this code to get DeviceEUI from LoRa module</span>
+                <div class="tutorial_codebox">
+                    <pre>
+                    from machine import UART
+                    import time
+                    # UART2
+                    # IO Pin:Tx = 16
+                    # IO Pin:Rx = 17
+                    uart = UART(2, baudrate=115200, bits=8, parity=None, stop=1, timeout=2000)
+                    uart.write("AT+DEVEUI\r\n")
+                    time.sleep(1)
+                    print(uart.read().decode('utf-8'))</pre>
+                </div>
+            </div>
+            <div class="tutorial_codebox">
+
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

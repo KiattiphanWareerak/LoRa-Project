@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Meta tags -->
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <!-- External stylesheets -->
+    <link rel="stylesheet" href="../styles/mainStyles.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script src="../scripts/common.js"></script>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="logo"></div>
+        <ul class="side_menu">
+            <!-- Dashboard link (active) -->
+            <li class="active" id="menu-mainDashboard" >
+                <a>
+                    <i class="fa-solid fa-chart-pie"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <!-- Application link -->
+            <li id="menu-applications">
+                <a>
+                    <i class="fa-solid fa-microchip"></i>
+                    <span>Application</span>
+                </a>
+            </li>
+            <!-- Device Profiles link -->
+            <li id="menu-deviceProfiles">
+                <a>
+                    <i class="fa-regular fa-address-card"></i>
+                    <span>Device Profiles</span>
+                </a>
+            </li>
+            <!-- Tutorial link -->
+            <li id="menu-tutorial">
+                <a>
+                    <i class="fas fa-question-circle"></i>
+                    <span>Tutorial</span>
+                </a>
+            </li>
+            <!-- Logout link -->
+            <li class="logout" id="menu-logout">
+                <a>
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main content -->
+    <div class="main--content">
+        <!-- Header -->
+        <div class="header--wrapper">
+            <div class="header--title">
+                <!-- Title for FAQs -->
+                <h1>Dashboard</h1>
+            </div>
+            <div class="user--info">
+                <img src="../components/user.png" alt="" />
+            </div>
+        </div>
+        <div class="wrap-content">
+            <div class="dashboard-chart-container">
+                <div class="dashboard-chart">
+                    <div class="dashboard-chart-headder">
+                        <span>Active Device</span>
+                    </div>
+                    <canvas id="device-pieChart" width="350" height="350"></canvas>
+                </div>
+                <div class="dashboard-chart">
+                    <div class="dashboard-chart-headder">
+                        <span>Active Gateway</span>
+                    </div>
+                    <canvas id="gateway-pieChart" width="350" height="350"></canvas>
+                </div>
+                <div class="dashboard-chart">
+                    <div class="dashboard-chart-headder">
+                        <span>User Guide</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Gateways Map section -->
+            <div class="map-containner">
+                <div class="map-headder">
+                    <h3>Gateway Location</h3>
+                </div>
+                <div id="map" class="gateway-map"></div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

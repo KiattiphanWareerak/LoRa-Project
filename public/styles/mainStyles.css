@@ -1,0 +1,679 @@
+*   {
+    margin: 0;
+    padding: 0;
+    border: none;
+    outline: none;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+/* * * * Display Setting * * * */
+body {
+    display: flex;
+}
+.warp-content {
+    flex-wrap: wrap;
+}
+.display_2_elements {
+    display: flex;
+    justify-content: space-between;
+}
+
+.left-element,
+.right-element {
+    width: 48%; /* Adjust the width as needed, leaving some space for margin/padding */
+}
+
+.left-element label,
+.right-element label {
+    display: block;
+    margin-bottom: 5px; /* Adjust as needed */
+}
+
+.left-element input,
+.right-element input {
+    width: 100%; /* Input takes full width of its container */
+    padding: 8px; /* Adjust as needed */
+    box-sizing: border-box;
+    border: 1px solid #ccc; /* Example border style, adjust as needed */
+}
+
+/* Add additional styles if needed */
+
+input{
+    width: 100%;
+    border-radius: 10px;
+    border-right: 10px;
+    margin-bottom: 20px;
+    /* margin-bottom: 1.5rem; */
+    border: 1px solid #333;
+    padding: 8px;
+}
+textarea{
+    width: 100%;
+    border-radius: 10px;
+    resize: none;
+    margin-bottom: 20px;
+    /* margin-bottom: 1.5rem; */
+    border: 1px solid #333;
+    padding: 8px;
+}
+
+/* * * * tab swiching Part * * * */
+.container {
+    width: 100%;
+    background-color: white;
+    padding: 30px;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
+    flex-wrap: wrap;
+}
+.container body{
+    background-color: #deeeff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+.tab_box {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    /* border-bottom: 2px solid rgba(299,299,299); */
+    border-bottom: 2px solid #000000;
+    position: relative;
+}
+.tab_box .tab_button{
+    font-size: 18px;
+    font-weight: 600;
+    color: black;
+    background: none;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+}
+.tab_box .tab_button.active{
+    color: #7360ff;
+}
+.content_box{
+    padding: 20px;
+}
+.content_box .tab_content{
+    display: none;
+}
+.content_box .tab_content.active{
+    display: block;
+}
+.content_box .content h2{
+    margin-bottom: 10px;
+}
+
+.active_line{
+    position: absolute;
+    top: 40px;
+    left: 35px;
+    width: 120px;
+    height: 5px;
+    background-color: #7360ff;
+    transition: all .3s ease-in-out;
+}
+
+/* * * * Sidebar Part * * * */
+.sidebar {
+    position: sticky;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 105px;
+    height: 100vh;
+    padding: 0 1.7rem;
+    color: #fff;
+    overflow: hidden;
+    transition: all 0.5s linear;
+    background: rgba(75, 140, 255, 255);
+}
+.sidebar:hover {
+    width: 250px;
+    transition: 0.5s;
+}
+.logo {
+    height: 80px;
+    padding: 16px;
+}
+.side_menu {
+    height: 88%;
+    position: relative;
+    list-style: none;
+    padding: 0;
+}
+.side_menu li {
+    padding: 1rem;
+    margin: 8px 0;
+    border-radius: 8px;
+    transition: all 0.5s ease-in-out;
+}
+.side_menu li:hover,
+.sidebar .active {
+    background: gray;
+}
+.side_menu a {
+    color: #fff;
+    font-size: 14px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+.side_menu a span {
+    overflow: hidden;
+}
+.side_menu a i {
+    font-size: 1.2rem;
+}
+.logout{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+
+}
+/* * * * main body * * * */
+.main--content{
+    position: relative;
+    background: #ebe9e9;
+    width: 100%;
+    padding: 1rem;
+}
+.header--wrapper img {
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    border-radius: 50%;
+}
+.header--wrapper{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    background: #fff;
+    border-radius: 10px;
+    padding: 10px 2rem;
+    margin: 1rem;
+}
+.header--title{
+    /* color: rgba(113, 99, 186, 255); */
+    color: rgba(75, 140, 255, 255);
+}
+.user--info{
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+.search--box{
+    background: rgb(237, 237, 237);
+    border-radius: 15px;
+    color: rgba(113, 99, 186, 255);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 12px;
+}
+.search--box input{
+    background: transparent;
+    padding: 10px;
+}
+.search--box i{
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.5s ease-out;
+}
+.search--box i:hover{
+    transform: scale(1.2);
+}
+/* * Mid--content * * */
+.mid--contents {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px; /* Adjust as needed */
+}
+  
+.located {
+    display: flex;
+    align-items: center;
+    margin-right: 5px;
+}
+.located h4 {
+    margin: 0 3px; /* Adjust the margin as needed */
+  }
+
+/* * * * Dashboard Display Part * * * */
+.dashboard-chart-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    width: 100%;
+    height: 400px;
+    /* background-color: #26489a; */
+    margin-bottom: 10px;
+}
+
+.dashboard-chart-container .dashboard-chart {
+    width: 350px;
+    height: 400px;
+    background-color: rgb(237, 237, 237);
+    border-radius: 20px;
+    margin-right: 40px;
+    border: #dfdfdf 1px solid;
+}
+
+.dashboard-chart .dashboard-chart-headder {
+    margin-top: 10px;
+    padding-bottom: 5px;
+    text-align: center;
+    border-bottom: #dfdfdf 1px solid;
+    cursor: default;
+}
+
+.map-containner {
+    width: 100%;
+    background-color: rgb(237, 237, 237);
+    justify-content: center;
+}
+
+.gateway-map {
+    width: 95%;
+    padding-bottom: 50%;
+    position: relative;
+}
+
+/* * * * Button Part * * * */
+.save-button-container {
+    text-align: right;
+    margin-top: 10px; /* Adjust margin as needed */
+    margin-right: 100px;
+}
+
+#save-config_btn {
+    color: #fff;
+    padding: 8px 22px;
+    width: 150px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    margin-top: 20px;
+    margin-left: 5px;
+    background-color: rgb(67, 194, 236);
+}
+.button-group{
+    display: flex;
+    text-align: right;
+}
+.button-group button{
+    color: #fff;
+    padding: 8px 22px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    margin-left: 5px;
+}
+.button-add{
+    background: green;
+}
+.button-del{
+    background: red;
+}
+.button-config{
+    background: rgb(67, 194, 236);
+}
+button:active {
+    transform: scale(0.96);
+}
+.toggle_button {
+    width: 100%;
+    background-color: #fff;
+    display: flex;
+    align-items: baseline;
+    padding-top: 10px;
+    justify-content: left;
+}
+.toggle_button-label {
+    background-color: #d2d2d2;
+    width: 80px;
+    height: 40px;
+    border-radius: 200px;
+    cursor: pointer;
+    position: relative;
+}
+.toggle_button-label::before {
+    position: absolute;
+    content: '';
+    background-color: #fff;
+    width: 30px;
+    height: 30px;
+    border-radius: 30px;
+    margin: 5px;
+    transition: 0.2s;
+}
+input:checked + .toggle_button-label{
+    background-color: green;
+}
+input:checked + .toggle_button-label::before{
+    transform: translateX(40px);
+}
+.toggle_button input{
+    display: none;
+}
+
+.action_btn {
+    color: #fff;
+    padding: 8px 22px;
+    width: 200px;
+    border-radius: 20px;
+    transition: all 0.2s ease;
+    background-color: #4780fb;
+    cursor: pointer;
+}
+
+/* * * * Data display Part * * * */
+.section {
+    width: 100%;
+    display: inline-block; /* Ensure the div only spans the width of the label */
+}
+.section h3 {
+    width: 100%;
+    margin: 5px;
+    color: rgba(75, 140, 255, 255);
+}
+
+.section hr {
+    width: 100%;
+    height: 2px;
+    background-color: rgba(75, 140, 255, 255); /* You can set the color to black or any other color */
+    margin: 5px 0; /* Optional: Add some space between the label and the line */
+}
+/* * * * Table Part * * * */
+.app-name{
+    background: #fff;
+    margin-top: 1rem;
+    border-radius: 10px;
+    padding: 2rem;
+}
+.app-table{
+    width: 100%;
+}
+.dev-name{
+    background: #fff;
+    margin-top: 1rem;
+    border-radius: 10px;
+    padding: 2rem;
+}
+.dev-table{
+    width: 100%;
+}
+.profile-name{
+    background: #fff;
+    margin-top: 1rem;
+    border-radius: 10px;
+    padding: 2rem;
+}
+.profile-table{
+    width: auto;
+}
+table {
+    margin-top: 20px;
+    width: 100%;
+    border-right: 1px solid black;
+    border-left: 1px solid black;
+    border-collapse: collapse;
+}
+thead {
+    background: #fff;
+}
+
+th {
+    padding: 12px;
+    text-align: center;
+    background-color: #ccc;
+}
+tbody{
+    background: #fff;
+}
+td {
+    padding: 12px;
+    font-size: 14px;
+    color: #333;
+    text-align: center;
+}
+tr:nth-child(even) {
+    background: #fff;
+}
+tfoot{
+    background: rgb(113, 99, 186, 255);
+    font-weight: bold;
+    color: #fff;
+}
+tfoot td {
+    padding: 15px;
+}
+.check_icon {
+    color: green; /* Set the color for the check icon to green */
+}
+.xmark_icon {
+    color: red; /* Set the color for the xmark icon to red */
+}
+
+.enqueue_table table, tbody, tr, td {
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+    border-collapse: collapse;
+}
+
+.event_table table, tbody, tr, td {
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+    /* border-right: 1px solid black;
+    border-left: 1px solid black; */
+    border-collapse: collapse;
+}
+
+.frame_table table, tbody, tr, td {
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+    /* border-right: 1px solid black;
+    border-left: 1px solid black; */
+    border-collapse: collapse;
+}
+/* * * * Modal Part * * * */
+.modal_container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: gray;
+}
+
+.modal_container .form_headder h4{
+    position: absolute;
+    text-align: left;
+    width: 300px;
+    height: 40px;
+    top: 15px;
+    left: 10px;
+    font-size: 13px;
+    border-bottom: 1rem;
+}
+
+.modal_container .form_headder i{
+    display: block;
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    top: 10px;
+    right: 0;
+    font-size: 15px;
+}
+
+.modal_container .form {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 12px;
+    width: 500px;
+    margin: 0 auto;
+    padding: 50px;
+    background-color: whitesmoke;
+    display: none;
+}
+
+.modal_container .form input{
+    margin-bottom: 10px;
+}
+
+.integration-containner .integration-checkboxes {
+    display: flex;
+    width: 100%;
+    border: #000000 1px solid;
+    border-radius: 10px;
+    justify-content: space-evenly;
+}
+
+.integration-checkboxes .checkbox-containner {
+    padding-top: 5px;
+    display: flex;
+    margin-top: 5px;
+    background-color: whitesmoke;
+    border-radius: 10px;
+}
+
+.checkbox-containner input {
+    width: 20px;
+}
+
+.modal_button {
+    width: 100%;
+    text-align: center;
+    color: #fff;
+    padding: 8px 20px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    background: rgb(67, 194, 236);
+    margin-top: 10px; /* Adjust the margin-top as needed */
+}
+
+/* * * Dropdown Part * * */
+.dropdown {
+    width: 100%;
+}
+
+.dropdown select {
+    width: 100%;
+    height: 32px;
+    margin-top: 5px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    font-size: 15px;
+    border: #000000 1px solid;
+}
+
+/* * * Device-data Part (Graph) * * */
+.graph-display {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.graph-data {
+    display: block;
+    width: calc(50% - 20px); /* Adjust as needed */
+    margin: 10px;
+    padding: 20px;
+    background-color: #fff; /* Set background color as needed */
+    border: 1px solid #ccc; /* Set border color as needed */
+    border-radius: 8px; /* Set border radius as needed */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add shadow as needed */
+}
+/* * * Enqueue Tab * * */
+.Enqueue {
+    border: 1px solid black; /* This will create a solid black border around the div */
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.Enqueue span {
+    margin-left: 10px;
+    font-size: 12px;
+}
+
+.enqueue-option {
+    display: flex;
+}
+
+.enqueue-option .Fport_element {
+    margin-top: 20px;
+    margin-left: 20px;
+    margin-right: 100px;
+}
+
+.enqueue-option #Fport {
+    margin-top: 15px;
+}
+
+.Enqueue .enqueue_btn {
+    color: #fff;
+    padding: 8px 22px;
+    width: 150px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    margin-top: 20px;
+    margin-left: 5px;
+}
+
+#send_enqueue {
+    background-color:  rgb(67, 194, 236);
+}
+
+.button-group .enqueue_btn {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    background-color: #9eb0d6;
+    display: flex;
+    text-align: right;
+}
+
+.enqueue-table_container {
+    margin-top: 20px;
+    border: 1px solid black; /* This will create a solid black border around the div */
+    padding: 10px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.enqueue-table_container .button-group {
+    align-self: flex-end;
+}
+
+.enqueue-table_container .enqueue_table {
+    border: 1px solid black; /* This will create a solid black border around the div */
+    padding: 10px;
+}
+
+/* * * Tutorial Part * * */
+.tutorial_container {
+    margin-left: 20px;
+}
+
+.tutorial_container .tutorial_guide {
+    margin-top: 20px;
+}
+.tutorial_container .tutorial_guide img {
+    max-width: 50%;
+    max-height: 350px;
+    margin-bottom: 30px;
+    text-align: center;
+}
+.tutorial_container .tutorial_codebox {
+    margin: 10px;
+    border: 1px solid black; /* This will create a solid black border around the div */
+    padding: 10px;
+    background-color: white;
+    border-radius: 5px;
+}

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Meta tags -->
+    <meta charset="UTF-8">
+    <title>Devices Page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- External stylesheets -->
+    <link rel="stylesheet" href="../styles/mainStyles.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    
+    <script src="../scripts/common.js"></script>
+    <script src="../scripts/devices.js"></script>
+    <script src="../scripts/webScript.js"></script>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="logo"></div>
+        <ul class="side_menu">
+            <!-- Dashboard link (active) -->
+            <li id="menu-mainDashboard" >
+                <a>
+                    <i class="fa-solid fa-chart-pie"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <!-- Application link -->
+            <li id="menu-applications">
+                <a>
+                    <i class="fa-solid fa-microchip"></i>
+                    <span>Application</span>
+                </a>
+            </li>
+            <!-- Device Profiles link -->
+            <li id="menu-deviceProfiles">
+                <a>
+                    <i class="fa-regular fa-address-card"></i>
+                    <span>Device Profiles</span>
+                </a>
+            </li>
+            <!-- Tutorial link -->
+            <li id="menu-tutorial">
+                <a>
+                    <i class="fas fa-question-circle"></i>
+                    <span>Tutorial</span>
+                </a>
+            </li>
+            <!-- Logout link -->
+            <li class="logout" id="menu-logout">
+                <a>
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main content -->
+    <div class="main--content">
+        <!-- Header -->
+        <div class="header--wrapper">
+            <div class="header--title">
+                <!-- Application title (commented out) -->
+                <!-- <h1>My-App-1</h1> -->
+            </div>
+            <div class="user--info">
+                <img src="../components/user.png" alt="" />
+            </div>
+        </div>
+
+        <!-- Middle content -->
+        <div class="mid--contents">
+            <div class="located">
+                <!-- Breadcrumb for navigation -->
+                <h4><a href="../htmls/applications.html">Applications</a></h4>
+                <!-- Add more breadcrumb items if needed -->
+            </div>
+            <!-- Buttons for application management -->
+            <div class="button-group">
+                <button class="button-config" id="appConfigButton" onclick="openModal('dev_ConfigApp')">Application Configuration</button>
+                <button class="button-add" id="addDeviceButton" onclick="openModal('dev_AddDevice')">Add Device</button>
+                <button class="button-del" id="deleteDevButton"  onclick="openModal('dev_DelDev')">Delete Device</button>
+            </div>
+        </div>
+        <div class="dev-name">
+            <div class="dev-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" id="select-all" name="selectAll"></th>
+                            <th>No.</th>
+                            <th>Device name</th>
+                            <th>Device ID</th>
+                            <th>Last Seen</th>
+                        </tr>
+                    </thead>
+                    <tbody id="data-table">
+                        <!-- <tr>
+                            <td><input type="checkbox" name="app1" /></td>
+                            <td>1</td>
+                            <td><a href="devicesConfiguration.html">My-App-1</a></td>
+                            <td>xxADzXxxxArd-***</td>
+                            <td>3</td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" name="app2" /></td>
+                            <td>2</td>
+                            <td>new-app</td>
+                            <td>xxcdaXxxxAff-***</td>
+                            <td>3</td>
+                        </tr> -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal container -->
+    <div class="modal_container">
+        <!-- Application Configuration Modal -->
+        <div class="form" id="dev_ConfigApp">
+            <div class="form_headder">
+                <h4>Application Configuration</h4>
+                <i class="fa-solid fa-circle-xmark" onclick="closeModal('dev_ConfigApp')"></i>
+            </div>
+            <!-- Form inputs -->
+            <div>General
+                <input type="text" placeholder="Application name" id="appNameInput" required>
+                <textarea name="Description" placeholder="Description" id="descriptionInput" cols="30" rows="5"></textarea>
+            </div>
+            <!-- Checkboxes -->
+            <!-- <div class="integration-containner"> Integration
+                <div class="integration-checkboxes">
+                    <div class="checkbox-containner">
+                        <input type="checkbox" id="influxDB" name="integration" value="influxDB">
+                        <label for="influxDB">InfluxDB</label>
+                    </div>
+                    <div class="checkbox-containner">
+                        <input type="checkbox" name="integration" value="other">
+                        <div>Other</div>
+                    </div>
+                </div>
+            </div> -->
+            <!-- Submit button -->
+            <div>
+                <button class="modal_button" id="appConfigConfirm">Submit</button>
+            </div>
+        </div>
+        
+        <!-- Add Device Modal -->
+        <div class="form" id="dev_AddDevice">
+            <div class="form_headder">
+                <h4>Add Device</h4>
+                <i class="fa-solid fa-circle-xmark" onclick="closeModal('dev_AddDevice')"></i>
+            </div>
+            <!-- Form inputs -->
+            <div>
+                <label for="devName">General:</label>
+                <input type="text" id="devNameInput" class="devName" placeholder="Device name" required>
+                <input type="text" id="devIdInput" class="devEUI" placeholder="Device EUI" required>
+            </div>
+            <!-- Device Profile dropdown -->
+            <div>
+                <div>Device-Profile</div>
+                <div class="dropdown">
+                    <select id="deviceProfile_List">
+                        <!-- <option value="LoRaWAN 1.0.2">LoRaWAN 1.0.2</option> -->
+                    </select>
+                </div>
+            </div>
+            <!-- Next button -->
+            <div>
+                <button class="modal_button" id="addDevNext">Next</button>
+            </div>
+        </div>
+
+        <!-- Add Appkey Modal -->
+        <div class="form" id="dev_AddAppkey">
+            <div class="form_headder">
+                <h4>Add Device > Appkey or OTAA key</h4>
+                <i class="fa-solid fa-circle-xmark" onclick="closeModal('dev_AddAppkey')"></i>
+            </div>
+            <!-- Form inputs -->
+            <div>
+                <label for="dev_Appkey">Key:</label>
+                <input type="text" id="devKeyInput" class="dev_Appkey" required>
+            </div>
+            <!-- Submit button -->
+            <div>
+                <button class="modal_button" id="addDevConfirm" onclick="closeModal('dev_AddAppkey')">Submit</button>
+            </div>
+        </div>
+
+        <!-- Delete Device Modal -->
+        <div class="form" id="dev_DelDev">
+            <div class="form_headder">
+                <h4>Delete Device</h4>
+                <i class="fa-solid fa-circle-xmark" onclick="closeModal('dev_DelDev')"></i>
+            </div>
+            <!-- display selected application-->
+            <div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Delete the following devices?</th>
+                        </tr>
+                    </thead>
+                    <tbody id="delete-selected">
+                        <tr>
+                            <td>max01</td>
+                        </tr>
+                        <tr>
+                            <td>asip02</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- Confirm button -->
+            <div>
+                <button class="modal_button" id="delDevConfirm">Confirm</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

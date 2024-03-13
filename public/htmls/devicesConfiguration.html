@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Meta tags -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Device Configuration</title>
+    <!-- Include Chart.js library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- External stylesheets -->
+    <link rel="stylesheet" href="../styles/mainStyles.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <script src="../scripts/common.js"></script>
+    <script src="../scripts/devicesConfiguration.js"></script>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="logo"></div>
+        <ul class="side_menu">
+            <!-- Dashboard link (active) -->
+            <li id="menu-mainDashboard" >
+                <a>
+                    <i class="fa-solid fa-chart-pie"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <!-- Application link -->
+            <li id="menu-applications">
+                <a>
+                    <i class="fa-solid fa-microchip"></i>
+                    <span>Application</span>
+                </a>
+            </li>
+            <!-- Device Profiles link -->
+            <li id="menu-deviceProfiles">
+                <a>
+                    <i class="fa-regular fa-address-card"></i>
+                    <span>Device Profiles</span>
+                </a>
+            </li>
+            <!-- Tutorial link -->
+            <li id="menu-tutorial">
+                <a>
+                    <i class="fas fa-question-circle"></i>
+                    <span>Tutorial</span>
+                </a>
+            </li>
+            <!-- Logout link -->
+            <li class="logout" id="menu-logout">
+                <a>
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main content -->
+    <div class="main--content">
+        <!-- Header -->
+        <div class="header--wrapper">
+            <div class="header--title">
+                <!-- Application title (commented out) -->
+                <!-- <h1>Max-01</h1> -->
+            </div>
+            <div class="user--info">
+                <img src="../components/user.png" alt="" />
+            </div>
+        </div>
+
+        <!-- Middle content -->
+        <div class="mid--contents">
+            <div class="located">
+                <!-- Breadcrumb for navigation -->
+                <h4><a id="loc-apps" href="../htmls/applications.html">Application</a></h4>
+                <!-- Add more breadcrumb items if needed -->
+            </div>
+        </div>
+
+        <!-- Tabs and Content -->
+        <div>
+            <div class="container">
+                <!-- Tab buttons -->
+                <div class="tab_box">
+                    <button class="tab_button" onclick="opentab(event, 'Dashboard')">Dashboard</button>
+                    <button class="tab_button" onclick="opentab(event, 'Configuration')">Configuration</button>
+                    <button class="tab_button" onclick="opentab(event, 'Queue')">Queue</button>
+                    <button class="tab_button" onclick="opentab(event, 'Event')">Event</button>
+                    <button class="tab_button" onclick="opentab(event, 'LoRaWAN_frame')">LoRaWAN frame</button>
+                    <div class="active_line"></div>
+                </div>
+
+                <!-- Tab contents -->
+                <div class="content_box">
+                    <div id="Dashboard" class="tab_content">
+                        <div class="graph-display">
+                            <div class="graph-data" id="Recieved">
+                                Recieved
+                                <canvas id="receivedChart"></canvas>
+                            </div>
+                            <div class="graph-data" id="RSSI">
+                                RSSI
+                                <canvas id="rssiChart"></canvas>
+                            </div>
+                
+                            <div class="graph-data" id="SNR">
+                                SNR
+                                <canvas id="snrChart"></canvas>
+                            </div>
+                            <!-- <div class="graph-data" id="Recieved/frequency">
+                                Recieved/frequency
+                                <canvas id="receivedPerFreqChart"></canvas>
+                            </div>
+                            <div class="graph-data" id="Recieved/DR">
+                                Recieved/DR
+                                <canvas id="receivedPerDRChart"></canvas>
+                            </div> -->
+                            <div class="graph-data" id="Errors">
+                                Errors
+                                <canvas id="errorsChart"></canvas>
+                            </div>
+                        </div>
+                        <!-- <div class="dev_dashboard">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th id="time">Time</th>
+                                        <th>Received</th>
+                                        <th>RSSI</th>
+                                        <th>SNR</th>
+                                        <th>Errors</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="data-table">
+                                    <tr>
+                                        <td>1</td>
+                                        <td>123</td>
+                                        <td>-39.5</td>
+                                        <td>12.1</td>
+                                        <td>0</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2</td>
+                                        <td>10</td>
+                                        <td>-20</td>
+                                        <td>11.3</td>
+                                        <td>0</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div> -->
+                    </div>
+                    <div id="Configuration" class="tab_content">
+                        <div class="data-content" id="device-info">
+                            <div>
+                                <label for="device_Name">Name</label>
+                                <input type="text" placeholder="Name" id="device_Name" required>
+                            </div>
+                            <div>
+                                <label for="Description">Description</label>
+                                <br>
+                                <textarea name="description" id="Description" cols="30" rows="5"></textarea>
+                            </div>
+                            <div class="display_2_elements">
+                                <div class="left-element">
+                                    <label for="devEUI">Device EUI (EUI64)</label>
+                                    <div><input type="text" disabled="disabled" id="devIdInput" class="devEUI" required></div>
+                                </div>
+                                <div class="right-element">
+                                    <label for="joinEUI">Join EUI (EUI64)</label>
+                                    <div><input type="text" disabled="disabled" id="joinIdInput" class="joinEUI"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <label for="appkey">Application Key</label>
+                                <input type="text" placeholder="Application Key" id="appkey" required>
+                            </div>
+                            <div>
+                                <div>Device-Profile</div>
+                                <div class="dropdown">
+                                    <select id="deviceProfile_List">
+                                        <!-- <option value="LoRaWAN 1.0.2">LoRaWAN 1.0.2</option> -->
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="display_2_elements">
+                                <div class="left-element">
+                                    <label>Device is disabled</label>
+                                    <div class="toggle_button">
+                                        <input type="checkbox" id="device_disabled-check">
+                                        <label for="device_disabled-check" class="toggle_button-label"></label>
+                                    </div>
+                                </div>
+                                <div class="right-element">
+                                    <label>Disable frame counter validation</label>
+                                    <div class="toggle_button">
+                                        <input type="checkbox" id="frame-counter-validation_disabled-check">
+                                        <label for="frame-counter-validation_disabled-check" class="toggle_button-label"></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="save-button-container">
+                                <button id="save-config_btn">Save</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="Queue" class="tab_content">
+                        <div class="Enqueue">
+                            <div class="header-part">
+                                <h3>Enqueue</h3>
+                                <hr>
+                            </div>
+                            <div class="enqueue-option">
+                                <div class="Fport_element">
+                                    <label for="Fport">Fport:</label>
+                                    <input type="text" id="Fport" required>
+                                </div>
+                                <div class="Fport_element">
+                                    <label>Confirmed:</label>
+                                    <div class="toggle_button">
+                                        <input type="checkbox" id="enqueue-confirm">
+                                        <label for="enqueue-confirm" class="toggle_button-label"></label>
+                                    </div>
+                                </div>
+                                <div class="Fport_element">
+                                    <label>Is encrypted:</label>
+                                    <div class="toggle_button">
+                                        <input type="checkbox" id="enqueue-encrypt">
+                                        <label for="enqueue-encrypt" class="toggle_button-label"></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div><span>Enqueue data (BASE64)</span></div>
+                            <div>
+                                <form id="jsonForm">
+                                    <textarea id="jsonInput" rows="10" cols="50" placeholder="Enter your data here..."></textarea>
+                                    <button class="enqueue_btn" id="send_enqueue">Enqueue</button>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="enqueue-table_container">
+                            <div class="button-group">
+                                <button class="enqueue_btn" id="queue_reload">Reload</button>
+                                <button class="enqueue_btn" id="queue_flush">Flush queue</button>
+                            </div>
+                            <div class="enqueue_table">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <!-- <th>ID</th>
+                                            <th>Pending</th>
+                                            <th>Encrypted</th>
+                                            <th>Frame-counter</th>
+                                            <th>Confirmed</th>
+                                            <th>Fport</th>
+                                            <th>Data</th> -->
+                                        </tr>
+                                    </thead>
+                                    <tbody id="enqueue_data">
+                                        <tr>
+                                            <td>...</td>
+                                            <td>...</td>
+                                            <td>...</td>
+                                            <td>...</td>
+                                            <td>...</td>
+                                            <td>...</td>
+                                            <td>...</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="Event" class="tab_content">
+                        <div class="event_table">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Date & TIme</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="event_data">
+                                    <!-- <tr>
+                                        <td>...</td>
+                                        <td><button>something</button></td>
+                                    </tr> -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="LoRaWAN_frame" class="tab_content">
+                        <div class="frame_table">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Date & Time</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="frame_data">
+                                    <!-- <tr>
+                                        <td>...</td>
+                                        <td><button>something</button></td>
+                                    </tr> -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
