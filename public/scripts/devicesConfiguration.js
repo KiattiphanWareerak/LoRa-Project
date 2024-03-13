@@ -445,7 +445,71 @@ function displayConfigurationsDevice(message) {
 //---------------------------------------------------------------------//
 function displayQueuesDevice(dev_queueItems) {
     // Queues tab
+    // const queueData = dev_queueItems.resultList;
+    // const totalQueue = dev_queueItems.totalCount;
+    // console.log('totalQueue:', totalQueue)
+    // console.log('queueData[0] confirm:', queueData[0].confirmed)
+
+    const tableBody = document.getElementById("enqueue_data");
+
+  for (const queue of dev_queueItems.resultList) {
+    const row = document.createElement("tr");
+
+    // เพิ่ม id ของ Queue
+    const idColumn = document.createElement("td");
+    idColumn.textContent = queue.id;
+    row.appendChild(idColumn);
+
+    // เพิ่มสถานะ Pending, Encrypted และ Confirmed
+    for (const key of ["isPending", "isEncrypted", "confirmed"]) {
+        const cell = document.createElement("td");
+        const icon = document.createElement("i");
+        icon.className = queue[key]
+          ? "fa-solid fa-check check_icon"
+          : "fa-solid fa-xmark xmark_icon";
+        cell.appendChild(icon);
+        row.appendChild(cell);
+      }
+
+    // เพิ่มข้อมูลอื่นๆ
+    for (const key of ["fCntDown", "fPort", "data"]) {
+      const cell = document.createElement("td");
+      switch (key) {
+        case "fCntDown":
+            if (queue[key] == 0) {
+                cell.textContent = '';
+            } else {
+                cell.textContent = queue[key];
+            }
+            break;
+        case "fPort":
+            cell.textContent = queue[key];
+            break;
+        case "data":
+            const base64Data = queue[key];
+            const hexData = b64ToHex(base64Data);
+            cell.textContent = hexData;
+            break;
+      }
+      row.appendChild(cell);
+    }
+
+    // เพิ่มแถวตารางลงใน tbody
+    tableBody.appendChild(row);
+  }
 }
+
+// Function to convert base64 to hex
+function b64ToHex(base64String) {
+    const raw = atob(base64String);
+    let result = '';
+    for (let i = 0; i < raw.length; i++) {
+        const hex = raw.charCodeAt(i).toString(16);
+        result += (hex.length === 2 ? hex : '0' + hex);
+    }
+    return result.toUpperCase();
+}
+
 //---------------------------------------------------------------------//
 function convertUTCtoThailandTime(utcTimeString) {
     // Create a Date object from the UTC time string

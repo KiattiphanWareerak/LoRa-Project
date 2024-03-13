@@ -42,7 +42,7 @@
             <li class="active" id="menu-tutorial">
                 <a>
                     <i class="fas fa-question-circle"></i>
-                    <span>Tutorial</span>
+                    <span>Tutorial Code</span>
                 </a>
             </li>
             <!-- Logout link -->
@@ -60,8 +60,8 @@
         <!-- Header -->
         <div class="header--wrapper">
             <div class="header--title">
-                <!-- Title for FAQs -->
-                <h1>Tutorial</h1>
+                <!-- Title for Tutorial Page -->
+                <h1>Tutorial Code</h1>
             </div>
             <div class="user--info">
                 <img src="../components/user.png" alt="" />
@@ -69,43 +69,172 @@
         </div>
         <div class="tutorial_container">
             <div class="tutorial_guide">
-                <span>1. Connect your micropython board which had connect with LoRa module to your computer</span>
-                <img src="components/connectUSB.png" alt="">
-            </div>
-            <div class="tutorial_guide">
-                <span>2. Open Thonny (Python IDE) (If you don't have Thonny you can download from <a
-                        href="https://thonny.org/">here</a>)</span>
-                <img src="../components/Thonny_Open.png" alt="">
-            </div>
-            <div class="tutorial_guide">
-                <span>3. Click "Options..." in "Tools" menu</span>
-                <img src="../components/Thonny_Options.png" alt="">
-            </div>
-            <div class="tutorial_guide">
-                <span>4. เลือกบอร์ดและพอร์ตในการเชื่อมต่อที่ใช้ (ในที่นี้คือ Micropython(ESP32) เชื่อมต่อที่ Serial Port
-                    @COM4)</span>
-                <img src="../components/Thonny_Tools.jpg" alt="">
-            </div>
-            <div class="tutorial_guide">
-                <span>5. Press (Ctrl+N) to create a new blank file</span>
-                <img src="../components/Thonny_newFilew.png" alt="">
-                <br>
-                <span>6. Then use this code to get DeviceEUI from LoRa module</span>
+                <span>1. Code for get DeviceEUI from LoRa module</span>
                 <div class="tutorial_codebox">
-                    <pre>
-                    from machine import UART
-                    import time
-                    # UART2
-                    # IO Pin:Tx = 16
-                    # IO Pin:Rx = 17
-                    uart = UART(2, baudrate=115200, bits=8, parity=None, stop=1, timeout=2000)
-                    uart.write("AT+DEVEUI\r\n")
-                    time.sleep(1)
-                    print(uart.read().decode('utf-8'))</pre>
+                    <pre><code>
+from machine import UART
+import time
+# UART2
+# IO Pin:Tx = 16
+# IO Pin:Rx = 17
+uart = UART(2, baudrate=115200, bits=8, parity=None, stop=1, timeout=1000)
+uart.write("AT+DEVEUI\r\n")
+time.sleep(1)
+print(uart.read().decode('utf-8'))
+                </code></pre>
                 </div>
             </div>
-            <div class="tutorial_codebox">
+        </div>
+        <div class="tutorial_container">
+            <div class="tutorial_guide">
+                <span>2. Code for config your LoRa module's Appkey</span>
+                <div class="tutorial_codebox">
+                    <pre><code>
+from machine import UART
+import time
 
+# Send AT Command function with <CR><LF>
+def sendATcommand(ATcommand):
+    rstr = ""
+    print("Command: {0}\r\n".format(ATcommand))
+    uart.write("{0}\r\n".format(ATcommand))
+    rstr = uart.read()
+    if rstr is None:
+        rstr = "None"
+        time.sleep(time_interval() + 1)
+    else:
+        rstr = rstr.decode("utf-8")
+    print(rstr)
+    return rstr
+                        
+# Config module function
+def Config():
+    sendATcommand("AT+APPKEY={Put the generated key here}")
+    #Example              AT+APPKEY=b1292d4e67b7d9fd5d0018326c7db3bb
+
+    sendATcommand("AT+SAVE")
+                    
+uart = UART(2, baudrate=115200, bits=8, parity=None, stop=1, timeout=1000)                
+Config()      
+                </code></pre>
+                </div>
+            </div>
+        </div>
+        <div class="tutorial_container">
+            <div class="tutorial_guide">
+                <span>3. Code for checking the current Appkey</span>
+                <div class="tutorial_codebox">
+                    <pre><code>
+from machine import UART
+import time
+# UART2
+# IO Pin:Tx = 16
+# IO Pin:Rx = 17
+uart = UART(2, baudrate=115200, bits=8, parity=None, stop=1, timeout=1000)
+uart.write("AT+APPKEY\r\n")
+time.sleep(1)
+print(uart.read().decode('utf-8'))
+                </code></pre>
+                </div>
+            </div>
+        </div>
+        <div class="tutorial_container">
+            <div class="tutorial_guide">
+                <span>4. Code for testing send the data "Hello" 20 times</span>
+                <div class="tutorial_codebox">
+                    <pre><code>
+from machine import UART
+import time, sys, os, math, random, network, machine
+check = 0
+                        
+# Send AT Command function with <CR><LF>
+def sendATcommand(ATcommand):
+    rstr = ""
+    print("Command: {0}\r\n".format(ATcommand))
+    uart.write("{0}\r\n".format(ATcommand))
+    rstr = uart.read()
+    if rstr is None:
+        rstr = "None"
+        time.sleep(time_interval() + 1)
+    else:
+        rstr = rstr.decode("utf-8")
+    print(rstr)
+    return rstr
+                        
+# Exponential Time Interval
+def time_interval(mean = 5):
+    x = round(-1.0 * mean * math.log(1 - random.random()))
+    print("Time:", x)
+    return x
+                        
+# Send HEX function
+def sendHello():
+    count = 0
+    
+    try:
+        while True:
+            #rstr = sendATcommand("AT+NCMGS=5,HELLO")
+            sendATcommand("AT+NMGS=5,48454c4c4f")
+            time.sleep(time_interval() + 1)
+            count += 1
+            print("Cycle: ", count)
+            if count == 20:       
+                break
+            
+    # When do Ctr+C for tnterrupting routines
+    except KeyboardInterrupt:
+        print("Interrupted!!")
+        try:
+            sys.exit(0)
+        except SystemExit:
+            os._exit(0)
+
+# Seb-string find index and do striping
+def return_join_value(rstr):
+    if rstr == None or rstr == "None":
+        return ""
+    y = -1 
+    cgatt_start_index = rstr.find(":") + 1
+    cgatt_end_index = rstr.find("\n", cgatt_start_index)
+    
+    new_str = rstr[cgatt_start_index:cgatt_end_index] 
+    return new_str.strip()
+
+def sendRestartCommand():
+    # LOOP OTAA
+    sendATcommand("AT+NRB")
+    # Check LoRaWAN Network Server Connection (AT+CGATT)
+    print("Check LoRaWAN Network Server Connection (If 1 mean module has connected)\n")
+    print("PLEASE WAIT!")
+    time.sleep(time_interval() + 1)
+
+# Restart the module (MAXIIOT DL7612-AS923-TH)
+def connectionStatus():
+    time.sleep(time_interval())
+    print("----Respond String----")
+    rstr = sendATcommand("AT+CGATT")
+    join_value = return_join_value(rstr)
+    # Check OTAA join value
+    global check
+    # if OTAA join value is not 1
+    while join_value != "1":
+        print("Retry OTAA Continue")
+        print("Still connecting")
+        check += 1
+        print("Check =", check)
+        if check == 20:
+            check = 0
+            sendRestartCommand()
+        rstr = sendATcommand("AT+CGATT")
+        join_value = return_join_value(rstr)
+    print("++++OTAA OK+++++")
+    # END LOOP OTAA
+    
+uart = UART(2, baudrate=115200, bits=8, parity=None, stop=1, timeout=1000)                
+connectionStatus()
+sendHello()                        
+                </code></pre>
+                </div>
             </div>
         </div>
     </div>

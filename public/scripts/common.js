@@ -307,6 +307,10 @@ function display_mainContent_deviceProfiles(gets) {
   }
 }
 //---------------------------------------------------------------------//
+function newtab() {
+  window.open('tutorialPage.html', '_blank');
+}
+//---------------------------------------------------------------------//
 function display_mainContent_applications(gets) {
   let tbody = document.getElementById('data-table');
 
