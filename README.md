@@ -18,6 +18,28 @@ npm run start-service
 ```
 6. Open your browser and enter ```localhost:3111```.
 
+# Warning
+Before using the web application, please change the IP Address of ChirpStack, PostgreSQL, and InfluxDBv2 first.
+(and check your API TOKEN: ChirpStack, InfluxDBv2)
+ChirpStack:
+```
+const serverChirpStack = 'CHIRPSTACK IP ADDRESS';
+```
+Postgres:
+```
+const client = new Client({
+      database: 'YOUR DATABASE',
+      user: 'YOUR USER',
+      password: 'YOUR PASSWORD',
+      host: 'YOU IP ADDRESS',
+      port: <YOUR PORT>,
+});
+```
+InfluxDBv2:
+```
+const INFLUX_URL = 'INFLUXDB IP ADDRESS';
+```
+
 # Example output
 Web server:
 ```
