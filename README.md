@@ -12,7 +12,7 @@ git clone https://github.com/KiattiphanWareerak/LoRa-Project.git
 ```
 npm run start-web
 ```
-5. Run the service server (service_server.js)
+5. Run the Service server (service_server.js)
 ```
 npm run start-service
 ```
@@ -36,4 +36,15 @@ PS C:\LoRa-Project> npm run start-service
 > node service_server.js
 
 Service is running at http://0.0.0.0:3333/
+```
+
+# Requirement
+```
+"@chirpstack/chirpstack-api": "^4.6.0"
+"@influxdata/influxdb-client": "^1.33.2"
+"axios": "^1.6.7"
+"cors": "^2.8.5"
+"express": "^4.18.3"
+"nodemailer": "^6.9.12"
+"pg": "^8.11.3"
 ```
