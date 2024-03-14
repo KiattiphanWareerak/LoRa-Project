@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       switch (menuId) {
         case 'menu-mainDashboard':
 
-          response = await fetch('http://localhost:3333/menu-dashboard', {
+          response = await fetch('http://202.28.95.234:3333/menu-dashboard', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           display_mainContent_dashboard(result);
           break;
         case 'menu-deviceProfiles':
-          response = await fetch('http://localhost:3333/menu-deviceProfile', {
+          response = await fetch('http://202.28.95.234:3333/menu-deviceProfile', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           display_mainContent_deviceProfiles(result);
           break;
         case 'menu-applications':
-          response = await fetch('http://localhost:3333/menu-application', {
+          response = await fetch('http://202.28.95.234:3333/menu-application', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
@@ -371,7 +371,7 @@ function display_mainContent_applications(gets) {
 //----------------------------COMMON ZONE------------------------------//
 //---------------------------------------------------------------------//
 async function authenticated() {
-  const response = await fetch('http://localhost:3333/authenticated', {
+  const response = await fetch('http://202.28.95.234:3333/authenticated', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'

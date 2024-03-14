@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // All checks passed, proceed with sending request
-        const response = await fetch('http://localhost:3333/register', {
+        const response = await fetch('http://202.28.95.234:3333/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

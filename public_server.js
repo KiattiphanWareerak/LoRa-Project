@@ -5,7 +5,7 @@ const express = require('express');
 const path = require('path');
 
 const PORT = 3111;
-const IP_ADDRESS = 'localhost';
+const IP_ADDRESS = '0.0.0.0';
 
 const web = express();
 

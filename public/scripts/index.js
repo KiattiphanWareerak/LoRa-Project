@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
         event.preventDefault();
 
         if (isEmail(input_id.value)) {
-            const response = await fetch('http://localhost:3333/loginByEmail', {
+            const response = await fetch('http://202.28.95.234:3333/loginByEmail', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem('user_token', result.user_token);
             window.location.href = '../htmls/dashboard.html';
         } else {
-            const response = await fetch('http://localhost:3333/loginByName', {
+            const response = await fetch('http://202.28.95.234:3333/loginByName', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

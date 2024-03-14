@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             let descriptionValue = descriptionInput.value.trim();
 
-            const response = await fetch('http://localhost:3333/add-application', {
+            const response = await fetch('http://202.28.95.234:3333/add-application', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -149,7 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let appIDsSelect = appIDs.map((appID) => ({ app_id: appID }));
 
-        const response = await fetch('http://localhost:3333/del-application', {
+        const response = await fetch('http://202.28.95.234:3333/del-application', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
