@@ -1,7 +1,7 @@
-# Welcome to LoRa Communication Management Web Application
+# Welcome to LoRa Communication Management Web Application.
 This project is to develop a web application to manage connections between LoRa devices in the network using the ChirpStack API.
 
-# Getting Started
+# Getting Started.
 1. Install Node.JS on your computer
 2. Clone this repository
 ```
@@ -12,13 +12,13 @@ git clone https://github.com/KiattiphanWareerak/LoRa-Project.git
 ```
 npm run start-web
 ```
-4. Run the service server (service_server.js)
+5. Run the service server (service_server.js)
 ```
 npm run start-service
 ```
-5. Open your browser and enter ```localhost:3111```
+6. Open your browser and enter ```localhost:3111```
 
-# Example output
+# Example output.
 Web server:
 ```
 PS C:\LoRa-Project> npm run start-web    
@@ -26,7 +26,7 @@ PS C:\LoRa-Project> npm run start-web
 > lora-web-application@1.0.0 start-web
 > node public_server.js
 
-Web appliction is running at http://0.0.0.0:3111/
+Web appliction is running at http://localhost:3111/
 ```
 Service server:
 ```
