@@ -122,6 +122,69 @@ async function enqueueDeviceRequest(message) {
     }
 }
 //---------------------------------------------------------------------//
+let otpStored = [];
+
+async function forgotPasswordRequest(message) {
+    try {
+        return new Promise(async (resolve, reject) => {
+            let checkUEmail = { status: 'failed', check_em: 'null' };
+
+            const respFromApiToken = await dataBaseService.getApiTokenRequest();
+            const respFromUserList = await chirpStackService.getUserListRequest(respFromApiToken);
+            const resultCheckUserEmail = await checkUserEmail(message, respFromUserList);
+
+            if (resultCheckUserEmail.email != 'null') {
+                checkUEmail.check_em = 'exist';
+            }
+            if (checkUEmail.check_em === 'null') {
+                resolve(checkUEmail);
+                return;
+            }
+
+            let transporter = nodemailer.createTransport({
+                host: 'smtp-mail.outlook.com',
+                port: 587,
+                secure: false,
+                auth: {
+                    user: 'ten_5u@hotmail.com',
+                    pass: '_Ten5u7985'
+                }
+            });
+
+            const randomNumber = Math.floor(Math.random() * 900000) + 100000;
+
+            const mailOptions = {
+                from: 'ten_5u@hotmail.com',
+                to: resultCheckUserEmail.email,
+                subject: 'Password Reset Request',
+                text: 'Please click on the following link to reset your password: http://localhost:3111/htmls/resetPassword.html\nOTP:' + randomNumber
+            };
+
+            transporter.sendMail(mailOptions, (error, info) => {
+                if (error) {
+                    console.log(error);
+                    resolve({ status: 'failed', check_em: 'failed' });
+                } else {
+                    console.log(`Email sent to ${resultCheckUserEmail.email}: `, info.response);
+                    const existingIndex = otpStored.findIndex(item => item.email === resultCheckUserEmail.email);
+
+                    if (existingIndex !== -1) {
+                        otpStored[existingIndex].otp = randomNumber;
+                        resetOTP(existingIndex.email, randomNumber);
+                    } else {
+                        otpStored.push({ email: resultCheckUserEmail.email, otp: randomNumber });
+                        resetOTP(resultCheckUserEmail.email, randomNumber);
+                    }
+                    console.log(otpStored);
+                    resolve({ status: 'success', check_em: 'success' });
+                }
+            });
+        });
+    } catch (error) {
+        console.log(error);
+    }
+}
+//---------------------------------------------------------------------//
 async function flushQueueRequest(message) {
     try {
         return new Promise(async (resolve, reject) => {
@@ -204,7 +267,7 @@ async function getDevicInfoRequest(message) {
             const respFromGetDevProfile = await chirpStackService.getDeviceProfileListRequest(message);
 
             let result = {
-                get_dev: respFromGetDev, 
+                get_dev: respFromGetDev,
                 get_devKey: respFromGetDevKey,
                 get_devProfiles: respFromGetDevProfile
             }
@@ -376,6 +439,54 @@ async function reloadQueueRequest(message) {
     }
 }
 //---------------------------------------------------------------------//
+async function resetPasswordRequest(message) {
+    try {
+        return new Promise(async (resolve, reject) => {
+            console.log(otpStored);
+            const respFromApiToken = await dataBaseService.getApiTokenRequest();
+            const respFromUserList = await chirpStackService.getUserListRequest(respFromApiToken);
+            const resultCheckUserEmail = await checkUserEmail(message, respFromUserList);
+
+            const existingIndex = otpStored.find(item => item.email === resultCheckUserEmail.email);
+            if (resultCheckUserEmail.email === 'null') {
+                resolve('Email is not already in use');
+                return;
+            }
+            if (!existingIndex.email && !existingIndex.otp) {
+                resolve('The OTP code has expired');
+                return;
+            }
+            if (message.user_otp != existingIndex.otp) {
+                resolve('Incorrect OTP code');
+                return;
+            }
+
+            const respFromUpdatePw = await chirpStackService.updatePasswordRequest(resultCheckUserEmail, message, respFromApiToken);
+
+            const respFromUserListIflux = await dataBaseService.getInfluxDbUserListRequest(respFromApiToken);
+            const matchedUsers = respFromUserListIflux.users.filter(user => user.name === message.user_un);
+
+            if (matchedUsers.length > 0) {
+                console.log(`Found user with`);
+                matchedUsers.forEach(async user => {
+                    console.log(`User ID: ${user.id}, Name: ${user.name}`);
+                    const respFromUpPwIflux = await dataBaseService.updatePasswordInfluxDbRequest(user, message, respFromApiToken);
+                    
+                    const indexOfEmailToUpdate = otpStored.findIndex(item => item.email === resultCheckUserEmail.email);
+                    otpStored[indexOfEmailToUpdate].otp = 'null';
+                    console.log('Delete old OTP after reset success: ', otpStored);
+                    resolve('success');
+                });
+            } else {
+                resolve('failed');
+                return;
+            }
+        });
+    } catch (error) {
+        console.log(error);
+    }
+}
+//---------------------------------------------------------------------//
 async function updateApplicationRequest(message) {
     try {
         return new Promise(async (resolve, reject) => {
@@ -407,6 +518,7 @@ module.exports = {
     deleteApplicationRequest,
     deleteDeviceRequest,
     enqueueDeviceRequest,
+    forgotPasswordRequest,
     flushQueueRequest,
     getApplicationRequest,
     getApplicationMenuRequest,
@@ -421,6 +533,7 @@ module.exports = {
     loginByNameRequest,
     registerRequest,
     reloadQueueRequest,
+    resetPasswordRequest,
     updateApplicationRequest,
     updateDeviceRequest
 };
@@ -468,5 +581,22 @@ async function checkUserName(username, nameList) {
     } catch (error) {
         console.log(error);
     }
+}
+//---------------------------------------------------------------------//
+async function resetOTP(email, otp) {
+    setTimeout(() => {
+        console.log("resetOTP is activate.");
+        const foundEmail = otpStored.find(item => item.email === email && item.otp === otp);
+
+        if (foundEmail) {
+            const indexOfDeleteOtp = otpStored.findIndex(item => item.email === email);
+            otpStored[indexOfDeleteOtp].otp = null;
+            console.log('Delete old OTP after 3 minutes: ', otpStored);
+            return;
+        } else {
+            console.log('Not found email/otp: ', otpStored);
+            return;
+        }
+    }, 3 * 60 * 1000);
 }
 //---------------------------------------------------------------------//

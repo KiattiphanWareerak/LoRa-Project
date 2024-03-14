@@ -995,6 +995,33 @@ async function getUserProfileRequest(apiToken) {
   }
 }
 //---------------------------------------------------------------------//
+async function getUserListRequest(apiToken) {
+  try {
+    // Create the Metadata object.
+    const metadata = new grpc.Metadata();
+    metadata.set("authorization", "Bearer " + apiToken.rows[0].cs_token);
+
+    return new Promise((resolve, reject) => {
+      // Create a request to list devices
+      const createReq = new user_pb.ListUsersRequest();
+      createReq.setLimit(999);
+
+      userService.list(createReq, metadata, (err, resp) => {
+        if (err !== null) {
+          console.log(err);
+          resolve({ status: 'failed' });
+          return;
+        }
+        console.log('User list request has been completed.');
+
+        resolve(resp.toObject());
+      });
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+//---------------------------------------------------------------------//
 async function getUserInTenantRequest(tenantId, apiToken) {
   try {
     // Create the Metadata object.
@@ -1068,33 +1095,6 @@ async function getTenantsListRequest(apiToken) {
           return;
         }
         console.log('Tenants list request has been completed.\n', resp.toObject());
-
-        resolve(resp.toObject());
-      });
-    });
-  } catch (error) {
-    console.log(error);
-  }
-}
-//---------------------------------------------------------------------//
-async function getUserListRequest(apiToken) {
-  try {
-    // Create the Metadata object.
-    const metadata = new grpc.Metadata();
-    metadata.set("authorization", "Bearer " + apiToken.rows[0].cs_token);
-
-    return new Promise((resolve, reject) => {
-      // Create a request to list devices
-      const createReq = new user_pb.ListUsersRequest();
-      createReq.setLimit(999);
-
-      userService.list(createReq, metadata, (err, resp) => {
-        if (err !== null) {
-          console.log(err);
-          resolve({ status: 'failed' });
-          return;
-        }
-        console.log('User list request has been completed.');
 
         resolve(resp.toObject());
       });
@@ -1237,6 +1237,34 @@ async function updateDeviceKeyRequest(message) {
   }
 }
 //---------------------------------------------------------------------//
+async function updatePasswordRequest(usrId, pw, apiToken) {
+  try {
+    // Create the Metadata object.
+    const metadata = new grpc.Metadata();
+    metadata.set("authorization", "Bearer " + apiToken.rows[0].cs_token);
+
+    return new Promise((resolve, reject) => {
+      // Create a empty.
+      const createReq = new user_pb.UpdateUserPasswordRequest();
+      createReq.setUserId(usrId.id);
+      createReq.setPassword(pw.user_pw);
+
+      userService.updatePassword(createReq, metadata, (err, resp) => {
+        if (err !== null) {
+          console.log(err);
+          resolve('failed');
+          return;
+        }
+        console.log('Update Password has been completed.');
+
+        resolve(resp.toObject());
+      });
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+//---------------------------------------------------------------------//
 module.exports = {
   addApplicationRequest,
   addDeviceRequest,
@@ -1272,6 +1300,7 @@ module.exports = {
   updateApplicationRequest,
   updateDeviceRequest,
   updateDeviceKeyRequest,
+  updatePasswordRequest
 };
 //---------------------------------------------------------------------//
 //----------------------------COMMON ZONE------------------------------//

@@ -98,6 +98,20 @@ service.post('/enqueue-device', async (req, res) => {
     }
 });
 
+service.post('/forgot-password', async (req, res) => {
+    const message = req.body;
+    console.log("Receive:\n", message);
+
+    try {
+        const result = await myApp.forgotPasswordRequest(message);
+
+        console.log("Result:\n", result);
+        res.send(JSON.stringify(result));
+    } catch (error) {
+        console.log("Error:\n", error);
+    }
+});
+
 service.post('/flush-queue', async (req, res) => {
     const message = req.body;
     console.log(message);
@@ -291,6 +305,20 @@ service.post('/register', async (req, res) => {
         res.send(JSON.stringify(result));
     } catch (error) {
         console.log(error);
+    }
+});
+
+service.post('/reset-password', async (req, res) => {
+    const message = req.body;
+    console.log("Receive:\n", message);
+
+    try {
+        const result = await myApp.resetPasswordRequest(message);
+
+        console.log("Result:\n", result);
+        res.send(JSON.stringify(result));
+    } catch (error) {
+        console.log("Error:\n", error);
     }
 });
 

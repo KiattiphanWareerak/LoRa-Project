@@ -2,59 +2,46 @@
 //----------------------------EVENT ZONE-------------------------------//
 //---------------------------------------------------------------------//
 document.addEventListener('DOMContentLoaded', () => {
-    const forgotSocket = new WebSocket('ws://localhost:3001');
-
-    forgotSocket.addEventListener('open', () => {
-        console.log('WebSocket connection established with WebServer from forgot password');
-
         const forgotPwForm = document.getElementById("forgot-password-form");
 
-        forgotPwForm.addEventListener("submit", (event) => {
+        forgotPwForm.addEventListener("submit", async (event) => {
             event.preventDefault();
 
             const input_em = document.getElementById("email").value.trim();
 
-            const req = {
-                request: 'forgotPassword',
-                message: {
-                    status: undefined,
-                    data: {
-                        user_em: input_em
-                    }
-                }
-            };
+            const response = await fetch('http://localhost:3333/forgot-password', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    user_em: input_em
+                })
+            });
 
-            forgotSocket.send(JSON.stringify(req));
-            alert("Plese wait...");
+            const result = await response.json();
+            console.log('Result:\n', result);
+
+            if (result.status === 'failed') {
+                if (result.check_em === 'null') {
+                    alert("Email is't already in use.");
+                    window.location.href = '../htmls/forgotPassword.html';
+                    return;
+                }
+                alert("Send reset password to server failed.");
+                window.location.href = '../htmls/forgotPassword.html';
+                return;
+            }
+            alert("Password reset email sent successfully.\nPlease check you mail or spam/junk folder.\n(Note that the OTP is valid for 3 minutes only)");
+            document.getElementById("email").value = '';
         });
 
+        // back to login page
         const backButton = document.getElementById("backButton");
 
         backButton.addEventListener("click", () => {
             window.location.href = "../htmls/index.html";
         });
-    });
-
-    forgotSocket.addEventListener('message', (event) => {
-        const messageFromServer = JSON.parse(event.data);
-        console.log('Message from server:', messageFromServer);
-
-        if (messageFromServer.request === 'forgotPassword' && messageFromServer.message.status === 'success') {
-            alert("Password reset email sent successfully.\nPlease note that the OTP is valid for 3 minutes only.");
-            const input_em = document.getElementById("email");
-            input_em.value = '';
-        } else if (messageFromServer.request === 'forgotPassword' && messageFromServer.message.status === 'failed') {
-            alert("Send reset password to server failed.");
-        }
-    });
-
-    forgotSocket.addEventListener('error', (event) => {
-        console.log('WebSocket error:', event);
-    });
-
-    forgotSocket.addEventListener('close', (event) => {
-        console.log('WebSocket closed:', event);
-    });
 });
 //---------------------------------------------------------------------//
 
