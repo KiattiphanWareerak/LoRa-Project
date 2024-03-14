@@ -5,8 +5,15 @@ function openModal(Modal) {
     document.getElementById(Modal).style.display = "block";
   }
   
-  function closeModal(Modal) {
-    document.getElementById(Modal).style.display = "none";
+  function closeModal(modalId) {
+    var modal = document.getElementById(modalId);
+
+    var inputs = modal.getElementsByTagName('input');
+    for (var i = 0; i < inputs.length; i++) {
+        inputs[i].value = '';
+    }
+
+    modal.style.display = 'none';
   }
   
   function nextModal() {

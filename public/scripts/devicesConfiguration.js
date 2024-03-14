@@ -10,7 +10,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // submit device configurations button
     const saveButton = document.getElementById("save-config_btn");
 
-    saveButton.addEventListener("click", async () => {
+    saveButton.addEventListener("click", async (event) => {
+        event.preventDefault()
+
         const deviceName = document.getElementById("device_Name").value;
         const deviceDescription = document.getElementById("Description").value;
         const devId = document.getElementById("devIdInput").value;
@@ -59,7 +61,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // submit enqueue button
     const enqueueButton = document.getElementById("send_enqueue");
 
-    enqueueButton.addEventListener("click", async () => {
+    enqueueButton.addEventListener("click", async (event) => {
+        event.preventDefault()
+
         if (document.getElementById("Fport").value === "") {
             alert("Please enter a value for Fport. (Fport: Number)");
             return;
@@ -80,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 eq_cnf: document.getElementById("enqueue-confirm").checked,
                 eq_fport: parseInt(document.getElementById("Fport").value),
                 eq_isEncry: document.getElementById("enqueue-encrypt").checked,
-                eq_data: JSON.parse(document.getElementById("jsonInput").value),
+                eq_data: document.getElementById("jsonInput").value,
             })
         });
 
@@ -99,7 +103,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // reload queue button
     const reloadQueueButton = document.getElementById("queue_reload");
 
-    reloadQueueButton.addEventListener("click", async () => {
+    reloadQueueButton.addEventListener("click", async (event) => {
+        event.preventDefault()
+
         const response = await fetch('http://localhost:3333/get-queue', {
             method: 'POST',
             headers: {
@@ -124,7 +130,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // flush queue button
     const flushQueueButton = document.getElementById("queue_flush");
 
-    flushQueueButton.addEventListener("click", async () => {
+    flushQueueButton.addEventListener("click", async (event) => {
+        event.preventDefault()
+
         const response = await fetch('http://localhost:3333/flush-queue', {
             method: 'POST',
             headers: {
@@ -147,8 +155,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // tab activated
-    const activeTabIndex = sessionStorage.getItem('activeTabIndex');
-
     const setActiveTab = (tabButton) => {
         tabButton.classList.add('active');
         const tabName = tabButton.getAttribute('onclick').match(/'(.*?)'/)[1];
@@ -402,6 +408,8 @@ function displayConfigurationsDevice(message) {
     // Get the select element by its id
     const selectElement = document.getElementById("deviceProfile_List");
 
+    selectElement.innerHTML = '';
+
     for (var added_option = 0; added_option < total_devProfile; added_option++) {
         var devProfile_name = user_devProfiles[added_option].name;
         var devProfile_id = user_devProfiles[added_option].id;
@@ -451,65 +459,54 @@ function displayQueuesDevice(dev_queueItems) {
     // console.log('queueData[0] confirm:', queueData[0].confirmed)
 
     const tableBody = document.getElementById("enqueue_data");
+    tableBody.innerHTML = '';
 
-  for (const queue of dev_queueItems.resultList) {
-    const row = document.createElement("tr");
+    for (const queue of dev_queueItems.resultList) {
+        const row = document.createElement("tr");
 
-    // เพิ่ม id ของ Queue
-    const idColumn = document.createElement("td");
-    idColumn.textContent = queue.id;
-    row.appendChild(idColumn);
+        // เพิ่ม id ของ Queue
+        const idColumn = document.createElement("td");
+        idColumn.textContent = queue.id;
+        row.appendChild(idColumn);
 
-    // เพิ่มสถานะ Pending, Encrypted และ Confirmed
-    for (const key of ["isPending", "isEncrypted", "confirmed"]) {
-        const cell = document.createElement("td");
-        const icon = document.createElement("i");
-        icon.className = queue[key]
-          ? "fa-solid fa-check check_icon"
-          : "fa-solid fa-xmark xmark_icon";
-        cell.appendChild(icon);
-        row.appendChild(cell);
-      }
+        // เพิ่มสถานะ Pending, Encrypted และ Confirmed
+        for (const key of ["isPending", "isEncrypted", "confirmed"]) {
+            const cell = document.createElement("td");
+            const icon = document.createElement("i");
+            icon.className = queue[key]
+                ? "fa-solid fa-check check_icon"
+                : "fa-solid fa-xmark xmark_icon";
+            cell.appendChild(icon);
+            row.appendChild(cell);
+        }
 
-    // เพิ่มข้อมูลอื่นๆ
-    for (const key of ["fCntDown", "fPort", "data"]) {
-      const cell = document.createElement("td");
-      switch (key) {
-        case "fCntDown":
-            if (queue[key] == 0) {
-                cell.textContent = '';
-            } else {
-                cell.textContent = queue[key];
+        // เพิ่มข้อมูลอื่นๆ
+        for (const key of ["fCntDown", "fPort", "data"]) {
+            const cell = document.createElement("td");
+            switch (key) {
+                case "fCntDown":
+                    if (queue[key] == 0) {
+                        cell.textContent = '';
+                    } else {
+                        cell.textContent = queue[key];
+                    }
+                    break;
+                case "fPort":
+                    cell.textContent = queue[key];
+                    break;
+                case "data":
+                    const base64Data = queue[key];
+                    const hexData = b64ToHex(base64Data);
+                    cell.textContent = hexData;
+                    break;
             }
-            break;
-        case "fPort":
-            cell.textContent = queue[key];
-            break;
-        case "data":
-            const base64Data = queue[key];
-            const hexData = b64ToHex(base64Data);
-            cell.textContent = hexData;
-            break;
-      }
-      row.appendChild(cell);
+            row.appendChild(cell);
+        }
+
+        // เพิ่มแถวตารางลงใน tbody
+        tableBody.appendChild(row);
     }
-
-    // เพิ่มแถวตารางลงใน tbody
-    tableBody.appendChild(row);
-  }
 }
-
-// Function to convert base64 to hex
-function b64ToHex(base64String) {
-    const raw = atob(base64String);
-    let result = '';
-    for (let i = 0; i < raw.length; i++) {
-        const hex = raw.charCodeAt(i).toString(16);
-        result += (hex.length === 2 ? hex : '0' + hex);
-    }
-    return result.toUpperCase();
-}
-
 //---------------------------------------------------------------------//
 function convertUTCtoThailandTime(utcTimeString) {
     // Create a Date object from the UTC time string
@@ -533,9 +530,16 @@ function convertUTCtoThailandTime(utcTimeString) {
 }
 //---------------------------------------------------------------------//
 function displayDeviceEvents(dev_events) {
+    const tableBody = document.getElementById("event_data");
+    tableBody.innerHTML = '';
     // Ensure dev_events is not empty and has at least one event
     if (dev_events.length === 0) {
-        console.log("No device events to display.");
+        const tableBody = document.getElementById("event_data");
+        const newRow = document.createElement("tr");
+        const textCell = document.createElement("td");
+        textCell.textContent = "No device events to display.";
+        newRow.appendChild(textCell);
+        tableBody.appendChild(newRow);
         return;
     }
 
@@ -588,9 +592,16 @@ function displayDeviceEvents(dev_events) {
 //---------------------------------------------------------------------//
 function displayDeviceFrames(dev_frames) {
     // LoRaWAN Frames tab
-    // Ensure dev_events is not empty and has at least one event
+    const tableBody = document.getElementById("frame_data");
+    tableBody.innerHTML = '';
+    // Ensure dev_frame is not empty and has at least one event
     if (dev_frames.length === 0) {
-        console.log("No frame to display.");
+        const tableBody = document.getElementById("frame_data");
+        const newRow = document.createElement("tr");
+        const textCell = document.createElement("td");
+        textCell.textContent = "No frame to display.";
+        newRow.appendChild(textCell);
+        tableBody.appendChild(newRow);
         return;
     }
 
@@ -812,5 +823,15 @@ async function sendSpecificRequest(tabName) {
 
         displayDeviceFrames(result);
     }
+}
+//---------------------------------------------------------------------//
+function b64ToHex(base64String) {
+    const raw = atob(base64String);
+    let result = '';
+    for (let i = 0; i < raw.length; i++) {
+        const hex = raw.charCodeAt(i).toString(16);
+        result += (hex.length === 2 ? hex : '0' + hex);
+    }
+    return result.toUpperCase();
 }
 //---------------------------------------------------------------------//

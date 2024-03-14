@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // set default tab (Dashboard of device)
     sessionStorage.setItem('activeTabIndex', 0);
     sessionStorage.setItem('activeTab', 'Dashboard');
-    
+
     // reset dev_name, dev_id before
     // localStorage.setItem('dev_id', null);
     // localStorage.setItem('dev_name', null);
@@ -131,6 +131,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Add device button
     const addDevNextButton = document.getElementById("addDevNext");
+    const generateDevKeyButton = document.getElementById("Generate_key");
     const addDevConfirmButton = document.getElementById("addDevConfirm");
     let messageToAddDev;
 
@@ -150,6 +151,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             alert('Please enter the device name in English lowercase-uppercase, numbers 0-9, "_", "-", and "@".');
             return;
         }
+
+        let is64Bit = devIdInput.value.length === 16; // 16 bytes
+
+        if (!is64Bit) {
+            alert("Device eui should be 64 bits (16 characters)");
+            return;
+        }
+
         messageToAddDev = {
             dev_name: devNameInput.value,
             dev_id: devIdInput.value,
@@ -162,9 +171,24 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('dev_AddAppkey').style.display = "block";
     };
 
+    const generateDevKey = async () => {
+        const genAppKetBtt = document.getElementById('devKeyInput');
+        genAppKetBtt.value = await generate128BitRandom();
+        messageToAddDev.dev_key = genAppKetBtt.value;
+    };
+
     const addDevConfirm = async () => {
-        let devKeyInput = document.getElementById('devKeyInput');
-        messageToAddDev.dev_key = devKeyInput.value;
+        if (messageToAddDev.dev_key) {
+            let is128Bit = messageToAddDev.dev_key.length === 32;
+
+            if (!is128Bit) {
+                alert("Device key (OTAA) should be 128 bits (32 characters)");
+                return;
+            }
+        } else {
+            alert("Invalid input element [Device key (OTAA) should be 128 bits (32 characters)]");
+            return;
+        }
 
         const response = await fetch('http://localhost:3333/add-device', {
             method: 'POST',
@@ -197,6 +221,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     addDevNextButton.addEventListener('click', (event) => {
         event.preventDefault();
         nextAddDev();
+    })
+
+    generateDevKeyButton.addEventListener('click', (event) => {
+        event.preventDefault();
+        generateDevKey();
     })
 
     addDevConfirmButton.addEventListener('click', (event) => {
@@ -392,6 +421,8 @@ function displayDeviceProfilesDropDown(items) {
     // Get the select element by its id
     const selectElement = document.getElementById("deviceProfile_List");
 
+    selectElement.innerHTML = '';
+
     for (var added_option = 0; added_option < total_devProfile; added_option++) {
         var devProfile_name = user_devProfiles[added_option].name;
         var devProfile_id = user_devProfiles[added_option].id;
@@ -422,12 +453,13 @@ function formatLastSeen(lastSeen) {
     return formattedDate;
 }
 //---------------------------------------------------------------------//
-const generate128BitRandom = () => {
+async function generate128BitRandom() {
     const buffer = crypto.getRandomValues(new Uint8Array(16));
     const hexString = Array.from(buffer).map(byte => byte.toString(16).padStart(2, '0')).join('');
     return hexString;
 }
-const generate64BitRandom = () => {
+//---------------------------------------------------------------------//
+async function generate64BitRandom() {
     const buffer = crypto.getRandomValues(new Uint8Array(8));
     const hexString = Array.from(buffer).map(byte => byte.toString(16).padStart(2, '0')).join('');
     return hexString;
