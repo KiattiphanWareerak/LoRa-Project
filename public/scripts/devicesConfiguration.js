@@ -1,5 +1,7 @@
 //---------------------------------------------------------------------//
 //----------------------------EVENTS ZONE------------------------------//
+const SERVICE_IP_ADDRESS = "<SERVICE SERVER IP ADDRESS>";
+const SERVICE_PORT = "3333";
 //---------------------------------------------------------------------//
 let sentRequests = {};
 
@@ -26,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const selectedValue = selected_devProfile.value;
 
-        const response = await fetch('http://202.28.95.234:3333/update-device', {
+        const response = await fetch(`http://${SERVICE_IP_ADDRESS}:${SERVICE_PORT}/update-device`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -73,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const response = await fetch('http://202.28.95.234:3333/enqueue-device', {
+        const response = await fetch(`http://${SERVICE_IP_ADDRESS}:${SERVICE_PORT}/enqueue-device`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -106,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
     reloadQueueButton.addEventListener("click", async (event) => {
         event.preventDefault()
 
-        const response = await fetch('http://202.28.95.234:3333/get-queue', {
+        const response = await fetch(`http://${SERVICE_IP_ADDRESS}:${SERVICE_PORT}/get-queue`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -133,7 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
     flushQueueButton.addEventListener("click", async (event) => {
         event.preventDefault()
 
-        const response = await fetch('http://202.28.95.234:3333/flush-queue', {
+        const response = await fetch(`http://${SERVICE_IP_ADDRESS}:${SERVICE_PORT}/flush-queue`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -197,7 +199,7 @@ document.addEventListener('DOMContentLoaded', () => {
             setActiveTab(tabButton);
             // Send request specific to the active tab
             if (tabButton.getAttribute('onclick').includes('Dashboard')) {
-                const response = await fetch('http://202.28.95.234:3333/get-linkMetric', {
+                const response = await fetch(`http://${SERVICE_IP_ADDRESS}:${SERVICE_PORT}/get-linkMetric`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -219,7 +221,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 displayDashboardDevice(result);
             } else if (tabButton.getAttribute('onclick').includes('Configuration')) {
-                const response = await fetch('http://202.28.95.234:3333/get-device', {
+                const response = await fetch(`http://${SERVICE_IP_ADDRESS}:${SERVICE_PORT}/get-device`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -240,7 +242,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 displayConfigurationsDevice(result);
             } else if (tabButton.getAttribute('onclick').includes('Queue')) {
-                const response = await fetch('http://202.28.95.234:3333/get-queue', {
+                const response = await fetch(`http://${SERVICE_IP_ADDRESS}:${SERVICE_PORT}/get-queue`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -260,7 +262,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 displayQueuesDevice(result);
             } else if (tabButton.getAttribute('onclick').includes('Event')) {
-                const response = await fetch('http://202.28.95.234:3333/get-event', {
+                const response = await fetch(`http://${SERVICE_IP_ADDRESS}:${SERVICE_PORT}/get-event`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -280,7 +282,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 displayDeviceEvents(result);
             } else if (tabButton.getAttribute('onclick').includes('LoRaWAN_frame')) {
-                const response = await fetch('http://202.28.95.234:3333/get-frame', {
+                const response = await fetch(`http://${SERVICE_IP_ADDRESS}:${SERVICE_PORT}/get-frame`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -720,7 +722,7 @@ function displayChartData(data, chartId, chartLabel, datasetLabel) {
 //---------------------------------------------------------------------//
 async function sendSpecificRequest(tabName) {
     if (tabName === 'Dashboard') {
-        const response = await fetch('http://202.28.95.234:3333/get-linkMetric', {
+        const response = await fetch(`http://${SERVICE_IP_ADDRESS}:${SERVICE_PORT}/get-linkMetric`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -742,7 +744,7 @@ async function sendSpecificRequest(tabName) {
 
         displayDashboardDevice(result);
     } else if (tabName === 'Configuration') {
-        const response = await fetch('http://202.28.95.234:3333/get-device', {
+        const response = await fetch(`http://${SERVICE_IP_ADDRESS}:${SERVICE_PORT}/get-device`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -763,7 +765,7 @@ async function sendSpecificRequest(tabName) {
 
         displayConfigurationsDevice(result);
     } else if (tabName === 'Queue') {
-        const response = await fetch('http://202.28.95.234:3333/get-queue', {
+        const response = await fetch(`http://${SERVICE_IP_ADDRESS}:${SERVICE_PORT}/get-queue`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -783,7 +785,7 @@ async function sendSpecificRequest(tabName) {
 
         displayQueuesDevice(result);
     } else if (tabName === 'Event') {
-        const response = await fetch('http://202.28.95.234:3333/get-event', {
+        const response = await fetch(`http://${SERVICE_IP_ADDRESS}:${SERVICE_PORT}/get-event`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -803,7 +805,7 @@ async function sendSpecificRequest(tabName) {
 
         displayDeviceEvents(result);
     } else if (tabName === 'LoRaWAN_frame') {
-        const response = await fetch('http://202.28.95.234:3333/get-frame', {
+        const response = await fetch(`http://${SERVICE_IP_ADDRESS}:${SERVICE_PORT}/get-frame`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

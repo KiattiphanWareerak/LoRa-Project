@@ -1,5 +1,7 @@
 //---------------------------------------------------------------------// 
 //----------------------------EVENT ZONE-------------------------------//
+const SERVICE_IP_ADDRESS = "<SERVICE SERVER IP ADDRESS>";
+const SERVICE_PORT = "3333";
 //---------------------------------------------------------------------//
 document.addEventListener('DOMContentLoaded', () => {
     const resetPwForm = document.getElementById("reset-password-form");
@@ -27,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const response = await fetch('http://202.28.95.234:3333/reset-password', {
+        const response = await fetch(`http://${SERVICE_IP_ADDRESS}:${SERVICE_PORT}/reset-password`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

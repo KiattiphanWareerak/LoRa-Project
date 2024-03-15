@@ -1,5 +1,7 @@
 //---------------------------------------------------------------------// 
 //----------------------------EVENT ZONE-------------------------------//
+const SERVICE_IP_ADDRESS = "<SERVICE SERVER IP ADDRESS>";
+const SERVICE_PORT = "3333";
 //---------------------------------------------------------------------//
 document.addEventListener('DOMContentLoaded', () => {
     localStorage.clear();
@@ -12,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
         event.preventDefault();
 
         if (isEmail(input_id.value)) {
-            const response = await fetch('http://202.28.95.234:3333/loginByEmail', {
+            const response = await fetch(`http://${SERVICE_IP_ADDRESS}:${SERVICE_PORT}/loginByEmail`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -35,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem('user_token', result.user_token);
             window.location.href = '../htmls/dashboard.html';
         } else {
-            const response = await fetch('http://202.28.95.234:3333/loginByName', {
+            const response = await fetch(`http://${SERVICE_IP_ADDRESS}:${SERVICE_PORT}/loginByName`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

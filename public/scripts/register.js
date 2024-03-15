@@ -1,5 +1,7 @@
 //---------------------------------------------------------------------// 
-//----------------------------EVENTS ZONE------------------------------// 
+//----------------------------EVENTS ZONE------------------------------//
+const SERVICE_IP_ADDRESS = "<SERVICE SERVER IP ADDRESS>";
+const SERVICE_PORT = "3333";
 //---------------------------------------------------------------------//
 document.addEventListener('DOMContentLoaded', () => {
     const registerForm = document.getElementById('registration-form');
@@ -35,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // All checks passed, proceed with sending request
-        const response = await fetch('http://202.28.95.234:3333/register', {
+        const response = await fetch(`http://${SERVICE_IP_ADDRESS}:${SERVICE_PORT}/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

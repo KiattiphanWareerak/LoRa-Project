@@ -1,5 +1,7 @@
 //---------------------------------------------------------------------// 
 //----------------------------EVENT ZONE-------------------------------//
+const SERVICE_IP_ADDRESS = "<SERVICE SERVER IP ADDRESS>";
+const SERVICE_PORT = "3333";
 //---------------------------------------------------------------------//
 document.addEventListener('DOMContentLoaded', () => {
         const forgotPwForm = document.getElementById("forgot-password-form");
@@ -9,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const input_em = document.getElementById("email").value.trim();
 
-            const response = await fetch('http://202.28.95.234:3333/forgot-password', {
+            const response = await fetch(`http://${SERVICE_IP_ADDRESS}:${SERVICE_PORT}/forgot-password`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

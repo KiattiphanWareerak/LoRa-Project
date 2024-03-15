@@ -1,5 +1,7 @@
 //---------------------------------------------------------------------// 
 //----------------------------EVENTS ZONE------------------------------// 
+const SERVICE_IP_ADDRESS = "<SERVICE SERVER IP ADDRESS>";
+const SERVICE_PORT = "3333";
 //---------------------------------------------------------------------//
 document.addEventListener('DOMContentLoaded', () => {
     // set default tab (Dashboard of device)
@@ -56,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             let descriptionValue = descriptionInput.value.trim();
 
-            const response = await fetch('http://202.28.95.234:3333/add-application', {
+            const response = await fetch(`http://${SERVICE_IP_ADDRESS}:${SERVICE_PORT}/add-application`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -149,7 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let appIDsSelect = appIDs.map((appID) => ({ app_id: appID }));
 
-        const response = await fetch('http://202.28.95.234:3333/del-application', {
+        const response = await fetch(`http://${SERVICE_IP_ADDRESS}:${SERVICE_PORT}/del-application`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

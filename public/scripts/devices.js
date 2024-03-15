@@ -1,5 +1,7 @@
 //---------------------------------------------------------------------// 
-//----------------------------EVENTS ZONE------------------------------// 
+//----------------------------EVENTS ZONE------------------------------//
+const SERVICE_IP_ADDRESS = "<SERVICE SERVER IP ADDRESS>";
+const SERVICE_PORT = "3333";
 //---------------------------------------------------------------------//
 document.addEventListener('DOMContentLoaded', async () => {
     // set default tab (Dashboard of device)
@@ -11,7 +13,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // localStorage.setItem('dev_name', null);
 
     // Display devices
-    const response = await fetch('http://202.28.95.234:3333/get-deviceList', {
+    const response = await fetch(`http://${SERVICE_IP_ADDRESS}:${SERVICE_PORT}/get-deviceList`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -33,7 +35,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     addDeviceButton.addEventListener("click", async (event) => {
         event.preventDefault();
 
-        const response = await fetch('http://202.28.95.234:3333/menu-deviceProfile', {
+        const response = await fetch(`http://${SERVICE_IP_ADDRESS}:${SERVICE_PORT}/menu-deviceProfile`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -56,7 +58,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const appConfigButton = document.getElementById("appConfigButton");
 
     const getAppConfig = async () => {
-        const response = await fetch('http://202.28.95.234:3333/get-application', {
+        const response = await fetch(`http://${SERVICE_IP_ADDRESS}:${SERVICE_PORT}/get-application`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -94,7 +96,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             alert('Please enter the application name again.\n' +
                 '(English lowercase-uppercase, numbers 0-9, "_, "-", and "@")');
         } else {
-            const response = await fetch('http://202.28.95.234:3333/update-application', {
+            const response = await fetch(`http://${SERVICE_IP_ADDRESS}:${SERVICE_PORT}/update-application`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -190,7 +192,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
-        const response = await fetch('http://202.28.95.234:3333/add-device', {
+        const response = await fetch(`http://${SERVICE_IP_ADDRESS}:${SERVICE_PORT}/add-device`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -292,7 +294,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         let messageToDelDev = devIDs.map((devID) => ({ dev_id: devID }));
 
-        const response = await fetch('http://202.28.95.234:3333/del-device', {
+        const response = await fetch(`http://${SERVICE_IP_ADDRESS}:${SERVICE_PORT}/del-device`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

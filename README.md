@@ -16,7 +16,7 @@ npm run start-web
 ```
 npm run start-service
 ```
-6. Open your browser and enter ```localhost:3111```.
+6. Open your browser and enter ```<Web Server IP Address>:3111```or ```localhost:3111``` if you run in localhost.
 
 # Warning
 Before using the web application, please change the IP Address of ChirpStack, PostgreSQL, and InfluxDBv2 first.
@@ -36,6 +36,32 @@ const client = new Client({
       port: <YOUR PORT>,
 });
 ```
+
+Don't forget to create table ```api_token``` and ```chirpstack_tenant_id```
+```
+                List of relations
+ Schema |         Name         | Type  |  Owner
+--------+----------------------+-------+----------
+ public | api_tokens           | table | postgres
+ public | chirpstack_tenant_id | table | postgres
+(2 rows)
+
+                 Table "public.api_tokens"
+   Column    |          Type          | Collation | Nullable | Default
+--------------+------------------------+-----------+-------------------
+ cs_token    | character varying(255) |           | not null |
+ influx_token| character varying(255) |           | not null | 
+Indexes:
+    "network_api_token_api_token_key" UNIQUE CONSTRAINT, btree (cs_token)
+
+                Table "public.chirpstack_tenant_id"
+  Column   |         Type          | Collation | Nullable | Default
+-----------+-----------------------+-----------+----------+---------
+ tenant_id | character varying(36) |           | not null |
+Indexes:
+    "chirpstack_tenant_id_pkey" PRIMARY KEY, btree (tenant_id)
+```
+
 InfluxDBv2:
 ```
 const INFLUX_URL = 'INFLUXDB IP ADDRESS';
@@ -49,7 +75,7 @@ PS C:\LoRa-Project> npm run start-web
 > lora-web-application@1.0.0 start-web
 > node public_server.js
 
-Web appliction is running at http://localhost:3111/
+Web appliction is running at http://0.0.0.0:3111/
 ```
 Service server:
 ```

@@ -4,6 +4,14 @@
 const { Client } = require("pg");
 const axios = require('axios');
 
+// Postgres setup
+const POSTGRES_DATABASE = 'my_web_db';
+const POSTGRES_USER = 'webapp';
+const POSTGRES_PASSWORD = '1q2w3e4r@30';
+const POSTGRES_HOST = '202.28.95.234';
+const POSTGRES_PORT = 5432;
+
+// InfluxDBv2 setup
 const INFLUX_URL = 'http://202.28.95.234:8086';
 //---------------------------------------------------------------------//
 //-------------------------------FUNCTIONS-----------------------------//
@@ -159,11 +167,11 @@ async function updatePasswordInfluxDbRequest(usrId, message, INFLUX_API_TOKEN) {
 async function getApiTokenRequest() {
   try {
     const client = new Client({
-      database: 'my_web_db',
-      user: 'webapp',
-      password: '1q2w3e4r@30',
-      host: '202.28.95.234',
-      port: 5432,
+      database: `${POSTGRES_DATABASE}`,
+      user: `${POSTGRES_USER}`,
+      password: `${POSTGRES_PASSWORD}`,
+      host: `${POSTGRES_HOST}`,
+      port: POSTGRES_PORT,
     });
 
     return new Promise(async (resolve, reject) => {
@@ -187,11 +195,11 @@ async function getApiTokenRequest() {
 async function getChirpStackTenantIdRequest() {
   try {
     const client = new Client({
-      database: 'my_web_db',
-      user: 'webapp',
-      password: '1q2w3e4r@30',
-      host: '202.28.95.234',
-      port: 5432,
+      database: `${POSTGRES_DATABASE}`,
+      user: `${POSTGRES_USER}`,
+      password: `${POSTGRES_PASSWORD}`,
+      host: `${POSTGRES_HOST}`,
+      port: POSTGRES_PORT,
     });
 
     return new Promise(async (resolve, reject) => {
