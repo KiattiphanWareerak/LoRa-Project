@@ -4,7 +4,7 @@ services:
   frontend:
     image: node:latest
     restart: always
-    container_name: frontend_server
+    container_name: public_server
     ports:
       - '3111:3111'
     volumes:
@@ -17,7 +17,7 @@ services:
   backend:
     image: node:latest
     restart: always
-    container_name: backend_server
+    container_name: service_server
     ports:
       - '3333:3333'
     volumes:
