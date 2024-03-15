@@ -1,0 +1,28 @@
+version: '1'
+
+services:
+  frontend:
+    image: node:latest
+    restart: always
+    container_name: frontend_server
+    ports:
+      - '3111:3111'
+    volumes:
+      - ./public:/app/public
+      - ./public_server.js:/app/public_server.js
+      - ./package.json:/app/package.json
+    working_dir: /app
+    command: sh -c "npm install && npm run start-web"
+
+  backend:
+    image: node:latest
+    restart: always
+    container_name: backend_server
+    ports:
+      - '3333:3333'
+    volumes:
+      - ./service:/app/service
+      - ./service_server.js:/app/service_server.js
+      - ./package.json:/app/package.json
+    working_dir: /app
+    command: sh -c "npm install && npm run start-service"
