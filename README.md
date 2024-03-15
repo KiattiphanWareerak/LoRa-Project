@@ -19,22 +19,26 @@ npm run start-service
 6. Open your browser and enter ```<Web Server IP Address>:3111```or ```localhost:3111``` if you run in localhost.
 
 # Warning
-Before using the web application, please change the IP Address of ChirpStack, PostgreSQL, and InfluxDBv2 first.
+Before using the web application, please change the IP Address of ChirpStack, PostgreSQL, InfluxDBv2 and Service Endpoint first.
 (and check your API TOKEN: ChirpStack, InfluxDBv2)
 
-ChirpStack:
+ChirpStack (chirpstack_service.js):
 ```
 const serverChirpStack = 'CHIRPSTACK IP ADDRESS';
 ```
-Postgres:
+
+InfluxDBv2 (database_service.js):
 ```
-const client = new Client({
-      database: 'YOUR DATABASE',
-      user: 'YOUR USER',
-      password: 'YOUR PASSWORD',
-      host: 'YOU IP ADDRESS',
-      port: <YOUR PORT>,
-});
+const INFLUX_URL = 'INFLUXDB IP ADDRESS';
+```
+
+Postgres (database_service.js):
+```
+const POSTGRES_DATABASE = 'YOUR DATABASE';
+const POSTGRES_USER = 'YOUR USER';
+const POSTGRES_PASSWORD = 'YOUR PASSWORD';
+const POSTGRES_HOST = 'YOU IP ADDRESS';
+const POSTGRES_PORT = <YOUR PORT>;
 ```
 
 Don't forget to create table ```api_token``` and ```chirpstack_tenant_id```
@@ -62,9 +66,10 @@ Indexes:
     "chirpstack_tenant_id_pkey" PRIMARY KEY, btree (tenant_id)
 ```
 
-InfluxDBv2:
+Service Endpoint(./public/scripts/serviceEndpoint.js):
 ```
-const INFLUX_URL = 'INFLUXDB IP ADDRESS';
+const SERVICE_IP_ADDRESS = "SERVICE SERVER IP ADDRESS";
+const SERVICE_PORT = "3333";
 ```
 
 # Example output

@@ -1,7 +1,5 @@
 //---------------------------------------------------------------------// 
 //----------------------------EVENTS ZONE------------------------------//
-const SERVICE_IP_ADDRESS = "<SERVICE SERVER IP ADDRESS>";
-const SERVICE_PORT = "3333";
 //---------------------------------------------------------------------//
 document.addEventListener('DOMContentLoaded', () => {
     const registerForm = document.getElementById('registration-form');
